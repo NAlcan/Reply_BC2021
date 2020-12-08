@@ -30,12 +30,22 @@ ggplot(data_articulo, aes(y=Clorofila_a, x = FosforoTotal)) +
   theme_minimal()
 
 
+
 Plot_pred <- data_articulo %>%
   pivot_longer(-c(all_of(id_variables), Clorofila_a),
                names_to="xvar",values_to="value") %>%
   ggplot(aes(x = value, y = Clorofila_a)) + geom_point(aes(color=BeretOut)) +
   scale_color_manual(values = c("#d95f02","#1b9e77")) +
   facet_wrap( nombre_programa ~ xvar , scales="free") 
+
+Plot_descr <- data_articulo %>%
+  filter (BeretOut == "inn") %>% 
+    pivot_longer(-c(all_of(id_variables), Clorofila_a),
+               names_to="xvar",values_to="value") %>%
+  ggplot(aes(x = value, y = Clorofila_a)) + geom_point(aes(color= nombre_programa),alpha = 0.5) +
+  scale_color_manual(values = c("#d95f02","#1b9e77")) +
+  facet_wrap( ~ xvar , scales="free") 
+
  
 # Dato extremo de Temp
 data_articulo %>%  filter (TempAgua > 200) %>%  
