@@ -64,7 +64,14 @@ bereta_variables <- c("clorofila_a_mg_l", "alc_t_mg_ca_co3_l", "conduc_m_s_cm", 
                       "sst_mg_l", "p_h_sin_unid","t_º_c")
 
 
-data_articulo <- data_articulo %>% dplyr::select(all_of(id_variables),all_of(bereta_variables))
+data_articulo <- data_articulo %>% dplyr::select(all_of(id_variables),all_of(bereta_variables)) %>% 
+                  rename("Clorofila_a" = clorofila_a_mg_l,
+                         "Alcalinidad" = alc_t_mg_ca_co3_l,
+                         "Conductividad" = conduc_m_s_cm,
+                         "FosforoTotal" = pt_mg_p_l,
+                         "SolidosTotales" = sst_mg_l,
+                         "Ph" = p_h_sin_unid,
+                         "TempAgua" = `t_º_c`)
 
 # BBDD 2. Data articulo ------------------------------------------------
 
@@ -72,24 +79,24 @@ data_articulo <- data_articulo %>% dplyr::select(all_of(id_variables),all_of(ber
 
 
 # Umbral del 99.5 de clo a. ¿Para todos los rios o por rio? 
-bereta_out1 <- data_articulo %>%  summarize (Q99.5 = quantile(clorofila_a_mg_l, probs = c(0.995),na.rm=T))
+bereta_out1 <- data_articulo %>%  summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995),na.rm=T))
 
-data_articulo %>% filter (clorofila_a_mg_l >= bereta_out1$Q99.5   ) %>% 
-  select(codigo_pto, fecha_muestra, clorofila_a_mg_l)
+data_articulo %>% filter (Clorofila_a >= bereta_out1$Q99.5   ) %>% 
+  select(codigo_pto, fecha_muestra, Clorofila_a)
 
 # Me quedan cuatro puntos. En articulo son 5. QUe pasa con RN12?
 data_articulo %>% filter (codigo_pto == "RN12" & fecha_muestra == "2018-04-17") %>% 
-  dplyr::select(codigo_pto, fecha_muestra, clorofila_a_mg_l)
+  dplyr::select(codigo_pto, fecha_muestra, Clorofila_a)
 
 
 # Si calculo el 99.5 por rio... como el RU es muy bajo, me quedan muchos extremos!
 
 bereta_out2 <- data_articulo %>% group_by(nombre_programa) %>% 
-  summarize (Q99.5 = quantile(clorofila_a_mg_l, probs = c(0.995),na.rm=T))
+  summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995),na.rm=T))
 
-data_articulo %>% filter (clorofila_a_mg_l >= bereta_out2$Q99.5[[1]]   |
-                            clorofila_a_mg_l >= bereta_out2$Q99.5[[2]]) %>% 
-  select(codigo_pto, fecha_muestra, clorofila_a_mg_l)
+data_articulo %>% filter (Clorofila_a >= bereta_out2$Q99.5[[1]]   |
+                            Clorofila_a >= bereta_out2$Q99.5[[2]]) %>% 
+  select(codigo_pto, fecha_muestra, Clorofila_a)
 
 
 data_articulo %>% filter (!(codigo_pto == "RN12" & fecha_muestra == "2018-04-17"| 

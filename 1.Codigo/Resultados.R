@@ -13,27 +13,27 @@ id_variables <- c("nombre_programa","codigo_pto","departamento","fecha_muestra",
 # Voy a generar la variable "beret" que identifica los datos excluidos en articulos
 
 data_articulo <- data_articulo %>% 
-  mutate(beret = factor( ifelse ((codigo_pto == "RN12" & fecha_muestra == "2018-04-17"| 
+  mutate(BeretOut = factor( ifelse ((codigo_pto == "RN12" & fecha_muestra == "2018-04-17"| 
                             codigo_pto == "RN5" & fecha_muestra == "2012-01-19" |
                             codigo_pto == "RN5" & fecha_muestra == "2012-12-06" |
                             codigo_pto == "RN6" & fecha_muestra == "2012-08-15" |
                             codigo_pto == "RN3" & fecha_muestra == "2012-12-05"  ), "out","inn")))
 
 id_variables <- c("nombre_programa","codigo_pto","departamento","fecha_muestra",
-                  "fecha_hora","id_muestra","beret") 
+                  "fecha_hora","id_muestra","BeretOut") 
 
-ggplot(data_articulo,aes(y=clorofila_a_mg_l, x=nombre_programa)) +   geom_jitter(aes(color = beret)) + 
+ggplot(data_articulo,aes(y=Clorofila_a, x=nombre_programa)) +   geom_jitter(aes(color = BeretOut)) + 
   theme_minimal()
   
-ggplot(data_articulo, aes(y=clorofila_a_mg_l, x = pt_mg_p_l)) +
-  geom_point(aes(color = beret)) + facet_wrap( .~ nombre_programa) +
+ggplot(data_articulo, aes(y=Clorofila_a, x = FosforoTotal)) +
+  geom_point(aes(color = BeretOut)) + facet_wrap( .~ nombre_programa) +
   theme_minimal()
 
 
 Plot_pred <- data_articulo %>%
-  pivot_longer(-c(all_of(id_variables), clorofila_a_mg_l),
+  pivot_longer(-c(all_of(id_variables), Clorofila_a),
                names_to="xvar",values_to="value") %>%
-  ggplot(aes(x=value,y=clorofila_a_mg_l)) + geom_point(aes(color=beret)) +
+  ggplot(aes(x = value, y = Clorofila_a)) + geom_point(aes(color=BeretOut)) +
   scale_color_manual(values = c("#d95f02","#1b9e77")) +
   facet_wrap( nombre_programa ~ xvar , scales="free") 
  
