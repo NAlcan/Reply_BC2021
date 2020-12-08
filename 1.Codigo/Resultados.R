@@ -37,3 +37,5 @@ Plot_pred <- data_articulo %>%
   scale_color_manual(values = c("#d95f02","#1b9e77")) +
   facet_wrap( nombre_programa ~ xvar , scales="free") 
  
+# Dato extremo de Temp
+data_articulo %>%  filter (TempAgua > 200)
