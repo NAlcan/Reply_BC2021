@@ -22,8 +22,8 @@ data_articulo <- data_articulo %>%
 id_variables <- c("nombre_programa","codigo_pto","departamento","fecha_muestra",
                   "fecha_hora","id_muestra","BeretOut") 
 
-ggplot(data_articulo,aes(y=Clorofila_a, x=nombre_programa)) +   geom_jitter(aes(color = BeretOut)) + 
-  theme_minimal()
+Data_out <- ggplot(data_articulo,aes(y=Clorofila_a, x=nombre_programa)) +   geom_jitter(aes(color = BeretOut)) + 
+  theme_minimal() + labs(x=NULL)
   
 ggplot(data_articulo, aes(y=Clorofila_a, x = FosforoTotal)) +
   geom_point(aes(color = BeretOut)) + facet_wrap( .~ nombre_programa) +
@@ -38,4 +38,14 @@ Plot_pred <- data_articulo %>%
   facet_wrap( nombre_programa ~ xvar , scales="free") 
  
 # Dato extremo de Temp
-data_articulo %>%  filter (TempAgua > 200)
+data_articulo %>%  filter (TempAgua > 200) %>%  
+  select(codigo_pto, fecha_muestra, Clorofila_a,TempAgua)
+
+# Render RMarkdown ------------------------------------------------- 
+rmarkdown::render(
+  input="3.Resultados/Resultados_preliminares.Rmd",
+  output_format = "pdf_document",
+  output_dir = "3.Resultados",
+  run_pandoc = TRUE,
+  output_file = paste0("Resultados_preliminares.pdf")
+)
