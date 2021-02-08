@@ -10,6 +10,13 @@ glimpse(data_articulo)
 
 id_variables <- c("nombre_programa","codigo_pto","departamento","fecha_muestra",
                   "fecha_hora","id_muestra") 
+# Umbral del 99.5 de clo a. ¿Para todos los rios o por rio? 
+bereta_out1 <- data_articulo %>%  summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995),na.rm=T))
+
+data_articulo %>% filter (Clorofila_a >= bereta_out1$Q99.5   ) %>% 
+  select(codigo_pto, fecha_muestra, Clorofila_a)
+
+
 # Voy a generar la variable "beret" que identifica los datos excluidos en articulos
 
 data_articulo <- data_articulo %>% 
@@ -50,6 +57,17 @@ Plot_descr <- data_articulo %>%
 # Dato extremo de Temp
 data_articulo %>%  filter (TempAgua > 200) %>%  
   select(codigo_pto, fecha_muestra, Clorofila_a,TempAgua)
+
+# Datos de pH cortados respecto al articulo
+summary(data_articulo$Ph)
+
+ggplot(data_articulo, aes(y=Ph, x = 1)) + geom_violin()
+
+data_articulo %>%  group_by (nombre_programa) %>% 
+  filter ( TempAgua < 200) %>% # Datos extremos
+  summarize ( mediapH = mean (Ph, na.rm=T),
+              meanTemp = mean(TempAgua, na.rm=T),
+              meanPT = mean (FosforoTotal , na.rm = T))
 
 # Render RMarkdown ------------------------------------------------- 
 rmarkdown::render(
