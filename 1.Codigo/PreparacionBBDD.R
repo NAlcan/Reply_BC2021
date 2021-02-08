@@ -15,6 +15,7 @@ glimpse( RN_RU)
 # Hay caracteres especiales en columnas numericas ej:  
 RN_RU %>%  dplyr::select (clorofila_a_mg_l) %>% 
   filter(str_detect(clorofila_a_mg_l , "<") )
+
 # Pasos para Acomodar la base:
 # 1. Eliminar valores especiales "< LD" (criterio conservador, se asumen NA)
 
@@ -27,7 +28,7 @@ id_variables <- c("nombre_programa","codigo_pto","departamento","fecha_muestra",
 # las paso a numericas 
 # los warnings avisan que se sustiuyeron caracteres raros por NA
 
-rios_numericas <- RN_RU %>% dplyr::select(-c(all_of(id_variables))) %>% 
+rios_numericas <- RN_RU %>% dplyr::select(!(all_of(id_variables))) %>% 
         mutate_if (is.character, as.numeric) 
 
 glimpse(rios_numericas) # son numericas todas(dbl o int) efectivamente
@@ -54,14 +55,15 @@ glimpse(data_rios)
 data_articulo <- data_rios %>% filter (nombre_programa == "Río Negro" & fecha_muestra >= "2009-05-01" | 
                                          nombre_programa == "Río Negro" & fecha_muestra <= "2018-11-30" |
                                          nombre_programa == "Rio Uruguay" & fecha_muestra >= "2014-06-01"|
-                                         nombre_programa == "Rio Uruguay" & fecha_muestra <= "2018-11-30")
+                                         nombre_programa == "Rio Uruguay" & fecha_muestra <= "2018-11-30" |
+                                         nombre_programa == "Rio Cuareim") # El articulo original no especifica las fechas del Rio Cuareim
 
 
 # 3. Seleccionar variables usadas en el articulos
 
 # Variables usada en Bereta
 bereta_variables <- c("clorofila_a_mg_l", "alc_t_mg_ca_co3_l", "conduc_m_s_cm", "pt_mg_p_l",
-                      "sst_mg_l", "p_h_sin_unid","t_º_c")
+                      "sst_mg_l", "p_h_sin_unid","t_o_c")
 
 
 data_articulo <- data_articulo %>% dplyr::select(all_of(id_variables),all_of(bereta_variables)) %>% 
@@ -71,7 +73,7 @@ data_articulo <- data_articulo %>% dplyr::select(all_of(id_variables),all_of(ber
                          "FosforoTotal" = pt_mg_p_l,
                          "SolidosTotales" = sst_mg_l,
                          "Ph" = p_h_sin_unid,
-                         "TempAgua" = `t_º_c`)
+                         "TempAgua" = `t_o_c`)
 
 # BBDD 2. Data articulo ------------------------------------------------
 
