@@ -117,7 +117,7 @@ data_articulo %>%  group_by (nombre_programa) %>%
   )
 
 
-# GLM ---------------------------------------------------------------------
+# 2.2. Analysis of variables by linear model ---------------------------------
 
 ph_rn <- data_articulo %>%
   filter (BeretOut == "inn" & nombre_programa == "RN") %>%
@@ -125,6 +125,8 @@ ph_rn <- data_articulo %>%
 
 ph_rn_model <-
   lme4::lmer(Ph ~ Year  + (1 | codigo_pto / Mes), data = ph_rn)
+
+df.residual(ph_rn_model)
 
 summary(ph_rn_model)
 
