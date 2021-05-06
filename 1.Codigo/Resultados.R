@@ -8,19 +8,12 @@ data_articulo <- read_csv("2.Datos/data_articulo.csv")
 
 glimpse(data_articulo)
 
-# Elimino el Cuareim que no se usa en este analisis
-# Edito los nombres de los programas del RN y RU
-# Y genero las variable Year y Mes
+# Genero las variable Year y Mes
 
 data_articulo <-
-  data_articulo %>% filter (nombre_programa != ("Rio Cuareim")) %>%
-  mutate (
-    nombre_programa = fct_recode(nombre_programa,
-                                 RN = "Río Negro",
-                                 RU = "Rio Uruguay"),
-    Year = year(fecha_muestra),
-    Mes = month (fecha_muestra)
-  )
+  data_articulo %>%
+  mutate (Year = year(fecha_muestra),
+          Mes = month (fecha_muestra))
 
 
 # Umbral del 99.5 de clo a. ¿Para todos los rios o por rio?
@@ -146,9 +139,9 @@ summary(Alc_rn_model)
 # NO COINCIDEN LOS Grados de Libertad!!
 
 
-# Render RMarkdown ------------------------------------------------- 
+# Render RMarkdown -------------------------------------------------
 rmarkdown::render(
-  input="3.Resultados/Resultados_preliminares.Rmd",
+  input = "3.Resultados/Resultados_preliminares.Rmd",
   output_format = "pdf_document",
   output_dir = "3.Resultados",
   run_pandoc = TRUE,
