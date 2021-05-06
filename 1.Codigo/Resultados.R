@@ -2,6 +2,7 @@
 library(tidyverse) # Funciones de manipulacion de la base y graficos
 library(RColorBrewer) #Paleta de colores
 library(lubridate) # para manipular fechas
+theme_set(theme_minimal())
 # Datos -------------------------------------------------------------------
 
 data_articulo <- read_csv("2.Datos/data_articulo.csv")
@@ -96,13 +97,32 @@ Plot_descr_out <- data_articulo %>%
 data_articulo %>%  filter (TempAgua > 200) %>%
   select(codigo_pto, fecha_muestra, Clorofila_a, TempAgua)
 
-# Datos de pH cortados respecto al articulo
+# Datos de pH cortados respecto al articulo. Figura 3.C
 summary(data_articulo$Ph)
 
 ggplot(data_articulo, aes(y = Ph, x = 1)) + geom_violin()
 
+
+# Recrear la figura 3 completa --------------------------------------------
+
+data_articulo %>%   filter (BeretOut == "inn") %>%
+  dplyr::select(Clorofila_a,
+                Alcalinidad,
+                Conductividad,
+                FosforoTotal,
+                SolidosTotales,
+                Ph,
+                TempAgua) %>% 
+  pivot_longer(cols = !(Clorofila_a), names_to = "vars", values_to = "valor") %>% 
+  ggplot(aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) + 
+  facet_wrap(~ vars , scales = "free_x", ncol=2) + 
+  labs(x = NULL)
+  
+# Hay muchos datos extremos o "outlayers" que el articulo no es claro como los corrigio
+
+# Descriptivas de Ph, Temp Y PT 
 data_articulo %>%  group_by (nombre_programa) %>%
-  filter (TempAgua < 200) %>% # Datos extremos
+  filter (TempAgua < 200) %>% # El datos extremo de T 
   summarize (
     mediapH = mean (Ph, na.rm = T),
     meanTemp = mean(TempAgua, na.rm = T),
