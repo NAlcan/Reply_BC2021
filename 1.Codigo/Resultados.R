@@ -2,7 +2,8 @@
 library(tidyverse) # Funciones de manipulacion de la base y graficos
 library(RColorBrewer) #Paleta de colores
 library(lubridate) # para manipular fechas
-theme_set(theme_minimal())
+theme_set(theme_minimal()) # Theme por defecto de los graficos
+library(patchwork) # Para pegar plots
 # Datos -------------------------------------------------------------------
 
 data_articulo <- read_csv("2.Datos/data_articulo.csv")
@@ -118,12 +119,16 @@ summary(data_articulo$Ph)
 ggplot(data_articulo, aes(y = Ph, x = 1)) + geom_violin()
 
 # Dato outliers en otras variables ----------------------------------------
+
+# Los valores referencia de cada variable al P99.5%
 limits <- data_articulo %>% filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>%
-  summarise(across(is.numeric , ~ quantile(., probs = c(0.995), na.rm = T))) %>% 
+  summarise(across(where(is.numeric) , ~ quantile(., probs = c(0.995), na.rm = T))) %>% 
   dplyr::select(!c(id_muestra,Year,Mes, Clorofila_a))
 
+# Lista de los nombres de las variables(facilitar sacarlas para graficar)
+id_article_vars <- colnames(limits)
 
-
+# Objeto nuvo donde si la variable supera el limita el dato se cambia por NA
 data_limits <- data_articulo %>% filter (BeretOut == "inn" & nombre_programa !=("RC")) %>% 
     mutate(Alcalinidad = ifelse(Alcalinidad <= limits$Alcalinidad, Alcalinidad, NaN),
             Conductividad = ifelse(Conductividad <= limits$Conductividad,Conductividad, NaN),
@@ -132,32 +137,194 @@ data_limits <- data_articulo %>% filter (BeretOut == "inn" & nombre_programa !=(
             Ph = ifelse (Ph <= limits$Ph,Ph, NaN),
             TempAgua = ifelse(TempAgua <= limits$TempAgua, TempAgua,  NaN) )
 
-id_article_vars <- colnames(limits)
-
+# Cuantos datos se pasan de valor en cada variable
 data_limits %>% dplyr::select( all_of(id_article_vars)) %>% 
   map_df(~ sum(is.na(.))) - 
   data_articulo %>%  filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>% 
   dplyr::select( all_of(id_article_vars)) %>% 
   map_df(~ sum(is.na(.)))
 
-
-
 # Recrear la figura 3 completa --------------------------------------------
 
-data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+# limites maximos de los ejes x, por cada plot (BBLL2020,Fig3)
+plot_x_limits <- tribble(
+~vars, ~lmin, ~lmax,
+"Alcalinidad", 0, 150,
+"Conductividad",0, 300,
+"FosforoTotal", 0, 1000,
+"Ph", 5,8,
+"SolidosTotales", 0, 600,
+"TempAgua", 0 , 40
+)
+
+# Un plot por variable y luego los pego. Para poner mismo rango en ejes, etc.
+# Datos identicos a  BBLL2020 Fig3. Se usan los mismo rangos de x sin criterio para remover mas que ese
+data_figbbll <- data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
     dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
   pivot_longer(
     cols = !(Clorofila_a),
     names_to = "vars",
     values_to = "valor"
-  ) %>%
-  ggplot(aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
-  facet_wrap(~ vars , scales = "free_x", ncol = 2) +
-  labs(x = NULL)
+  ) %>% group_by(vars) %>% 
+  nest()
 
-# Hay muchos datos extremos o "outlayers" que el articulo no es claro como los corrigio
+# Le agrego los rangos de x para plot
 
-data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+data_figbbll2<-  data_figbbll %>% 
+  left_join(plot_x_limits, id = "vars" )
+
+# LA funcion que va hacer un plot para cada variable
+plot_function <- function(data, xmin,xmax) {
+ p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
+  scale_x_continuous(limits = c(xmin,xmax)) +
+   scale_y_continuous(limits = c(0,45)) +
+  labs( x = NULL, y = "Clorofila a ug.L") 
+}
+
+# Cada plot lo almaceno en una columna nueva
+
+data_figbbll3 <- data_figbbll2 %>% 
+  mutate(gg = pmap(list(data,lmin,lmax), plot_function))
+
+# Extraigo la lista 
+plots<-data_figbbll3 %>%  ungroup() %>% 
+dplyr::select(gg) 
+
+# Todos Juntos
+plots_juntos <- wrap_plots(plots$gg, ncol = 2)
+
+# Los voy a extraer para nombrar adecuadament eje x
+p1_alc <- plots[[1]][[1]] +
+  labs(x = id_article_vars[[1]] )
+
+  
+p2_ec <- plots[[1]][[2]] +
+  labs(x = id_article_vars[[2]] )
+
+p3_tp <- plots[[1]][[3]] +
+  labs(x = id_article_vars[[3]] )
+
+# Ojo que ph esta en distinto orden po eso 5
+p4_ph <- plots[[1]][[5]] +
+  labs(x = id_article_vars[[5]] )
+
+p5_sst <- plots[[1]][[4]] +
+  labs(x = id_article_vars[[4]] )
+
+p6_ta <- plots[[1]][[6]] +
+  labs(x = id_article_vars[[6]] )
+
+plots_juntos2 <- wrap_plots(p1_alc,p2_ec,p3_tp,p4_ph,p5_sst,p6_ta, ncol = 2)
+
+
+# Hay muchos datos extremos o "outlaiers" que el articulo no es claro bajo que criterio
+
+# Este no recorta eje x, el y se le deja el mismo que BBLL se podria cambiar a umbral995
+plot_function2 <- function(data) {
+  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
+    scale_y_continuous(limits = c(0,45)) +
+    labs( x = NULL, y = "Clorofila a ug.L") 
+}
+
+
+data_figlarge <- data_figbbll2 %>% 
+  mutate(gg = map(data, plot_function2)) # uso map xq ahora solo depende de data
+
+# Extraigo la lista 
+plots2<-data_figlarge %>%  ungroup() %>% 
+  dplyr::select(gg) 
+
+# Todos Juntos
+plots_juntos2 <- wrap_plots(plots2$gg, ncol = 2)
+
+# Los voy a extraer para nombrar adecuadament eje x 
+# y ademas tengo los valores limites ej: limits$Alcalinidad
+
+p1.2_alc <- plots[[1]][[1]]$data %>% 
+    mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "0", "1" )) %>% 
+   rename(  "Alcalinidad" = valor ) %>% 
+     ggplot(aes(x = Alcalinidad , y = Clorofila_a, color = extra)) +
+     geom_point(alpha = 0.8) +
+     scale_y_continuous(limits = c(0,45)) +
+   scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+     labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+  
+
+p2.2_ec <- plots[[1]][[2]]$data %>% 
+  mutate(extra = ifelse (valor > limits$Conductividad[[1]], "0", "1" )) %>% 
+  rename(  "Conductividad" = valor ) %>% 
+  ggplot(aes(x = Conductividad , y = Clorofila_a, color = extra)) +
+  geom_point(alpha = 0.8) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+
+p3.2_tp <- plots[[1]][[3]]$data %>% 
+  mutate(extra = ifelse (valor > limits$FosforoTotal[[1]], "0", "1" )) %>% 
+  rename(  "FosforoTotal" = valor ) %>% 
+  ggplot(aes(x = FosforoTotal , y = Clorofila_a, color = extra)) +
+  geom_point(alpha = 0.8) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+# Ojo que ph esta en distinto orden po eso 5
+p4.2_ph <- plots[[1]][[5]]$data %>% 
+  mutate(extra = ifelse (valor > limits$Ph[[1]], "0", "1" )) %>% 
+  rename(  "Ph" = valor ) %>% 
+  ggplot(aes(x = Ph , y = Clorofila_a, color = extra)) +
+  geom_point(alpha = 0.8) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+p5.2_sst <- plots[[1]][[4]]$data %>% 
+  mutate(extra = ifelse (valor > limits$SolidosTotales[[1]], "0", "1" )) %>% 
+  rename(  "SolidosTotales" = valor ) %>% 
+  ggplot(aes(x = SolidosTotales , y = Clorofila_a, color = extra)) +
+  geom_point(alpha = 0.8) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+p6.2_ta <- plots[[1]][[6]]$data %>% 
+  mutate(extra = ifelse (valor > limits$TempAgua[[1]], "0", "1" )) %>% 
+  rename(  "TempAgua" = valor ) %>% 
+  ggplot(aes(x = TempAgua , y = Clorofila_a, color = extra)) +
+  geom_point(alpha = 0.8) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2)
+
+
+## Aca van los violins
+
+viol1_alc <- plots[[1]][[1]]$data %>% 
+  mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "0", "1" )) %>% 
+  rename(  "Alcalinidad" = valor ) %>% 
+  ggplot(aes(y = Alcalinidad , x = 1)) +
+  geom_violin() +
+  geom_point(aes(color = extra)) +
+  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+  #labs(color = "> 99.5") +
+  theme(legend.position = "bottom")
+
+
+
+
+
+
+# Sino recorto nada
+data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
   dplyr::select(c(all_of(id_article_vars), Clorofila_a)) %>%
   pivot_longer(
     cols = !(Clorofila_a),
