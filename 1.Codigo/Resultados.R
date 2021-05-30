@@ -118,22 +118,33 @@ summary(data_articulo$Ph)
 ggplot(data_articulo, aes(y = Ph, x = 1)) + geom_violin()
 
 # Dato outliers en otras variables ----------------------------------------
-limits <- data_articulo %>% filter (nombre_programa !=("RC")) %>% 
-  dplyr::select(!(any_of(id_variables))) %>% 
-  summarise(clo99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm = T),
-            Alc99.5 = quantile(Alcalinidad, probs = c(0.995), na.rm = T),
-            Conduc99.5 = quantile(Conductividad, probs = c(0.995), na.rm = T),
-            P_tot99.5 = quantile(FosforoTotal, probs = c(0.995), na.rm = T),
-            Solid99.5 = quantile(SolidosTotales, probs = c(0.995), na.rm = T),
-            Ph99.5 = quantile(Ph, probs = c(0.995), na.rm = T),
-            Temp99.5 = quantile(TempAgua, probs = c(0.995), na.rm = T))
+limits <- data_articulo %>% filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>%
+  summarise(across(is.numeric , ~ quantile(., probs = c(0.995), na.rm = T))) %>% 
+  dplyr::select(!c(id_muestra,Year,Mes, Clorofila_a))
 
-data_limits <- data_articulo %>% filter (nombre_programa != "RC") %>% 
-  filter ()
-  
+
+
+data_limits <- data_articulo %>% filter (BeretOut == "inn" & nombre_programa !=("RC")) %>% 
+    mutate(Alcalinidad = ifelse(Alcalinidad <= limits$Alcalinidad, Alcalinidad, NaN),
+            Conductividad = ifelse(Conductividad <= limits$Conductividad,Conductividad, NaN),
+            FosforoTotal = ifelse(FosforoTotal <=  limits$FosforoTotal, FosforoTotal, NaN),
+            SolidosTotales = ifelse(SolidosTotales <= limits$SolidosTotales, SolidosTotales,NaN),
+            Ph = ifelse (Ph <= limits$Ph,Ph, NaN),
+            TempAgua = ifelse(TempAgua <= limits$TempAgua, TempAgua,  NaN) )
+
+id_article_vars <- colnames(limits)
+
+data_limits %>% dplyr::select( all_of(id_article_vars)) %>% 
+  map_df(~ sum(is.na(.))) - 
+  data_articulo %>%  filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>% 
+  dplyr::select( all_of(id_article_vars)) %>% 
+  map_df(~ sum(is.na(.)))
+
+
+
 # Recrear la figura 3 completa --------------------------------------------
 
-data_articulo %>%   filter (BeretOut == "inn") %>%
+data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
     dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
   pivot_longer(
     cols = !(Clorofila_a),
@@ -145,6 +156,60 @@ data_articulo %>%   filter (BeretOut == "inn") %>%
   labs(x = NULL)
 
 # Hay muchos datos extremos o "outlayers" que el articulo no es claro como los corrigio
+
+data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+  dplyr::select(c(all_of(id_article_vars), Clorofila_a)) %>%
+  pivot_longer(
+    cols = !(Clorofila_a),
+    names_to = "vars",
+    values_to = "valor"
+  ) %>%
+  ggplot(aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
+  facet_wrap(~ vars , scales = "free_x", ncol = 2) +
+  labs(x = NULL)
+
+
+
+
+# Violin Plots 
+## ESto HAY QUE ARREGLARLO.HACER UN PLOT POR VAIABLE
+# Abajo el GEOM VIOLIN,
+# ARIIBA los PUNTOS EXTREMOS EN ROJO
+data_limits %>% 
+  ggplot() +  
+  geom_point(data = data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+               dplyr::select(!(c(all_of(id_variables),Year, Mes, all_of(id_limits_vars)))) %>% 
+               pivot_longer(
+                 cols = !(Clorofila_a),
+                 names_to = "vars",
+                 values_to = "valor"
+               ), aes (x = vars, y = valor), color = "red" ) +
+  facet_wrap(~ vars , scales = "free", ncol = 2) +
+    geom_violin( data = data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+                   dplyr::select(all_of(id_limits_vars)) %>% 
+                   pivot_longer(
+                     cols = everything(),
+                     names_to = "vars",
+                     values_to = "valor"
+                   ), aes ( x = vars, y = valor) ) +
+    facet_wrap(~ vars , scales = "free", ncol = 2) +
+    labs(x = NULL) 
+
+
+
+
+data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+  dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
+  pivot_longer(
+    cols = !(Clorofila_a),
+    names_to = "vars",
+    values_to = "valor"
+  ) %>%
+  ggplot(aes(x = vars , y = valor)) + geom_violin(alpha = 0.5) +
+  facet_wrap(~ vars , scales = "free", ncol = 2) +
+  labs(x = NULL)
+
+
 
 # Descriptivas de Ph, Temp Y PT
 data_articulo %>%  group_by (nombre_programa) %>%
