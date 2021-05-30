@@ -16,6 +16,12 @@ glimpse(RN_RU)
 RN_RU %>%  dplyr::select (clorofila_a_mg_l) %>%
   filter(str_detect(clorofila_a_mg_l , "<"))
 
+# Cuantos valores "<" hay por variable
+
+RN_RU %>% filter (nombre_programa %in% c("Rio Uruguay", "Río Negro")) %>% 
+ filter(str_detect(pt_mg_p_l , "<"))
+
+
 # Pasos para Acomodar la base:
 # 1. Eliminar valores especiales "< LD" (criterio conservador, se asumen NA)
 
