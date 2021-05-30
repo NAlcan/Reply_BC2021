@@ -25,13 +25,12 @@ data_articulo <-
   )
 
 
-
 # Umbral del 99.5 de clo a. ¿Para todos los rios o por rio?
-bereta_out1 <- data_articulo %>%
+bereta_out1 <- data_articulo %>% filter( nombre_programa != ("RC")) %>% 
   summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm = T))
 
 data_articulo %>% filter (Clorofila_a >= bereta_out1$Q99.5) %>%
-  select(codigo_pto, fecha_muestra, Clorofila_a)
+ dplyr::select(codigo_pto, fecha_muestra, Clorofila_a)
 
 
 # Voy a generar la variable "beret" que identifica los datos excluidos en articulos
@@ -63,7 +62,7 @@ id_variables <-
     "BeretOut"
   )
 
-data_articulo %>% filter (BeretOut != "out") %>%
+data_articulo %>% filter (BeretOut != "out" & nombre_programa != "RC") %>%
   summarise (
     max = max(Clorofila_a, na.rm = T),
     min = min(Clorofila_a, na.rm = T),
@@ -110,7 +109,7 @@ Plot_descr_out <- data_articulo %>%
 
 # Dato extremo de Temp
 data_articulo %>%  filter (TempAgua > 200) %>%
-  select(codigo_pto, fecha_muestra, Clorofila_a, TempAgua)
+  dplyr::select(codigo_pto, fecha_muestra, Clorofila_a, TempAgua)
 
 # Datos de pH cortados respecto al articulo. Figura 3.C
 summary(data_articulo$Ph)
@@ -118,19 +117,24 @@ summary(data_articulo$Ph)
 
 ggplot(data_articulo, aes(y = Ph, x = 1)) + geom_violin()
 
+# Dato outliers en otras variables ----------------------------------------
+limits <- data_articulo %>% filter (nombre_programa !=("RC")) %>% 
+  dplyr::select(!(any_of(id_variables))) %>% 
+  summarise(clo99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm = T),
+            Alc99.5 = quantile(Alcalinidad, probs = c(0.995), na.rm = T),
+            Conduc99.5 = quantile(Conductividad, probs = c(0.995), na.rm = T),
+            P_tot99.5 = quantile(FosforoTotal, probs = c(0.995), na.rm = T),
+            Solid99.5 = quantile(SolidosTotales, probs = c(0.995), na.rm = T),
+            Ph99.5 = quantile(Ph, probs = c(0.995), na.rm = T),
+            Temp99.5 = quantile(TempAgua, probs = c(0.995), na.rm = T))
 
+data_limits <- data_articulo %>% filter (nombre_programa != "RC") %>% 
+  filter ()
+  
 # Recrear la figura 3 completa --------------------------------------------
 
 data_articulo %>%   filter (BeretOut == "inn") %>%
-  # filter (TempAgua < 200) %>%
-  # filter (Alcalinidad < 500) %>%
-  dplyr::select(Clorofila_a,
-                Alcalinidad,
-                Conductividad,
-                FosforoTotal,
-                SolidosTotales,
-                Ph,
-                TempAgua) %>%
+    dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
   pivot_longer(
     cols = !(Clorofila_a),
     names_to = "vars",
