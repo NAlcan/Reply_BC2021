@@ -126,7 +126,8 @@ bereta_out2 <- data_articulo %>% group_by(nombre_programa) %>%
   summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm = T))
 
 data_articulo %>% filter (Clorofila_a >= bereta_out2$Q99.5[[1]]   |
-                            Clorofila_a >= bereta_out2$Q99.5[[2]]) %>%
+                            Clorofila_a >= bereta_out2$Q99.5[[2]] |
+                            Clorofila_a >= bereta_out2$Q99.5[[3]]) %>%
   select(codigo_pto, fecha_muestra, Clorofila_a)
 
 
