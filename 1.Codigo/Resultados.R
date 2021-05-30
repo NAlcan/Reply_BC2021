@@ -394,7 +394,7 @@ data_articulo %>%  group_by (nombre_programa) %>%
 library(nlme)
 lme_model <-  function (df) {
   lme <- lme(
-    log10(valor) ~ Year,
+    valor ~ Year,
     random =  ~ 1 |
       codigo_pto / Mes,
     data = df,
@@ -420,7 +420,7 @@ beta_year <- function(model) {
 }
 
 # Rio negro
-rn <- data_articulo %>%
+rn <- data_limits %>%
   filter (BeretOut == "inn" & nombre_programa == "RN") %>%
   dplyr::select(
     codigo_pto,
@@ -457,7 +457,7 @@ rn_list %>% dplyr::select(!c(data, models)) %>%
 
 # Rio Uruguay
 
-ru <- data_articulo %>%
+ru <- data_limits %>%
   filter (BeretOut == "inn" & nombre_programa == "RU") %>%
   dplyr::select(
     codigo_pto,
