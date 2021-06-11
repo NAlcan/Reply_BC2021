@@ -108,16 +108,6 @@ Plot_descr_out <- data_articulo %>%
   scale_color_manual(values = c("#d95f02", "#1b9e77")) +
   facet_grid(nombre_programa ~ xvar , scales = "free")
 
-# Dato extremo de Temp
-data_articulo %>%  filter (TempAgua > 200) %>%
-  dplyr::select(codigo_pto, fecha_muestra, Clorofila_a, TempAgua)
-
-# Datos de pH cortados respecto al articulo. Figura 3.C
-summary(data_articulo$Ph)
-
-
-ggplot(data_articulo, aes(y = Ph, x = 1)) + geom_violin()
-
 # Dato outliers en otras variables ----------------------------------------
 
 # Los valores referencia de cada variable al P99.5%
@@ -306,20 +296,72 @@ p6.2_ta <- plots[[1]][[6]]$data %>%
 plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2)
 
 
-## Aca van los violins
 
-viol1_alc <- plots[[1]][[1]]$data %>% 
-  mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "0", "1" )) %>% 
-  rename(  "Alcalinidad" = valor ) %>% 
-  ggplot(aes(y = Alcalinidad , x = 1)) +
-  geom_violin() +
-  geom_point(aes(color = extra)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  #labs(color = "> 99.5") +
-  theme(legend.position = "bottom")
+# Saco los extremos 99.5 --------------------------------------------------
+# Pero ya lo trabajo con limits
+
+data_figs_limited <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+  dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
+  pivot_longer(
+    cols = !(Clorofila_a),
+    names_to = "vars",
+    values_to = "valor"
+  ) %>% group_by(vars) %>% 
+  nest()
+
+fig3_limited <- data_figs_limited %>% 
+  mutate(gg = map(data, plot_function2))
+
+# Extraigo la lista 
+plots3<-fig3_limited %>%  ungroup() %>% 
+  dplyr::select(gg) 
 
 
+plot3_limits <- wrap_plots(plots3$gg, ncol = 2)
 
+### Repito el plot pero separo por programa
+
+plot_function3 <- function(data) {
+  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + 
+    geom_point(aes(color = nombre_programa), alpha = 0.5) +
+    scale_y_continuous(limits = c(0,45)) +
+    facet_grid( nombre_programa ~. ) +
+    labs( x = NULL, y = "Clorofila a ug.L") +
+    theme(legend.position = "none")
+}
+
+data_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
+  pivot_longer(
+    cols = !c(Clorofila_a,nombre_programa),
+    names_to = "vars",
+    values_to = "valor"
+  ) %>% group_by(vars) %>% 
+  nest()
+
+fig4_programas <- data_programas %>% 
+  mutate(gg = map(data, plot_function3))
+# Extraigo la lista 
+plots4<-fig4_programas %>%  ungroup() %>% 
+  dplyr::select(gg) 
+
+plot4_programas <- wrap_plots(plots4$gg, ncol = 2)
+
+plot_function4 <- function(data) {
+  p1 <- ggplot(data, aes(y = valor, x = nombre_programa)) + 
+    geom_boxplot(aes(color = nombre_programa), alpha = 0.5) +
+    #facet_grid( nombre_programa ~. ) +
+    #labs( x = NULL) +
+    theme(legend.position = "none")
+}
+
+fig5_programas <- data_programas %>% 
+  mutate(gg = map(data, plot_function4))
+# Extraigo la lista 
+plots5<-fig5_programas %>%  ungroup() %>% 
+  dplyr::select(gg) 
+
+plot5_programas <- wrap_plots(plots5$gg, ncol = 2)
 
 
 
