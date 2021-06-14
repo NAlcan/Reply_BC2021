@@ -295,8 +295,6 @@ p6.2_ta <- plots[[1]][[6]]$data %>%
 
 plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2)
 
-
-
 # Saco los extremos 99.5 --------------------------------------------------
 # Pero ya lo trabajo con limits
 
@@ -316,8 +314,29 @@ fig3_limited <- data_figs_limited %>%
 plots3<-fig3_limited %>%  ungroup() %>% 
   dplyr::select(gg) 
 
-
 plot3_limits <- wrap_plots(plots3$gg, ncol = 2)
+
+## Agrego nombre de variables en eje x
+p1.3_alc <- plots3[[1]][[1]] +
+  labs(x = id_article_vars[[1]] )
+
+p2.3_ec <- plots3[[1]][[2]] +
+  labs(x = id_article_vars[[2]] )
+
+p3.3_tp <- plots3[[1]][[3]] +
+  labs(x = id_article_vars[[3]] )
+
+# Ojo que ph esta en distinto orden po eso 5
+p4.3_ph <- plots3[[1]][[5]] +
+  labs(x = id_article_vars[[5]] )
+
+p5.3_sst <- plots3[[1]][[4]] +
+  labs(x = id_article_vars[[4]] )
+
+p6.3_ta <- plots3[[1]][[6]] +
+  labs(x = id_article_vars[[6]] )
+
+plots_juntos3 <- wrap_plots(p1.3_alc,p2.3_ec,p3.3_tp,p4.3_ph,p5.3_sst,p6.3_ta, ncol = 2)
 
 ### Repito el plot pero separo por programa
 
@@ -327,6 +346,7 @@ plot_function3 <- function(data) {
     scale_y_continuous(limits = c(0,45)) +
     facet_grid( nombre_programa ~. ) +
     labs( x = NULL, y = "Clorofila a ug.L") +
+    scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
     theme(legend.position = "none")
 }
 
@@ -347,12 +367,35 @@ plots4<-fig4_programas %>%  ungroup() %>%
 
 plot4_programas <- wrap_plots(plots4$gg, ncol = 2)
 
+## Agrego nombre de variables en eje x
+p1.4_alc <- plots4[[1]][[1]] +
+  labs(x = id_article_vars[[1]] )
+
+p2.4_ec <- plots4[[1]][[2]] +
+  labs(x = id_article_vars[[2]] )
+
+p3.4_tp <- plots4[[1]][[3]] +
+  labs(x = id_article_vars[[3]] )
+
+# Ojo que ph esta en distinto orden po eso 5
+p4.4_ph <- plots4[[1]][[5]] +
+  labs(x = id_article_vars[[5]] )
+
+p5.4_sst <- plots4[[1]][[4]] +
+  labs(x = id_article_vars[[4]] )
+
+p6.4_ta <- plots4[[1]][[6]] +
+  labs(x = id_article_vars[[6]] )
+
+plots_juntos4 <- wrap_plots(p1.4_alc,p2.4_ec,p3.4_tp,p4.4_ph,p5.4_sst,p6.4_ta, ncol = 2)
+
+## Diferencias entre programas: violines
 plot_function4 <- function(data) {
   p1 <- ggplot(data, aes(y = valor, x = nombre_programa)) + 
-    geom_boxplot(aes(color = nombre_programa), alpha = 0.5) +
-    #facet_grid( nombre_programa ~. ) +
-    #labs( x = NULL) +
-    theme(legend.position = "none")
+    geom_violin(aes(fill = nombre_programa)) +
+    scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77"))+
+    theme(legend.position = "none") +
+    labs(x = NULL)
 }
 
 fig5_programas <- data_programas %>% 
@@ -363,6 +406,82 @@ plots5<-fig5_programas %>%  ungroup() %>%
 
 plot5_programas <- wrap_plots(plots5$gg, ncol = 2)
 
+## Agrego nombre de variables en eje x
+p1.5_alc <- plots5[[1]][[1]] +
+  labs(y = id_article_vars[[1]] )
+
+p2.5_ec <- plots5[[1]][[2]] +
+  labs(y = id_article_vars[[2]] )
+
+p3.5_tp <- plots5[[1]][[3]] +
+  labs(y = id_article_vars[[3]] )
+
+# Ojo que ph esta en distinto orden po eso 5
+p4.5_ph <- plots5[[1]][[5]] +
+  labs(y = id_article_vars[[5]] )
+
+p5.5_sst <- plots5[[1]][[4]] +
+  labs(y = id_article_vars[[4]] )
+
+p6.5_ta <- plots5[[1]][[6]] +
+  labs(y = id_article_vars[[6]] )
+
+plots_juntos5 <- wrap_plots(p1.5_alc,p2.5_ec,p3.5_tp,p4.5_ph,p5.5_sst,p6.5_ta, ncol = 2)
+
+
+## Diferencias entre programas: histograma
+plot_function5 <- function(data) {
+  p1 <- ggplot(data, aes(x = valor)) + 
+    geom_histogram(aes(fill = nombre_programa), alpha = 0.7) +
+    theme(legend.position = "none") +
+    scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77"))+
+    labs(x = NULL)
+}
+
+fig6_programas <- data_programas %>% 
+  mutate(gg = map(data, plot_function5))
+# Extraigo la lista 
+plots6<-fig6_programas %>%  ungroup() %>% 
+  dplyr::select(gg) 
+
+plot6_programas <- wrap_plots(plots6$gg, ncol = 2)
+
+## Agrego nombre de variables en eje x
+p1.6_alc <- plots6[[1]][[1]] +
+  labs(x = id_article_vars[[1]] )
+
+p2.6_ec <- plots6[[1]][[2]] +
+  labs(x = id_article_vars[[2]] )
+
+p3.6_tp <- plots6[[1]][[3]] +
+  labs(x = id_article_vars[[3]] )
+
+# Ojo que ph esta en distinto orden po eso 5
+p4.6_ph <- plots6[[1]][[5]] +
+  labs(x = id_article_vars[[5]] )
+
+p5.6_sst <- plots6[[1]][[4]] +
+  labs(x = id_article_vars[[4]] )
+
+p6.6_ta <- plots6[[1]][[6]] +
+  labs(x = id_article_vars[[6]], 
+       fill = "Sistema") + 
+  theme(legend.position = "bottom")
+
+plots_juntos6 <- wrap_plots(p1.6_alc,p2.6_ec,p3.6_tp,p4.6_ph,p5.6_sst,p6.6_ta, ncol = 2)
+
+# Hay diferencias estadísticas entre programas?
+
+data_programas
+
+kw_function <- function(data) {
+  kw <- kruskal.test(valor ~ nombre_programa, data = data)
+  kw2 <- kw$p.value
+}
+
+kw_porgramas <- data_programas %>% 
+mutate(kw = map(data, kw_function),
+       kw2 = ifelse(kw < 0.05 , "Significativo","No_significativo")) 
 
 
 # Sino recorto nada
