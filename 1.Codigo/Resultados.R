@@ -207,7 +207,7 @@ p6_ta <- plots[[1]][[6]] +
 plots_juntos2 <- wrap_plots(p1_alc,p2_ec,p3_tp,p4_ph,p5_sst,p6_ta, ncol = 2)
 
 
-# Hay muchos datos extremos o "outlaiers" que el articulo no es claro bajo que criterio
+# Hay muchos datos extremos o "outliers" que el articulo no es claro bajo que criterio
 
 # Este no recorta eje x, el y se le deja el mismo que BBLL se podria cambiar a umbral995
 plot_function2 <- function(data) {
@@ -472,16 +472,47 @@ plots_juntos6 <- wrap_plots(p1.6_alc,p2.6_ec,p3.6_tp,p4.6_ph,p5.6_sst,p6.6_ta, n
 
 # Hay diferencias estadísticas entre programas?
 
-data_programas
+# Agrego la clorofila como una variable mas a ser testeada.
+diff_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
+  pivot_longer(
+    cols = !c(nombre_programa),
+    names_to = "vars",
+    values_to = "x"
+  ) %>% 
+  rename("group" = nombre_programa) %>% 
+  group_by(vars) %>% 
+  nest()
 
-kw_function <- function(data) {
-  kw <- kruskal.test(valor ~ nombre_programa, data = data)
-  kw2 <- kw$p.value
-}
+# kw_function <- function(data) {
+#   kw <- kruskal.test(valor ~ nombre_programa, data = data)
+#   kw2 <- kw$p.value
+# }
+# 
+# kw_porgramas <- diff_programas %>% 
+# mutate(kw = map(data, kw_function),
+#        kw2 = ifelse(kw < 0.05 , "Significativo","No_significativo")) 
 
-kw_porgramas <- data_programas %>% 
-mutate(kw = map(data, kw_function),
-       kw2 = ifelse(kw < 0.05 , "Significativo","No_significativo")) 
+### Gls para comparar diferencias en medias o desvios
+library(nlme)
+gls.var.test<-function(data){
+  x = data$x
+  group = data$group
+    if(is.null(group)){ data.gls<-x; colnames(data.gls)<-c("x","group")} else data.gls<-data.frame(x,group)
+  
+  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# SACA LOS NAN
+  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# SACA LOS NAN
+  
+  modHeteroVar = gls(x~group, data=data.gls, weights = varIdent(form = ~1|group), method="ML") # Heterogeneous variance
+  modHomoVar   = gls(x~group, data=data.gls, method="ML") # Homogeneous Variance
+  modEqualMean = gls(x~1,     data=data.gls, weights = varIdent(form = ~1|group), method="ML")# Same mean all groups, different variance
+  gls_data <- data.frame(VarTest=anova(modHeteroVar,modHomoVar)$`p-value`[2],
+                    MeanTest=anova(modEqualMean,modHeteroVar)$`p-value`[2]) # Evaluar el loglikelyhood ratio test. p>0.01
+    }
+
+
+gls_porgramas <- diff_programas %>% 
+  mutate(gls = map(data, gls.var.test ))
 
 
 # Sino recorto nada
