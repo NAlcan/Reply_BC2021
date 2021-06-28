@@ -63,6 +63,10 @@ id_variables <-
     "BeretOut"
   )
 
+
+
+# Descriptivos ------------------------------------------------------------
+
 data_articulo %>% filter (BeretOut != "out" & nombre_programa != "RC") %>%
   summarise (
     max = max(Clorofila_a, na.rm = T),
@@ -72,6 +76,8 @@ data_articulo %>% filter (BeretOut != "out" & nombre_programa != "RC") %>%
     n = n()
   )
 
+
+# Graficos
 
 Data_out <-
   ggplot(data_articulo, aes(y = Clorofila_a, x = nombre_programa)) +
@@ -108,7 +114,7 @@ Plot_descr_out <- data_articulo %>%
   scale_color_manual(values = c("#d95f02", "#1b9e77")) +
   facet_grid(nombre_programa ~ xvar , scales = "free")
 
-# Dato outliers en otras variables ----------------------------------------
+# outliers ----------------------------------------
 
 # Los valores referencia de cada variable al P99.5%
 limits <- data_articulo %>% filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>%
@@ -134,7 +140,7 @@ data_limits %>% dplyr::select( all_of(id_article_vars)) %>%
   dplyr::select( all_of(id_article_vars)) %>% 
   map_df(~ sum(is.na(.)))
 
-# Recrear la figura 3 completa --------------------------------------------
+#Figura 3 recreación --------------------------------------------
 
 # limites maximos de los ejes x, por cada plot (BBLL2020,Fig3)
 plot_x_limits <- tribble(
@@ -295,7 +301,7 @@ p6.2_ta <- plots[[1]][[6]]$data %>%
 
 plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2)
 
-# Saco los extremos 99.5 --------------------------------------------------
+# Limits <99.5 --------------------------------------------------
 # Pero ya lo trabajo con limits
 
 data_figs_limited <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
@@ -350,6 +356,10 @@ plot_function3 <- function(data) {
     theme(legend.position = "none")
 }
 
+
+# Programas rios ----------------------------------------------------------
+
+
 data_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
   dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
   pivot_longer(
@@ -389,16 +399,36 @@ p6.4_ta <- plots4[[1]][[6]] +
 
 plots_juntos4 <- wrap_plots(p1.4_alc,p2.4_ec,p3.4_tp,p4.4_ph,p5.4_sst,p6.4_ta, ncol = 2)
 
-## Diferencias entre programas: violines
+
+# FQ entre rios -----------------------------------------------------------
+# Agrego la clorofila como una variable mas a ser testeada.
+
+cuareim <- data_articulo %>%  
+  filter (nombre_programa == "RC") 
+
+diff_programas <- data_limits %>% 
+  rbind(cuareim) %>% 
+  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
+  pivot_longer(
+    cols = !c(nombre_programa),
+    names_to = "vars",
+    values_to = "x"
+  ) %>% 
+  rename("group" = nombre_programa) %>% 
+  group_by(vars) %>% 
+  nest()
+
+# Violines
+
 plot_function4 <- function(data) {
-  p1 <- ggplot(data, aes(y = valor, x = nombre_programa)) + 
-    geom_violin(aes(fill = nombre_programa)) +
-    scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77"))+
+  p1 <- ggplot(data, aes(y = x, x = group)) + 
+    geom_violin(aes(fill = group)) +
+    scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77","#984ea3"))+
     theme(legend.position = "none") +
     labs(x = NULL)
 }
 
-fig5_programas <- data_programas %>% 
+fig5_programas <- diff_programas %>% 
   mutate(gg = map(data, plot_function4))
 # Extraigo la lista 
 plots5<-fig5_programas %>%  ungroup() %>% 
@@ -470,29 +500,8 @@ p6.6_ta <- plots6[[1]][[6]] +
 
 plots_juntos6 <- wrap_plots(p1.6_alc,p2.6_ec,p3.6_tp,p4.6_ph,p5.6_sst,p6.6_ta, ncol = 2)
 
-# Hay diferencias estadísticas entre programas?
 
-# Agrego la clorofila como una variable mas a ser testeada.
-diff_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
-  pivot_longer(
-    cols = !c(nombre_programa),
-    names_to = "vars",
-    values_to = "x"
-  ) %>% 
-  rename("group" = nombre_programa) %>% 
-  group_by(vars) %>% 
-  nest()
-
-# kw_function <- function(data) {
-#   kw <- kruskal.test(valor ~ nombre_programa, data = data)
-#   kw2 <- kw$p.value
-# }
-# 
-# kw_porgramas <- diff_programas %>% 
-# mutate(kw = map(data, kw_function),
-#        kw2 = ifelse(kw < 0.05 , "Significativo","No_significativo")) 
-
+# GLS entre rios --------------------------------
 ### Gls para comparar diferencias en medias o desvios
 library(nlme)
 gls.var.test<-function(data){
@@ -512,7 +521,11 @@ gls.var.test<-function(data){
 
 
 gls_porgramas <- diff_programas %>% 
-  mutate(gls = map(data, gls.var.test ))
+  mutate(gls = map(data, gls.var.test)) %>% 
+  unnest(gls) %>% 
+  mutate( VarTest = ifelse( VarTest <= 0.05, "p<0.05","n.s"),
+          MeanTest = ifelse( MeanTest <= 0.05, "p<0.05","n.s")) %>% 
+  dplyr::select(vars,VarTest, MeanTest)
 
 
 # Sino recorto nada
