@@ -4,6 +4,7 @@ library(RColorBrewer) #Paleta de colores
 library(lubridate) # para manipular fechas
 theme_set(theme_minimal()) # Theme por defecto de los graficos
 library(patchwork) # Para pegar plots
+library(png) # para importar figuras externas
 # Datos -------------------------------------------------------------------
 
 data_articulo <- read_csv("2.Datos/data_articulo.csv")
@@ -174,16 +175,16 @@ plot_function <- function(data, xmin,xmax) {
  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
   scale_x_continuous(limits = c(xmin,xmax)) +
    scale_y_continuous(limits = c(0,45)) +
-  labs( x = NULL, y = "Clorofila a ug.L") 
+  labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
 }
 
 # Cada plot lo almaceno en una columna nueva
 
-data_figbbll3 <- data_figbbll2 %>% 
+data_figbbll2 <- data_figbbll2 %>% 
   mutate(gg = pmap(list(data,lmin,lmax), plot_function))
 
 # Extraigo la lista 
-plots<-data_figbbll3 %>%  ungroup() %>% 
+plots<-data_figbbll2 %>%  ungroup() %>% 
 dplyr::select(gg) 
 
 # Todos Juntos
@@ -217,10 +218,11 @@ plots_juntos2 <- wrap_plots(p1_alc,p2_ec,p3_tp,p4_ph,p5_sst,p6_ta, ncol = 2)
 
 # Este no recorta eje x, el y se le deja el mismo que BBLL se podria cambiar a umbral995
 plot_function2 <- function(data) {
-  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
+  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) +
+    geom_point(alpha = 0.5, size = 2 ) +
     scale_y_continuous(limits = c(0,45)) +
-    labs( x = NULL, y = "Clorofila a ug.L") 
-}
+    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
+  }
 
 
 data_figlarge <- data_figbbll2 %>% 
@@ -236,70 +238,71 @@ plots_juntos2 <- wrap_plots(plots2$gg, ncol = 2)
 # Los voy a extraer para nombrar adecuadament eje x 
 # y ademas tengo los valores limites ej: limits$Alcalinidad
 
-p1.2_alc <- plots[[1]][[1]]$data %>% 
+p1.2_alc <- plots2[[1]][[1]]$data %>% 
     mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "0", "1" )) %>% 
-   rename(  "Alcalinidad" = valor ) %>% 
-     ggplot(aes(x = Alcalinidad , y = Clorofila_a, color = extra)) +
-     geom_point(alpha = 0.8) +
+     ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
+     geom_point(alpha = 0.8, size = 2.5, pch = 21) +
      scale_y_continuous(limits = c(0,45)) +
-   scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-     labs(y = "Clorofila a ug.L", color = "> 99.5") +
-  theme(legend.position = "bottom")
+   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+     labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
+          x = expression(paste("Alkalinity (mg L"^-1,")"))) +
+  guides(fill = F)
   
 
-p2.2_ec <- plots[[1]][[2]]$data %>% 
+p2.2_ec <- plots2[[1]][[2]]$data %>% 
   mutate(extra = ifelse (valor > limits$Conductividad[[1]], "0", "1" )) %>% 
-  rename(  "Conductividad" = valor ) %>% 
-  ggplot(aes(x = Conductividad , y = Clorofila_a, color = extra)) +
-  geom_point(alpha = 0.8) +
+  ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
+  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
   scale_y_continuous(limits = c(0,45)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  labs(y = "Clorofila a ug.L", color = "> 99.5") +
-  theme(legend.position = "bottom")
+  scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+  labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
+       x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) ) +
+  guides (fill = F)
 
 
-p3.2_tp <- plots[[1]][[3]]$data %>% 
+p3.2_tp <- plots2[[1]][[3]]$data %>% 
   mutate(extra = ifelse (valor > limits$FosforoTotal[[1]], "0", "1" )) %>% 
-  rename(  "FosforoTotal" = valor ) %>% 
-  ggplot(aes(x = FosforoTotal , y = Clorofila_a, color = extra)) +
-  geom_point(alpha = 0.8) +
+  ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
+  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
   scale_y_continuous(limits = c(0,45)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  labs(y = "Clorofila a ug.L", color = "> 99.5") +
-  theme(legend.position = "bottom")
+  scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+  labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
+       x = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) ) +
+  guides(fill = F)
 
 # Ojo que ph esta en distinto orden po eso 5
-p4.2_ph <- plots[[1]][[5]]$data %>% 
+p4.2_ph <- plots2[[1]][[5]]$data %>% 
   mutate(extra = ifelse (valor > limits$Ph[[1]], "0", "1" )) %>% 
-  rename(  "Ph" = valor ) %>% 
-  ggplot(aes(x = Ph , y = Clorofila_a, color = extra)) +
-  geom_point(alpha = 0.8) +
+  rename(  "pH" = valor ) %>% 
+  ggplot(aes(x = pH , y = Clorofila_a, fill = extra)) +
+  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
   scale_y_continuous(limits = c(0,45)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  labs(y = "Clorofila a ug.L", color = "> 99.5") +
-  theme(legend.position = "bottom")
+  scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+  labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) ) +
+  guides (fill = F)
 
-p5.2_sst <- plots[[1]][[4]]$data %>% 
+p5.2_sst <- plots2[[1]][[4]]$data %>% 
   mutate(extra = ifelse (valor > limits$SolidosTotales[[1]], "0", "1" )) %>% 
-  rename(  "SolidosTotales" = valor ) %>% 
-  ggplot(aes(x = SolidosTotales , y = Clorofila_a, color = extra)) +
-  geom_point(alpha = 0.8) +
+  ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
+  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
   scale_y_continuous(limits = c(0,45)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  labs(y = "Clorofila a ug.L", color = "> 99.5") +
+  scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+  labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
+  x = expression(paste("Total Suspended Solid ( mg L"^-1,")"))) +
+  guides (fill = F)
+
+p6.2_ta <- plots2[[1]][[6]]$data %>% 
+  mutate(extra = ifelse (valor > limits$TempAgua[[1]], "No", "Yes" )) %>% 
+  ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
+  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
+  scale_y_continuous(limits = c(0,45)) +
+  scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+  labs(fill = "> 99.5",
+       y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
+       x = expression(paste("T (", degree,"C)"))) +
   theme(legend.position = "bottom")
 
-p6.2_ta <- plots[[1]][[6]]$data %>% 
-  mutate(extra = ifelse (valor > limits$TempAgua[[1]], "0", "1" )) %>% 
-  rename(  "TempAgua" = valor ) %>% 
-  ggplot(aes(x = TempAgua , y = Clorofila_a, color = extra)) +
-  geom_point(alpha = 0.8) +
-  scale_y_continuous(limits = c(0,45)) +
-  scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-  labs(y = "Clorofila a ug.L", color = "> 99.5") +
-  theme(legend.position = "bottom")
-
-plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2)
+plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2, widths = 1)
 
 # Limits <99.5 --------------------------------------------------
 # Pero ya lo trabajo con limits
@@ -324,25 +327,58 @@ plot3_limits <- wrap_plots(plots3$gg, ncol = 2)
 
 ## Agrego nombre de variables en eje x
 p1.3_alc <- plots3[[1]][[1]] +
-  labs(x = id_article_vars[[1]] )
+  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
 
 p2.3_ec <- plots3[[1]][[2]] +
-  labs(x = id_article_vars[[2]] )
+  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
 
 p3.3_tp <- plots3[[1]][[3]] +
-  labs(x = id_article_vars[[3]] )
+  labs(x = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) )
 
 # Ojo que ph esta en distinto orden po eso 5
 p4.3_ph <- plots3[[1]][[5]] +
-  labs(x = id_article_vars[[5]] )
+  labs(x = "pH" )
 
 p5.3_sst <- plots3[[1]][[4]] +
-  labs(x = id_article_vars[[4]] )
+  labs(x = expression(paste("Total Suspended Solid ( mg L"^-1,")")) )
 
 p6.3_ta <- plots3[[1]][[6]] +
-  labs(x = id_article_vars[[6]] )
+  labs(x = expression(paste("T (", degree,"C)")) )
 
-plots_juntos3 <- wrap_plots(p1.3_alc,p2.3_ec,p3.3_tp,p4.3_ph,p5.3_sst,p6.3_ta, ncol = 2)
+library(png) # To upload png images from BL
+library(grid) # Convert PNG to Grob
+library(ggplotify) # Convert Grob to GGPLOT
+
+f3a<-readPNG("2.Datos/Fig3BC/3a.png")
+fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate=TRUE))
+f3b<-readPNG("2.Datos/Fig3BC/3b.png")
+fig3b <-as.ggplot(grid::rasterGrob(f3b, interpolate=TRUE))
+f3c<-readPNG("2.Datos/Fig3BC/3c.png")
+fig3c <- as.ggplot(grid::rasterGrob(f3c, interpolate=TRUE))
+f3d<-readPNG("2.Datos/Fig3BC/3d.png")
+fig3d <- as.ggplot(grid::rasterGrob(f3d, interpolate=TRUE))
+f3e<-readPNG("2.Datos/Fig3BC/3e.png")
+fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE))
+f3f<-readPNG("2.Datos/Fig3BC/3f.png")
+fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE))
+
+figura3a <- p1.3_alc + fig3a +
+  plot_layout(widths = 2, heights = unit(4, 'cm')) +
+  theme(plot.margin = margin(2, 2, 2, 2))
+
+figura3a <- p1.3_alc + fig3a +
+  plot_layout(widths = 2, heights = unit(5, 'cm'))
+
+
+
+plots_juntos3 <- cowplot::plot_grid(p1.3_alc,fig3a,
+                            p2.3_ec,fig3b,
+                            p3.3_tp,fig3c,
+                            p4.3_ph,fig3d,
+                            p5.3_sst,fig3e,
+                            p6.3_ta,fig3f)
++ 
+  plot_layout(ncol = 2)
 
 ### Repito el plot pero separo por programa
 
@@ -351,7 +387,7 @@ plot_function3 <- function(data) {
     geom_point(aes(color = nombre_programa), alpha = 0.5) +
     scale_y_continuous(limits = c(0,45)) +
     facet_grid( nombre_programa ~. ) +
-    labs( x = NULL, y = "Clorofila a ug.L") +
+    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
     scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
     theme(legend.position = "none")
 }
@@ -403,20 +439,47 @@ plots_juntos4 <- wrap_plots(p1.4_alc,p2.4_ec,p3.4_tp,p4.4_ph,p5.4_sst,p6.4_ta, n
 # FQ entre rios -----------------------------------------------------------
 # Agrego la clorofila como una variable mas a ser testeada.
 
-cuareim <- data_articulo %>%  
-  filter (nombre_programa == "RC") 
-
 diff_programas <- data_limits %>% 
-  rbind(cuareim) %>% 
-  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
+    dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
   pivot_longer(
     cols = !c(nombre_programa),
     names_to = "vars",
     values_to = "x"
   ) %>% 
   rename("group" = nombre_programa) %>% 
+  mutate(group = fct_recode(group,
+    `Uruguay river` = "RU",
+    `Negro river` = "RN"
+  )) %>% 
   group_by(vars) %>% 
-  nest()
+    nest()
+
+# GLS entre rios --------------------------------
+### Gls para comparar diferencias en medias o desvios
+library(nlme)
+gls.var.test<-function(data){
+  x = data$x
+  group = data$group
+    if(is.null(group)){ data.gls<-x; colnames(data.gls)<-c("x","group")} else data.gls<-data.frame(x,group)
+  
+  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# SACA LOS NAN
+  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# SACA LOS NAN
+  
+  modHeteroVar = gls(x~group, data=data.gls, weights = varIdent(form = ~1|group), method="ML") # Heterogeneous variance
+  modHomoVar   = gls(x~group, data=data.gls, method="ML") # Homogeneous Variance
+  modEqualMean = gls(x~1,     data=data.gls, weights = varIdent(form = ~1|group), method="ML")# Same mean all groups, different variance
+  gls_data <- data.frame(VarTest=anova(modHeteroVar,modHomoVar)$`p-value`[2],
+                    MeanTest=anova(modEqualMean,modHeteroVar)$`p-value`[2]) # Evaluar el loglikelyhood ratio test. p>0.01
+    }
+
+
+gls_porgramas <- diff_programas %>% 
+  mutate(gls = map(data, gls.var.test)) %>% 
+  unnest(gls) %>% 
+  mutate( VarTest = ifelse( VarTest <= 0.05, "p<0.05","n.s"),
+          MeanTest = ifelse( MeanTest <= 0.05, "p<0.05","n.s")) %>% 
+  dplyr::select(vars,VarTest, MeanTest)
+
 
 # Violines
 
@@ -424,39 +487,45 @@ plot_function4 <- function(data) {
   p1 <- ggplot(data, aes(y = x, x = group)) + 
     geom_violin(aes(fill = group)) +
     scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77","#984ea3"))+
-    theme(legend.position = "none") +
+    theme(legend.position = "none",
+          axis.text.x = element_text(size = 12)) +
     labs(x = NULL)
+  
 }
 
 fig5_programas <- diff_programas %>% 
   mutate(gg = map(data, plot_function4))
+
 # Extraigo la lista 
 plots5<-fig5_programas %>%  ungroup() %>% 
   dplyr::select(gg) 
 
 plot5_programas <- wrap_plots(plots5$gg, ncol = 2)
 
-## Agrego nombre de variables en eje x
-p1.5_alc <- plots5[[1]][[1]] +
-  labs(y = id_article_vars[[1]] )
+## Agrego nombre de variables en eje y
+p1.5_clo <- plots5[[1]][[1]] +
+  labs(y =  expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) )
 
-p2.5_ec <- plots5[[1]][[2]] +
-  labs(y = id_article_vars[[2]] )
 
-p3.5_tp <- plots5[[1]][[3]] +
-  labs(y = id_article_vars[[3]] )
+p2.5_alc <- plots5[[1]][[2]] +
+  labs(y = expression(paste("Alkalinity (mg L"^-1,")")) )
 
-# Ojo que ph esta en distinto orden po eso 5
-p4.5_ph <- plots5[[1]][[5]] +
-  labs(y = id_article_vars[[5]] )
+p3.5_ec <- plots5[[1]][[3]] +
+  labs(y = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
 
-p5.5_sst <- plots5[[1]][[4]] +
-  labs(y = id_article_vars[[4]] )
+p4.5_tp <- plots5[[1]][[4]] +
+  labs(y = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) )
 
-p6.5_ta <- plots5[[1]][[6]] +
-  labs(y = id_article_vars[[6]] )
+p5.5_sst <- plots5[[1]][[5]] +
+  labs(y = expression(paste("Total Suspended Solid ( mg L"^-1,")")))
 
-plots_juntos5 <- wrap_plots(p1.5_alc,p2.5_ec,p3.5_tp,p4.5_ph,p5.5_sst,p6.5_ta, ncol = 2)
+p6.5_ph <- plots5[[1]][[6]] +
+  labs(y = "pH" )
+
+p7.5_ta <- plots5[[1]][[7]] +
+  labs(y = expression(paste("T (", degree,"C)")) )
+
+plots_juntos5 <- wrap_plots(p1.5_clo, p2.5_alc,p3.5_ec,p4.5_tp,p5.5_sst,p6.5_ph,p7.5_ta, ncol = 2)
 
 
 ## Diferencias entre programas: histograma
@@ -500,97 +569,6 @@ p6.6_ta <- plots6[[1]][[6]] +
 
 plots_juntos6 <- wrap_plots(p1.6_alc,p2.6_ec,p3.6_tp,p4.6_ph,p5.6_sst,p6.6_ta, ncol = 2)
 
-
-# GLS entre rios --------------------------------
-### Gls para comparar diferencias en medias o desvios
-library(nlme)
-gls.var.test<-function(data){
-  x = data$x
-  group = data$group
-    if(is.null(group)){ data.gls<-x; colnames(data.gls)<-c("x","group")} else data.gls<-data.frame(x,group)
-  
-  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# SACA LOS NAN
-  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# SACA LOS NAN
-  
-  modHeteroVar = gls(x~group, data=data.gls, weights = varIdent(form = ~1|group), method="ML") # Heterogeneous variance
-  modHomoVar   = gls(x~group, data=data.gls, method="ML") # Homogeneous Variance
-  modEqualMean = gls(x~1,     data=data.gls, weights = varIdent(form = ~1|group), method="ML")# Same mean all groups, different variance
-  gls_data <- data.frame(VarTest=anova(modHeteroVar,modHomoVar)$`p-value`[2],
-                    MeanTest=anova(modEqualMean,modHeteroVar)$`p-value`[2]) # Evaluar el loglikelyhood ratio test. p>0.01
-    }
-
-
-gls_porgramas <- diff_programas %>% 
-  mutate(gls = map(data, gls.var.test)) %>% 
-  unnest(gls) %>% 
-  mutate( VarTest = ifelse( VarTest <= 0.05, "p<0.05","n.s"),
-          MeanTest = ifelse( MeanTest <= 0.05, "p<0.05","n.s")) %>% 
-  dplyr::select(vars,VarTest, MeanTest)
-
-
-# Sino recorto nada
-data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-  dplyr::select(c(all_of(id_article_vars), Clorofila_a)) %>%
-  pivot_longer(
-    cols = !(Clorofila_a),
-    names_to = "vars",
-    values_to = "valor"
-  ) %>%
-  ggplot(aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
-  facet_wrap(~ vars , scales = "free_x", ncol = 2) +
-  labs(x = NULL)
-
-
-
-
-# Violin Plots 
-## ESto HAY QUE ARREGLARLO.HACER UN PLOT POR VAIABLE
-# Abajo el GEOM VIOLIN,
-# ARIIBA los PUNTOS EXTREMOS EN ROJO
-data_limits %>% 
-  ggplot() +  
-  geom_point(data = data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-               dplyr::select(!(c(all_of(id_variables),Year, Mes, all_of(id_limits_vars)))) %>% 
-               pivot_longer(
-                 cols = !(Clorofila_a),
-                 names_to = "vars",
-                 values_to = "valor"
-               ), aes (x = vars, y = valor), color = "red" ) +
-  facet_wrap(~ vars , scales = "free", ncol = 2) +
-    geom_violin( data = data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-                   dplyr::select(all_of(id_limits_vars)) %>% 
-                   pivot_longer(
-                     cols = everything(),
-                     names_to = "vars",
-                     values_to = "valor"
-                   ), aes ( x = vars, y = valor) ) +
-    facet_wrap(~ vars , scales = "free", ncol = 2) +
-    labs(x = NULL) 
-
-
-
-
-data_articulo %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-  dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
-  pivot_longer(
-    cols = !(Clorofila_a),
-    names_to = "vars",
-    values_to = "valor"
-  ) %>%
-  ggplot(aes(x = vars , y = valor)) + geom_violin(alpha = 0.5) +
-  facet_wrap(~ vars , scales = "free", ncol = 2) +
-  labs(x = NULL)
-
-
-
-# Descriptivas de Ph, Temp Y PT
-data_articulo %>%  group_by (nombre_programa) %>%
-  filter (TempAgua < 200) %>% # El datos extremo de T
-  summarize (
-    mediapH = mean (Ph, na.rm = T),
-    meanTemp = mean(TempAgua, na.rm = T),
-    meanPT = mean (FosforoTotal , na.rm = T)
-  )
 
 
 # 2.2. Analysis of variables by linear model ---------------------------------
@@ -696,6 +674,72 @@ ru_list <- ru %>%
 
 ru_list %>% dplyr::select(!c(data, models)) %>%
   unnest(cols  = c(beta, mean, var, grados_libertad))
+
+
+
+
+# Pairs -------------------------------------------------------------------
+
+# Matriz de correlaciones de todas las variables del OAN
+data_complet <- read_csv("2.Datos/tidyOAN_datacomplet.csv")
+glimpse(data_complet)
+
+
+data_complet <- data_complet %>%  filter (
+  nombre_programa == "Río Negro" & fecha_muestra >= "2009-05-01" |
+    nombre_programa == "Río Negro" &
+    fecha_muestra <= "2018-11-30" |
+    nombre_programa == "Rio Uruguay" &
+    fecha_muestra >= "2014-06-01" |
+    nombre_programa == "Rio Uruguay" &
+    fecha_muestra <= "2018-11-30" ) %>% 
+  dplyr::select("clorofila_a_mg_l",
+    "alc_t_mg_ca_co3_l",
+    "conduc_m_s_cm",
+    "pt_mg_p_l",
+    "sst_mg_l",
+    "p_h_sin_unid",
+    "t_o_c",
+    "od_mg_l",
+    "po4_mg_po4_p_l",
+    "no3_mg_no3_n_l",
+    "no2_mg_no2_n_l",
+    "n_amoniacal_mg_nh4_n_l",
+    "nt_mg_n_l")
+
+
+# Remuevo Outliers al 99.5
+limits2 <- data_complet %>%
+  summarise(across(where(is.numeric) , ~ quantile(., probs = c(0.995), na.rm = T)))
+
+# Objeto nuvo donde si la variable supera el limita el dato se cambia por NA
+data_limits2<- 
+  data_complet %>% 
+  mutate(clorfila = ifelse(clorofila_a_mg_l <= limits2$clorofila_a_mg_l, clorofila_a_mg_l, NaN),
+         Alcalinidad = ifelse(alc_t_mg_ca_co3_l <= limits2$alc_t_mg_ca_co3_l, alc_t_mg_ca_co3_l, NaN),
+         Conductividad = ifelse(conduc_m_s_cm <= limits2$conduc_m_s_cm,conduc_m_s_cm, NaN),
+         FosforoTotal = ifelse(pt_mg_p_l <=  limits2$pt_mg_p_l, pt_mg_p_l, NaN),
+         SolidosTotales = ifelse(sst_mg_l <= limits2$sst_mg_l, sst_mg_l,NaN),
+         Ph = ifelse (p_h_sin_unid <= limits2$p_h_sin_unid,p_h_sin_unid, NaN),
+         TempAgua = ifelse(t_o_c <= limits2$t_o_c, t_o_c,  NaN),
+         O2 = ifelse(od_mg_l <= limits2$od_mg_l, od_mg_l,  NaN),
+         po4 = ifelse(po4_mg_po4_p_l <= limits2$po4_mg_po4_p_l, po4_mg_po4_p_l,  NaN),
+         no3 = ifelse(no3_mg_no3_n_l <= limits2$no3_mg_no3_n_l, no3_mg_no3_n_l,  NaN),
+         no2 = ifelse(no2_mg_no2_n_l <= limits2$no2_mg_no2_n_l, no2_mg_no2_n_l,  NaN),
+         nh4 = ifelse(n_amoniacal_mg_nh4_n_l <= limits2$n_amoniacal_mg_nh4_n_l, n_amoniacal_mg_nh4_n_l,  NaN),
+         nt = ifelse(nt_mg_n_l <= limits2$nt_mg_n_l, nt_mg_n_l,  NaN),
+         .keep = "unused")
+
+# # #
+
+data_limits2 %>% 
+  map_df(~ sum(is.na(.))) - 
+  data_complet %>% 
+  map_df(~ sum(is.na(.)))
+
+
+library(GGally)
+ggpairs(data_limits2)
 
 # Render RMarkdown -------------------------------------------------
 rmarkdown::render(
