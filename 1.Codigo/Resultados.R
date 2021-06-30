@@ -170,49 +170,49 @@ data_figbbll <- data_articulo %>%   filter (BeretOut == "inn" & nombre_programa 
 data_figbbll2<-  data_figbbll %>% 
   left_join(plot_x_limits, id = "vars" )
 
-# LA funcion que va hacer un plot para cada variable
-plot_function <- function(data, xmin,xmax) {
- p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
-  scale_x_continuous(limits = c(xmin,xmax)) +
-   scale_y_continuous(limits = c(0,45)) +
-  labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
-}
-
-# Cada plot lo almaceno en una columna nueva
-
-data_figbbll2 <- data_figbbll2 %>% 
-  mutate(gg = pmap(list(data,lmin,lmax), plot_function))
-
-# Extraigo la lista 
-plots<-data_figbbll2 %>%  ungroup() %>% 
-dplyr::select(gg) 
-
-# Todos Juntos
-plots_juntos <- wrap_plots(plots$gg, ncol = 2)
-
-# Los voy a extraer para nombrar adecuadament eje x
-p1_alc <- plots[[1]][[1]] +
-  labs(x = id_article_vars[[1]] )
-
-  
-p2_ec <- plots[[1]][[2]] +
-  labs(x = id_article_vars[[2]] )
-
-p3_tp <- plots[[1]][[3]] +
-  labs(x = id_article_vars[[3]] )
-
-# Ojo que ph esta en distinto orden po eso 5
-p4_ph <- plots[[1]][[5]] +
-  labs(x = id_article_vars[[5]] )
-
-p5_sst <- plots[[1]][[4]] +
-  labs(x = id_article_vars[[4]] )
-
-p6_ta <- plots[[1]][[6]] +
-  labs(x = id_article_vars[[6]] )
-
-plots_juntos2 <- wrap_plots(p1_alc,p2_ec,p3_tp,p4_ph,p5_sst,p6_ta, ncol = 2)
-
+# # LA funcion que va hacer un plot para cada variable
+# plot_function <- function(data, xmin,xmax) {
+#  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + geom_point(alpha = 0.5) +
+#   scale_x_continuous(limits = c(xmin,xmax)) +
+#    scale_y_continuous(limits = c(0,45)) +
+#   labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
+# }
+# 
+# # Cada plot lo almaceno en una columna nueva
+# 
+# data_figbbll2 <- data_figbbll2 %>% 
+#   mutate(gg = pmap(list(data,lmin,lmax), plot_function))
+# 
+# # Extraigo la lista 
+# plots<-data_figbbll2 %>%  ungroup() %>% 
+# dplyr::select(gg) 
+# 
+# # Todos Juntos
+# plots_juntos <- wrap_plots(plots$gg, ncol = 2)
+# 
+# # Los voy a extraer para nombrar adecuadament eje x
+# p1_alc <- plots[[1]][[1]] +
+#   labs(x = id_article_vars[[1]] )
+# 
+#   
+# p2_ec <- plots[[1]][[2]] +
+#   labs(x = id_article_vars[[2]] )
+# 
+# p3_tp <- plots[[1]][[3]] +
+#   labs(x = id_article_vars[[3]] )
+# 
+# # Ojo que ph esta en distinto orden po eso 5
+# p4_ph <- plots[[1]][[5]] +
+#   labs(x = id_article_vars[[5]] )
+# 
+# p5_sst <- plots[[1]][[4]] +
+#   labs(x = id_article_vars[[4]] )
+# 
+# p6_ta <- plots[[1]][[6]] +
+#   labs(x = id_article_vars[[6]] )
+# 
+# plots_juntos2 <- wrap_plots(p1_alc,p2_ec,p3_tp,p4_ph,p5_sst,p6_ta, ncol = 2)
+# 
 
 # Hay muchos datos extremos o "outliers" que el articulo no es claro bajo que criterio
 
@@ -747,7 +747,10 @@ data_limits2 %>%
 
 
 library(GGally)
-ggpairs(data_limits2)
+png("3.Resultados/MatrizdeCorrelacion.png", height = 600, width = 600)
+g<-ggpairs(data_limits2)
+print(g)
+dev.off()
 
 # Render RMarkdown -------------------------------------------------
 rmarkdown::render(
