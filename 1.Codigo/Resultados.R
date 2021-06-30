@@ -141,7 +141,7 @@ data_limits %>% dplyr::select( all_of(id_article_vars)) %>%
   dplyr::select( all_of(id_article_vars)) %>% 
   map_df(~ sum(is.na(.)))
 
-#Figura 3 recreación --------------------------------------------
+#Recreación --------------------------------------------
 
 # limites maximos de los ejes x, por cada plot (BBLL2020,Fig3)
 plot_x_limits <- tribble(
@@ -221,7 +221,7 @@ plot_function2 <- function(data) {
   p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) +
     geom_point(alpha = 0.5, size = 2 ) +
     scale_y_continuous(limits = c(0,45)) +
-    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
+    labs( x = NULL, y = NULL)
   }
 
 
@@ -304,10 +304,10 @@ p6.2_ta <- plots2[[1]][[6]]$data %>%
 
 plots_juntos2.2 <- wrap_plots(p1.2_alc,p2.2_ec,p3.2_tp,p4.2_ph,p5.2_sst,p6.2_ta, ncol = 2, widths = 1)
 
-# Limits <99.5 --------------------------------------------------
+# Figura 3 Nuestras vs BC --------------------------------------------------
 # Pero ya lo trabajo con limits
 
-data_figs_limited <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+data_figPosta <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
   dplyr::select(!(c(all_of(id_variables),Year, Mes))) %>%
   pivot_longer(
     cols = !(Clorofila_a),
@@ -316,8 +316,20 @@ data_figs_limited <- data_limits %>%   filter (BeretOut == "inn" & nombre_progra
   ) %>% group_by(vars) %>% 
   nest()
 
-fig3_limited <- data_figs_limited %>% 
-  mutate(gg = map(data, plot_function2))
+data_figPosta <- data_figPosta %>% 
+  left_join(plot_x_limits, id = "vars" )
+
+
+plot_function2.2 <- function(data, lmin, lmax) {
+  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) +
+    geom_point(alpha = 0.5, size = 2 ) +
+    scale_x_continuous(limits = c( xmin = lmin , xmax = lmax)) +
+    scale_y_continuous(limits = c(0,45)) +
+    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
+}
+
+fig3_limited <-data_figPosta %>% 
+  mutate(gg = pmap(list(data,lmin,lmax), plot_function2.2))
 
 # Extraigo la lista 
 plots3<-fig3_limited %>%  ungroup() %>% 
@@ -348,6 +360,7 @@ p6.3_ta <- plots3[[1]][[6]] +
 library(png) # To upload png images from BL
 library(grid) # Convert PNG to Grob
 library(ggplotify) # Convert Grob to GGPLOT
+library(cowplot) # Paste plots toghetr
 
 f3a<-readPNG("2.Datos/Fig3BC/3a.png")
 fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate=TRUE))
@@ -366,19 +379,13 @@ figura3a <- p1.3_alc + fig3a +
   plot_layout(widths = 2, heights = unit(4, 'cm')) +
   theme(plot.margin = margin(2, 2, 2, 2))
 
-figura3a <- p1.3_alc + fig3a +
-  plot_layout(widths = 2, heights = unit(5, 'cm'))
+plots_juntos3 <- plot_grid(fig3a, p1.3_alc,
+                           fig3b, p2.3_ec,
+                           fig3c, p3.3_tp,
+                           fig3d, p4.3_ph,
+                           fig3e, p5.3_sst,
+                           fig3f, p6.3_ta)
 
-
-
-plots_juntos3 <- cowplot::plot_grid(p1.3_alc,fig3a,
-                            p2.3_ec,fig3b,
-                            p3.3_tp,fig3c,
-                            p4.3_ph,fig3d,
-                            p5.3_sst,fig3e,
-                            p6.3_ta,fig3f)
-+ 
-  plot_layout(ncol = 2)
 
 ### Repito el plot pero separo por programa
 
@@ -527,6 +534,7 @@ p7.5_ta <- plots5[[1]][[7]] +
 
 plots_juntos5 <- wrap_plots(p1.5_clo, p2.5_alc,p3.5_ec,p4.5_tp,p5.5_sst,p6.5_ph,p7.5_ta, ncol = 2)
 
+ggsave(plots_juntos5, filename = "3.Resultados/Violines.png", height = 6.7  , width = 6)
 
 ## Diferencias entre programas: histograma
 plot_function5 <- function(data) {
