@@ -19,7 +19,10 @@ RN_RU %>%  dplyr::select (clorofila_a_mg_l) %>%
 # Cuantos valores "<" hay por variable
 
 RN_RU %>% filter (nombre_programa %in% c("Rio Uruguay", "Río Negro")) %>% 
- filter(str_detect(pt_mg_p_l , "<"))
+ filter(str_detect(sst_mg_l , "<"))
+
+RN_RU %>% filter (nombre_programa %in% c("Rio Uruguay", "Río Negro")) %>% 
+  filter(str_detect( clorofila_a_mg_l, "<"))
 
 
 # Pasos para Acomodar la base:
@@ -114,7 +117,8 @@ data_articulo <-
 
 # Umbral del 99.5 de clo a. ¿Para todos los rios o por rio?
 bereta_out1 <-
-  data_articulo %>%  summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm =
+  data_articulo %>% filter (nombre_programa != "Rio Cuareim") %>%  
+  summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm =
                                                    T))
 
 data_articulo %>% filter (Clorofila_a >= bereta_out1$Q99.5) %>%
@@ -128,13 +132,15 @@ data_articulo %>% filter (codigo_pto == "RN12" &
 
 # Si calculo el 99.5 por rio... como el RU es muy bajo, me quedan muchos extremos!
 
-bereta_out2 <- data_articulo %>% group_by(nombre_programa) %>%
+bereta_out2 <- data_articulo %>% 
+  filter (nombre_programa != "Rio Cuareim") %>%  
+  group_by(nombre_programa) %>%
   summarize (Q99.5 = quantile(Clorofila_a, probs = c(0.995), na.rm = T))
 
-data_articulo %>% filter (Clorofila_a >= bereta_out2$Q99.5[[1]]   |
-                            Clorofila_a >= bereta_out2$Q99.5[[2]] |
-                            Clorofila_a >= bereta_out2$Q99.5[[3]]) %>%
-  select(codigo_pto, fecha_muestra, Clorofila_a)
+data_articulo %>%  filter (nombre_programa != "Rio Cuareim") %>%  
+  filter (Clorofila_a >= bereta_out2$Q99.5[[1]]   |
+                            Clorofila_a >= bereta_out2$Q99.5[[2]]) %>%
+  select(codigo_pto,nombre_programa, fecha_muestra, Clorofila_a)
 
 
 data_articulo %>% filter (
