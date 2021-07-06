@@ -175,3 +175,20 @@ data_bereta <-
   )
 
 #write_csv(data_bereta, file = "2.Datos/data_bereta.csv")
+
+
+# Gis Data ----------------------------------------------------------------
+
+
+
+sitios <- read_excel("2.Datos/sites_references.xls", 
+                     .name_repair = make_clean_names) %>% 
+  mutate(programa = to_snake_case(programa),
+         estacion = to_snake_case (estacion),
+         status = ifelse(codigo_estacion %in% data_bereta$codigo_pto & (
+                           str_detect(codigo_estacion, "RN") |
+                             str_detect(codigo_estacion, "RU")), "Train",
+                         ifelse(codigo_estacion %in% data_bereta$codigo_pto &
+                                  str_detect(codigo_estacion, "RC"), "Test","Not_used")))
+
+#write_csv(sitios, file = "2.Datos/coordenadas_sitios.csv")
