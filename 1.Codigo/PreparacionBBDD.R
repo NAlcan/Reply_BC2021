@@ -3,6 +3,7 @@ library(tidyverse) # Funciones de manipulacion de la base y graficos
 library(readxl) # para importar especificamente archivos .xlsx
 library(janitor)# algunas funciones mas para limpiar datos
 library(lubridate) # para manipular obetos Fecha/Hora
+library(snakecase) # to edit factor levels names
 # Cargo los datos de OAN --------------------------------------------------
 RN_RU <- read_excel("Datos 2009 - 2018 RN.RU.1.xlsx",
                     .name_repair = make_clean_names) # .name_repar = make_clean_names transforma los titulos de columnas todos uniformes
@@ -185,10 +186,11 @@ sitios <- read_excel("2.Datos/sites_references.xls",
                      .name_repair = make_clean_names) %>% 
   mutate(programa = to_snake_case(programa),
          estacion = to_snake_case (estacion),
-         status = ifelse(codigo_estacion %in% data_bereta$codigo_pto & (
-                           str_detect(codigo_estacion, "RN") |
-                             str_detect(codigo_estacion, "RU")), "Train",
+         status = ifelse(codigo_estacion %in% data_bereta$codigo_pto &
+                           str_detect(codigo_estacion, "RN"), "Train_NR",
                          ifelse(codigo_estacion %in% data_bereta$codigo_pto &
-                                  str_detect(codigo_estacion, "RC"), "Test","Not_used")))
+                                 str_detect(codigo_estacion, "RU"), "Train_UR",
+                         ifelse(codigo_estacion %in% data_bereta$codigo_pto &
+                                  str_detect(codigo_estacion, "RC"), "Test_CR","Not_used"))))
 
 #write_csv(sitios, file = "2.Datos/coordenadas_sitios.csv")
