@@ -486,18 +486,34 @@ plots_juntos3 <- plot_grid(fig3a, p1.3_alc,
 # FQ entre rios -----------------------------------------------------------
 # Agrego la clorofila como una variable mas a ser testeada.
 
+q99.5_remove <- function(x){
+  q = quantile(x, probs = c(0.995), na.rm = T)
+  x_c = ifelse(x <= q , x , NaN)
+}
+
+
+test_cuareim <- data_articulo %>% 
+  filter(nombre_programa == "RC") %>% 
+  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>% 
+  mutate (across(where (is.numeric), q99.5_remove))
+  
+  
+
+
 diff_programas <- data_limits %>% 
-    dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
-  pivot_longer(
+       dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>% 
+ bind_rows(test_cuareim) %>% 
+          pivot_longer(
     cols = !c(nombre_programa),
     names_to = "vars",
     values_to = "x"
   ) %>% 
   rename("group" = nombre_programa) %>% 
-  mutate(group = fct_recode(group,
+  mutate(group_name = fct_recode(group,
     `Uruguay river` = "RU",
-    `Negro river` = "RN"
-  )) %>% 
+    `Negro river` = "RN",
+    `Cuareim river` = "RC"),
+    data_model = ifelse(group != "RC","Train","Test")) %>%
   group_by(vars) %>% 
     nest()
 
@@ -533,10 +549,13 @@ gls_porgramas <- diff_programas %>%
 plot_function4 <- function(data) {
   p1 <- ggplot(data, aes(y = x, x = group)) + 
     geom_violin(aes(fill = group)) +
-    scale_fill_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77","#984ea3"))+
+    scale_fill_manual(na.translate = FALSE , 
+                      values = c("#d95f02", "#1b9e77","#984ea3"))+
     theme(legend.position = "none",
           axis.text.x = element_text(size = 12)) +
-    labs(x = NULL)
+    labs(x = NULL) +
+    facet_grid( ~ fct_relevel(data_model,"Train","Test"),
+                              scales = "free_x")
   
 }
 
