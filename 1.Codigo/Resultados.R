@@ -4,7 +4,7 @@ library(RColorBrewer) #Paleta de colores
 library(lubridate) # para manipular fechas
 theme_set(theme_minimal()) # Theme por defecto de los graficos
 library(patchwork) # Para pegar plots
-library(png) # para importar figuras externas
+library(png) # para importar figuras externas que esten en .png
 # Datos -------------------------------------------------------------------
 
 data_articulo <- read_csv("2.Datos/data_articulo.csv")
@@ -88,32 +88,6 @@ Data_out <-
 ggplot(data_articulo, aes(y = Clorofila_a, x = FosforoTotal)) +
   geom_point(aes(color = BeretOut)) + facet_wrap(. ~ nombre_programa) +
   theme_minimal()
-
-Plot_pred <- data_articulo %>%
-  pivot_longer(-c(all_of(id_variables), Clorofila_a),
-               names_to = "xvar",
-               values_to = "value") %>%
-  ggplot(aes(x = value, y = Clorofila_a)) + geom_point(aes(color = BeretOut)) +
-  scale_color_manual(values = c("#d95f02", "#1b9e77")) +
-  facet_wrap(nombre_programa ~ xvar , scales = "free")
-
-Plot_descr_inn <- data_articulo %>%
-  filter (BeretOut == "inn") %>%
-  pivot_longer(-c(all_of(id_variables), Clorofila_a),
-               names_to = "xvar",
-               values_to = "value") %>%
-  ggplot(aes(x = value, y = Clorofila_a)) + geom_point(alpha = 0.5) +
-  scale_color_manual(values = c("#d95f02", "#1b9e77")) +
-  facet_grid(nombre_programa ~ xvar , scales = "free")
-
-Plot_descr_out <- data_articulo %>%
-  #  filter (BeretOut == "inn") %>%
-  pivot_longer(-c(all_of(id_variables), Clorofila_a),
-               names_to = "xvar",
-               values_to = "value") %>%
-  ggplot(aes(x = value, y = Clorofila_a)) + geom_point(alpha = 0.5) +
-  scale_color_manual(values = c("#d95f02", "#1b9e77")) +
-  facet_grid(nombre_programa ~ xvar , scales = "free")
 
 # outliers ----------------------------------------
 
@@ -246,7 +220,7 @@ p1.2_alc <- plots2[[1]][[1]]$data %>%
    scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
      labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
           x = expression(paste("Alkalinity (mg L"^-1,")"))) +
-  guides(fill = F)
+  guides(fill = "none")
   
 
 p2.2_ec <- plots2[[1]][[2]]$data %>% 
@@ -257,7 +231,7 @@ p2.2_ec <- plots2[[1]][[2]]$data %>%
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
        x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) ) +
-  guides (fill = F)
+  guides(fill = "none")
 
 
 p3.2_tp <- plots2[[1]][[3]]$data %>% 
@@ -268,7 +242,7 @@ p3.2_tp <- plots2[[1]][[3]]$data %>%
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
        x = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) ) +
-  guides(fill = F)
+  guides(fill = "none")
 
 # Ojo que ph esta en distinto orden po eso 5
 p4.2_ph <- plots2[[1]][[5]]$data %>% 
@@ -279,7 +253,7 @@ p4.2_ph <- plots2[[1]][[5]]$data %>%
   scale_y_continuous(limits = c(0,45)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) ) +
-  guides (fill = F)
+  guides(fill = "none")
 
 p5.2_sst <- plots2[[1]][[4]]$data %>% 
   mutate(extra = ifelse (valor > limits$SolidosTotales[[1]], "0", "1" )) %>% 
@@ -289,7 +263,7 @@ p5.2_sst <- plots2[[1]][[4]]$data %>%
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
   x = expression(paste("Total Suspended Solid ( mg L"^-1,")"))) +
-  guides (fill = F)
+  guides(fill = "none")
 
 p6.2_ta <- plots2[[1]][[6]]$data %>% 
   mutate(extra = ifelse (valor > limits$TempAgua[[1]], "No", "Yes" )) %>% 
@@ -339,23 +313,29 @@ plot3_limits <- wrap_plots(plots3$gg, ncol = 2)
 
 ## Agrego nombre de variables en eje x
 p1.3_alc <- plots3[[1]][[1]] +
-  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
+  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) ) +
+  theme(axis.title = element_text(size = 10))
 
 p2.3_ec <- plots3[[1]][[2]] +
-  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
+  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )+
+  theme(axis.title = element_text(size = 10))
 
 p3.3_tp <- plots3[[1]][[3]] +
-  labs(x = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) )
+  labs(x = expression(paste("Total Phosphorus (", mu,"g L"^-1,")")) )+
+  theme(axis.title = element_text(size = 10))
 
 # Ojo que ph esta en distinto orden po eso 5
 p4.3_ph <- plots3[[1]][[5]] +
-  labs(x = "pH" )
+  labs(x = "pH" )+
+  theme(axis.title = element_text(size = 10))
 
 p5.3_sst <- plots3[[1]][[4]] +
-  labs(x = expression(paste("Total Suspended Solid ( mg L"^-1,")")) )
+  labs(x = expression(paste("Total Suspended Solids ( mg L"^-1,")")) ) +
+  theme(axis.title = element_text(size = 10))
 
 p6.3_ta <- plots3[[1]][[6]] +
-  labs(x = expression(paste("T (", degree,"C)")) )
+  labs(x = expression(paste("T (", degree,"C)")) ) +
+  theme(axis.title = element_text(size = 10))
 
 library(png) # To upload png images from BL
 library(grid) # Convert PNG to Grob
@@ -375,72 +355,132 @@ fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE))
 f3f<-readPNG("2.Datos/Fig3BC/3f.png")
 fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE))
 
-figura3a <- p1.3_alc + fig3a +
-  plot_layout(widths = 2, heights = unit(4, 'cm')) +
-  theme(plot.margin = margin(2, 2, 2, 2))
+figura3a <- ggdraw(p1.3_alc + theme_half_open(12)) +
+  draw_plot(fig3a, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("A", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+figura3b <- ggdraw(p2.3_ec + theme_half_open(12)) +
+  draw_plot(fig3b, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("B", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+figura3c <- ggdraw(p3.3_tp + theme_half_open(12)) +
+  draw_plot(fig3c, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("C", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+
+figura3d <- ggdraw(p4.3_ph + theme_half_open(12)) +
+  draw_plot(fig3d, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("D", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+
+
+figura3e <- ggdraw(p5.3_sst + theme_half_open(12)) +
+  draw_plot(fig3e, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("E", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+
+figura3f <- ggdraw(p6.3_ta + theme_half_open(12)) +
+  draw_plot(fig3f, .45, .45, .5, .5) +
+  draw_plot_label(
+    c("F", ""),
+    c(0, 0.45),
+    c(1, 0.95),
+    size = 12
+  )
+
+
+
 
 plots_juntos3 <- plot_grid(fig3a, p1.3_alc,
                            fig3b, p2.3_ec,
                            fig3c, p3.3_tp,
                            fig3d, p4.3_ph,
                            fig3e, p5.3_sst,
-                           fig3f, p6.3_ta)
+                           fig3f, p6.3_ta,
+                           labels = c("", "a'",
+                                      "", "b'",
+                                      "", "c'",
+                                      "", "d'",
+                                      "", "e'",
+                                      "", "f"),
+                           label_x=.8,
+                           label_fontface = "plain")
 
-
-### Repito el plot pero separo por programa
-
-plot_function3 <- function(data) {
-  p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + 
-    geom_point(aes(color = nombre_programa), alpha = 0.5) +
-    scale_y_continuous(limits = c(0,45)) +
-    facet_grid( nombre_programa ~. ) +
-    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
-    scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
-    theme(legend.position = "none")
-}
-
-
-# Programas rios ----------------------------------------------------------
-
-
-data_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
-  dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
-  pivot_longer(
-    cols = !c(Clorofila_a,nombre_programa),
-    names_to = "vars",
-    values_to = "valor"
-  ) %>% group_by(vars) %>% 
-  nest()
-
-fig4_programas <- data_programas %>% 
-  mutate(gg = map(data, plot_function3))
-# Extraigo la lista 
-plots4<-fig4_programas %>%  ungroup() %>% 
-  dplyr::select(gg) 
-
-plot4_programas <- wrap_plots(plots4$gg, ncol = 2)
-
-## Agrego nombre de variables en eje x
-p1.4_alc <- plots4[[1]][[1]] +
-  labs(x = id_article_vars[[1]] )
-
-p2.4_ec <- plots4[[1]][[2]] +
-  labs(x = id_article_vars[[2]] )
-
-p3.4_tp <- plots4[[1]][[3]] +
-  labs(x = id_article_vars[[3]] )
-
-# Ojo que ph esta en distinto orden po eso 5
-p4.4_ph <- plots4[[1]][[5]] +
-  labs(x = id_article_vars[[5]] )
-
-p5.4_sst <- plots4[[1]][[4]] +
-  labs(x = id_article_vars[[4]] )
-
-p6.4_ta <- plots4[[1]][[6]] +
-  labs(x = id_article_vars[[6]] )
-
-plots_juntos4 <- wrap_plots(p1.4_alc,p2.4_ec,p3.4_tp,p4.4_ph,p5.4_sst,p6.4_ta, ncol = 2)
+# # by River ----------------------------------------------------------
+# 
+#Se va ir
+# plot_function3 <- function(data) {
+#   p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) + 
+#   geom_point(aes(color = nombre_programa), alpha = 0.5) +
+#   scale_y_continuous(limits = c(0,45)) +
+#   facet_grid( nombre_programa ~. ) +
+#   labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
+#   scale_color_manual(na.translate = FALSE , values = c("#d95f02", "#1b9e77")) +
+#   theme(legend.position = "none")}
+# 
+# data_programas <- data_limits %>%   filter (BeretOut == "inn" & nombre_programa != "RC") %>% 
+#   dplyr::select(!(c(all_of(id_variables[-1]),Year, Mes))) %>%
+#   pivot_longer(
+#     cols = !c(Clorofila_a,nombre_programa),
+#     names_to = "vars",
+#     values_to = "valor"
+#   ) %>% group_by(vars) %>% 
+#   nest()
+# 
+# fig4_programas <- data_programas %>% 
+#   mutate(gg = map(data, plot_function3))
+# # Extraigo la lista 
+# plots4<-fig4_programas %>%  ungroup() %>% 
+#   dplyr::select(gg) 
+# 
+# plot4_programas <- wrap_plots(plots4$gg, ncol = 2)
+# 
+# ## Agrego nombre de variables en eje x
+# p1.4_alc <- plots4[[1]][[1]] +
+#   labs(x = id_article_vars[[1]] )
+# 
+# p2.4_ec <- plots4[[1]][[2]] +
+#   labs(x = id_article_vars[[2]] )
+# 
+# p3.4_tp <- plots4[[1]][[3]] +
+#   labs(x = id_article_vars[[3]] )
+# 
+# # Ojo que ph esta en distinto orden po eso 5
+# p4.4_ph <- plots4[[1]][[5]] +
+#   labs(x = id_article_vars[[5]] )
+# 
+# p5.4_sst <- plots4[[1]][[4]] +
+#   labs(x = id_article_vars[[4]] )
+# 
+# p6.4_ta <- plots4[[1]][[6]] +
+#   labs(x = id_article_vars[[6]] )
+# 
+# plots_juntos4 <- wrap_plots(p1.4_alc,p2.4_ec,p3.4_tp,p4.4_ph,p5.4_sst,p6.4_ta, ncol = 2)
 
 
 # FQ entre rios -----------------------------------------------------------
