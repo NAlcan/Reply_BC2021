@@ -34,13 +34,15 @@ bereta_out1 <- data_articulo %>% filter( nombre_programa != ("RC")) %>%
 data_articulo %>% filter (Clorofila_a >= bereta_out1$Q99.5) %>%
  dplyr::select(codigo_pto, fecha_muestra, Clorofila_a)
 
+data_articulo %>% filter (Clorofila_a > 40) %>%
+  dplyr::select(codigo_pto, fecha_muestra, Clorofila_a)
+
 
 # Voy a generar la variable "beret" que identifica los datos excluidos en articulos
 
 data_articulo <- data_articulo %>%
   mutate(BeretOut = factor(ifelse ((
-    codigo_pto == "RN12" & fecha_muestra == "2018-04-17" |
-      codigo_pto == "RN5" &
+        codigo_pto == "RN5" &
       fecha_muestra == "2012-01-19" |
       codigo_pto == "RN5" &
       fecha_muestra == "2012-12-06" |
@@ -114,6 +116,11 @@ data_limits %>% dplyr::select( all_of(id_article_vars)) %>%
   data_articulo %>%  filter ( BeretOut == "inn" & nombre_programa !=("RC")) %>% 
   dplyr::select( all_of(id_article_vars)) %>% 
   map_df(~ sum(is.na(.)))
+
+
+# How many pH values exceed 8
+
+data_limits %>% filter (Ph > 8) %>% summary(.)
 
 #Recreación --------------------------------------------
 
@@ -194,7 +201,7 @@ data_figbbll2<-  data_figbbll %>%
 plot_function2 <- function(data) {
   p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) +
     geom_point(alpha = 0.5, size = 2 ) +
-    scale_y_continuous(limits = c(0,45)) +
+    scale_y_continuous(limits = c(0,55)) +
     labs( x = NULL, y = NULL)
   }
 
@@ -213,10 +220,10 @@ plots_juntos2 <- wrap_plots(plots2$gg, ncol = 2)
 # y ademas tengo los valores limites ej: limits$Alcalinidad
 
 p1.2_alc <- plots2[[1]][[1]]$data %>% 
-    mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "0", "1" )) %>% 
+    mutate(extra = ifelse (valor > limits$Alcalinidad[[1]], "Yes", "No" )) %>% 
      ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
-     geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-     scale_y_continuous(limits = c(0,45)) +
+     geom_point(alpha = 0.5, size = 2, pch = 21) +
+     scale_y_continuous(limits = c(0,55)) +
    scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
      labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
           x = expression(paste("Alkalinity (mg L"^-1,")"))) +
@@ -224,10 +231,10 @@ p1.2_alc <- plots2[[1]][[1]]$data %>%
   
 
 p2.2_ec <- plots2[[1]][[2]]$data %>% 
-  mutate(extra = ifelse (valor > limits$Conductividad[[1]], "0", "1" )) %>% 
+  mutate(extra = ifelse (valor > limits$Conductividad[[1]], "Yes", "No" )) %>% 
   ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
-  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-  scale_y_continuous(limits = c(0,45)) +
+  geom_point(alpha = 0.5, size = 2, pch = 21) +
+  scale_y_continuous(limits = c(0,55)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
        x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) ) +
@@ -235,10 +242,10 @@ p2.2_ec <- plots2[[1]][[2]]$data %>%
 
 
 p3.2_tp <- plots2[[1]][[3]]$data %>% 
-  mutate(extra = ifelse (valor > limits$FosforoTotal[[1]], "0", "1" )) %>% 
+  mutate(extra = ifelse (valor > limits$FosforoTotal[[1]], "Yes", "No" )) %>% 
   ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
-  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-  scale_y_continuous(limits = c(0,45)) +
+  geom_point(alpha = 0.5, size = 2, pch = 21) +
+  scale_y_continuous(limits = c(0,55)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
        x = expression(paste("Total phosphorus (", mu,"g L"^-1,")")) ) +
@@ -246,32 +253,32 @@ p3.2_tp <- plots2[[1]][[3]]$data %>%
 
 # Ojo que ph esta en distinto orden po eso 5
 p4.2_ph <- plots2[[1]][[5]]$data %>% 
-  mutate(extra = ifelse (valor > limits$Ph[[1]], "0", "1" )) %>% 
+  mutate(extra = ifelse (valor > limits$Ph[[1]], "Yes", "No" )) %>% 
   rename(  "pH" = valor ) %>% 
   ggplot(aes(x = pH , y = Clorofila_a, fill = extra)) +
-  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-  scale_y_continuous(limits = c(0,45)) +
+  geom_point(alpha = 0.5, size = 2, pch = 21) +
+  scale_y_continuous(limits = c(0,55)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) ) +
   guides(fill = "none")
 
 p5.2_sst <- plots2[[1]][[4]]$data %>% 
-  mutate(extra = ifelse (valor > limits$SolidosTotales[[1]], "0", "1" )) %>% 
+  mutate(extra = ifelse (valor > limits$SolidosTotales[[1]], "Yes", "No" )) %>% 
   ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
-  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-  scale_y_continuous(limits = c(0,45)) +
+  geom_point(alpha = 0.5, size = 2, pch = 21) +
+  scale_y_continuous(limits = c(0,55)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
   labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")), 
   x = expression(paste("Total Suspended Solid ( mg L"^-1,")"))) +
   guides(fill = "none")
 
 p6.2_ta <- plots2[[1]][[6]]$data %>% 
-  mutate(extra = ifelse (valor > limits$TempAgua[[1]], "No", "Yes" )) %>% 
+  mutate(extra = ifelse (valor > limits$TempAgua[[1]], "Yes", "No" )) %>% 
   ggplot(aes(x = valor , y = Clorofila_a, fill = extra)) +
-  geom_point(alpha = 0.8, size = 2.5, pch = 21) +
-  scale_y_continuous(limits = c(0,45)) +
+  geom_point(alpha = 0.5, size = 2.5, pch = 21) +
+  scale_y_continuous(limits = c(0,55)) +
   scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
-  labs(fill = "> 99.5",
+  labs(fill = " >99.5",
        y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")")),
        x = expression(paste("T (", degree,"C)"))) +
   theme(legend.position = "bottom")
@@ -296,10 +303,12 @@ data_figPosta <- data_figPosta %>%
 
 plot_function2.2 <- function(data, lmin, lmax) {
   p1 <- ggplot(data, aes(x = valor , y = Clorofila_a)) +
-    geom_point(alpha = 0.5, size = 2 ) +
+    geom_point(alpha = 0.8, size = 2 ) +
     scale_x_continuous(limits = c( xmin = lmin , xmax = lmax)) +
-    scale_y_continuous(limits = c(0,45)) +
-    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) 
+    scale_y_continuous(limits = c(0,45),
+                       breaks = seq(from = 0,to=48,by = 5)) +
+    labs( x = NULL, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
+    theme_classic()
 }
 
 fig3_limited <-data_figPosta %>% 
@@ -509,11 +518,11 @@ diff_programas <- data_limits %>%
     values_to = "x"
   ) %>% 
   rename("group" = nombre_programa) %>% 
-  mutate(group_name = fct_recode(group,
-    `Uruguay river` = "RU",
-    `Negro river` = "RN",
-    `Cuareim river` = "RC"),
-    data_model = ifelse(group != "RC","Train","Test")) %>%
+  mutate(group = fct_recode(group,
+    UR = "RU",
+    NR = "RN",
+    CR = "RC"),
+    data_model = ifelse(group != "CR","Train","Test")) %>%
   group_by(vars) %>% 
     nest()
 
@@ -555,7 +564,8 @@ plot_function4 <- function(data) {
           axis.text.x = element_text(size = 12)) +
     labs(x = NULL) +
     facet_grid( ~ fct_relevel(data_model,"Train","Test"),
-                              scales = "free_x")
+                              scales = "free_x",
+                              space = "free_x")
   
 }
 

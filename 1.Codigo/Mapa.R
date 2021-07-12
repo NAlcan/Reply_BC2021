@@ -84,7 +84,7 @@ mapa_listo <-  base_map +
                      aes(label = name), 
                      size = 3, 
                      fontface = "bold",
-                     family = "sans",
+                     family = "serif",
                      hjust = c(`Tacuarembó Chico` = .7,
                                   `Negro River` =  .2,
                                   `Uruguay River` = 1,
@@ -123,34 +123,10 @@ vers1 <- mapa_listo +
   geom_sf_text_repel(data = sites_longlat, aes( label = site_number), 
                      size = 2, max.overlaps = 20, box.padding = unit(0.1, "lines"))
   
+# to save in .svg format
+ggsave(vers1, filename = "3.Resultados/map_siterivers_svg.svg")
 
-   # leaflet::leaflet(data = sitios_longlat) %>% 
-#   leaflet::addTiles() %>%
-#   leaflet::addMarkers( group = ~ status)
-
-
-
-# #
-# ## Con `mapsf`
-# mf_init(x = rios_1)
-# # Plot a shadow
-# mf_shadow(rios_1, col = "grey10", add = TRUE)
-# 
-# mf_map(x = rios_1,  add = TRUE )
-# mf_map(x = rios_2,  add = TRUE, alpha = 0.3)
-# 
-# # Start an inset map
-# mf_inset_on(x = "worldmap", pos = "right")
-# # Plot the position of the sample dataset on a worlmap
-# mf_worldmap(depart, col = "#0E3F5C")
-# # Close the inset
-# mf_inset_off()
-# # Plot a title
-# mf_title("")
-# # Plot credits
-# mf_credits("")
-# # Plot a scale bar
-# mf_scale(size = 5)
-# # Plot a north arrow
-# mf_arrow('topleft')
-# 
+# eps output #
+# To save in eps need to comment l87: family = "sans"
+# in not it gives an ERORR!
+#ggsave(vers1, filename = "3.Resultados/map_siterivers_eps.eps")
