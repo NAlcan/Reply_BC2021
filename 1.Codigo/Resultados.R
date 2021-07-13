@@ -122,7 +122,12 @@ data_limits %>% dplyr::select( all_of(id_article_vars)) %>%
 
 data_limits %>% filter (Ph > 8) %>% summary(.)
 
-#Recreación --------------------------------------------
+data_limits %>% filter (Ph > 7.5)
+359/952
+
+
+
+# Recreación --------------------------------------------
 
 # limites maximos de los ejes x, por cada plot (BBLL2020,Fig3)
 plot_x_limits <- tribble(
@@ -436,9 +441,14 @@ plots_juntos3 <- plot_grid(fig3a, p1.3_alc,
                                       "", "c'",
                                       "", "d'",
                                       "", "e'",
-                                      "", "f"),
+                                      "", "f'"),
                            label_x=.8,
-                           label_fontface = "plain")
+                           label_fontface = "plain",
+                           label_fontfamily = "times")
+
+ggsave(plots_juntos3, filename = "3.Resultados/Figure3.tiff",
+       dpi = "print",
+       height =5.94  , width = 8.35)
 
 # # by River ----------------------------------------------------------
 # 
