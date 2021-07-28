@@ -114,10 +114,16 @@ bc_tidy <- oan_BC %>% dplyr::select(all_of(id_vars)) %>%
 
 glimpse(bc_tidy)
 
-# How many data per river
+
+# There no row that are all NA values
+bc_tidy %>% dplyr::select_if(is.numeric) %>% 
+    filter(if_any(everything(), purrr::negate(is.na))) %>% 
+  count()
+  
+# So, how many data per river is available?
 bc_tidy %>% 
   group_by(river) %>% 
-  count( )
+    count() 
 
 # Database with all rivers and extra variables than used in BC2021
 #write_csv(bc_tidy, file = "2.Datos/working_data/OAN_complet_data.csv")
