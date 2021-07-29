@@ -12,9 +12,9 @@ library(snakecase) # Factor levels and names manipulation
 # Files are compressed into zip folder. 
 # This code intends to unzip them, extract and unify unique Database
 
-# Zip load and decompression
+# Zip load and decompression (It only need to be done the first)
 
-unzip("2.Datos/redatosoan.zip", exdir = "2.Datos/oan_data")
+#unzip("2.Datos/redatosoan.zip", exdir = "2.Datos/oan_data")
 
 
 # Csv integration ---------------------------------------------------------
@@ -81,44 +81,51 @@ oan_BC <- oan_complet %>%
 oan_BC <- oan_BC %>% 
   mutate(data_model = ifelse (river %in% c("Negro","Uruguay"),"Train",
                               ifelse(river == "Cuareim", "Test","NotUsed")))
-id_vars[5] <- "data_model"
+id_vars[5] <- "data_model" # Add it to the id_vars labels container
 # Special characters -------------------------------------------------------
 
+# Function to detect a patter of any special character like:
+# Bellow (>) or Under (<) of Limit Detection (LD) or Limit Quantification (LC)  
+# And counts how many of this special character are in a vector
 spec_det <- function (x) {
   x2 <- str_detect(x, pattern =  "[<>LCLD]")  
     sum(x2, na.rm = T)
     }
 
-# How many special charaters in Negro and Uruguay rivers  
+# How many special characters only in Negro and Uruguay rivers  
 oan_BC %>% filter (river %in% c("Negro", "Uruguay")) %>% 
   dplyr::select(all_of(bc_vars)) %>% 
-  summarise(across(everything(), ~ spec_det(.))) %>% 
+  summarise(across(everything(), ~ spec_det(.))) %>% # Apply spec_detect function across all data columns
   pivot_longer( everything() ,names_to = "variable",
-                values_to = "Special_Characaters") %>% 
-  filter (Special_Characaters > 0) %>%
+                values_to = "Special_Characaters") %>% # Format in long table with one variable to each row and its count value 
+  filter (Special_Characaters > 0) %>% # 
   mutate (prop = round(Special_Characaters/nrow(oan_BC),2)) %>% 
-  arrange (Special_Characaters)
+  arrange (Special_Characaters) 
   
 
-# Convert all variables to numeric
-# Substitute all special values by NA
-
+# From now Convert all variables to numeric
+# Substitute all special characters ("<,>, LC, LD") values by NA
+# The warnings advice this 
 bc_numeric <-
   oan_BC %>% 
-  dplyr::select(!all_of(id_vars)) %>% 
+  dplyr::select(!all_of(id_vars)) %>% # Drop id vars wich will remain as a characters columns
   mutate_if(is.character,as.numeric)
 
+# Add id vars that not were transformed into numeric
 bc_tidy <- oan_BC %>% dplyr::select(all_of(id_vars)) %>% 
   bind_cols(bc_numeric)
 
-
+# Take a look 
 glimpse(bc_tidy)
 
 
-# There no row that are all NA values
-bc_tidy %>% dplyr::select_if(is.numeric) %>% 
-    filter(if_any(everything(), purrr::negate(is.na))) %>% 
+# What about NA values now?
+# Is there an entire row with all numeric variable with NA values?
+bc_tidy %>% dplyr::select(where(is.numeric)) %>% 
+    filter(if_all(is.numeric, is.na)) %>% 
   count()
+
+
   
 # So, how many data per river is available?
 bc_tidy %>% 
@@ -135,6 +142,11 @@ bc2021 <- bc_tidy %>%
   filter (data_model != "NotUsed")
 
 #write_csv(bc2021, file = "2.Datos/working_data/bc2021_data.csv")
+
+# How many data per river considering only BC2021 Variables
+bc2021 %>% 
+  group_by(river) %>% 
+  count() 
 
 
 # GIS data ----------------------------------------------------------------
