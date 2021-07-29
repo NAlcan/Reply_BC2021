@@ -352,3 +352,36 @@ figure4 <- wrap_plots(fig4_chla, fig4_alk,fig4_ec,
 ggsave(figure4, filename = "3.Resultados/figure4_rivercomp.png", height = 6.7  , width = 6)
 
 
+# Generalized Least Squares for river comparision ---------------------------------------------------------
+## This GLS function allows for compare differences between mean and variances
+library(nlme)
+gls.var.test<-function(data){
+  x = data$x
+  group = data$group
+  if(is.null(group)){ data.gls<-x; colnames(data.gls)<-c("x","group")} else data.gls<-data.frame(x,group)
+  
+  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# SACA LOS NAN
+  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# SACA LOS NAN
+  
+  modHeteroVar = gls(x~group, data=data.gls, weights = varIdent(form = ~1|group), method="ML") # Heterogeneous variance
+  modHomoVar   = gls(x~group, data=data.gls, method="ML") # Homogeneous Variance
+  modEqualMean = gls(x~1,     data=data.gls, weights = varIdent(form = ~1|group), method="ML")# Same mean all groups, different variance
+  gls_data <- data.frame(VarTest=anova(modHeteroVar,modHomoVar)$`p-value`[2],
+                         MeanTest=anova(modEqualMean,modHeteroVar)$`p-value`[2]) # Evaluar el loglikelyhood ratio test. p>0.01
+}
+
+
+gls_rivers <- diff_rivers_data %>% 
+  unnest(cols = data) %>% 
+  filter (river != "Cuareim") %>% 
+  rename(x = value ,
+        group = river ) %>% 
+mutate (group = factor(group) )%>% 
+  nest() %>% 
+  mutate(gls = map(data, gls.var.test)) %>% 
+  unnest(gls) %>% 
+  mutate( VarTest = ifelse( VarTest <= 0.05, "p<0.05","n.s"),
+          MeanTest = ifelse( MeanTest <= 0.05, "p<0.05","n.s")) %>% 
+  dplyr::select(name,VarTest, MeanTest)
+
+gls_rivers
