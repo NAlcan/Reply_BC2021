@@ -16,7 +16,7 @@ data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
 
 # Define de row names that belongs to ID of data like, date, site, river...
 
-id_vars <- c("date","date_time", "estacion","river")
+id_vars <- c("date","date_time", "estacion","river","data_model")
 
 # Rename Variables according to BC2021
 
@@ -62,7 +62,7 @@ bc_vars <- c(
 data_oan %>% group_by(river)  %>% 
 summarize(across(where(is.numeric), q99.5_exceed)) 
   
-# Q99.5 limit values
+# Q99.5 limit values for chla by river
  data_oan %>% group_by(river) %>% 
   dplyr::select(date, estacion, chla, river) %>% 
   summarise(p99.5 = quantile(chla, probs = c(0.995), na.rm = T))
@@ -76,5 +76,43 @@ summarize(across(where(is.numeric), q99.5_exceed))
   dplyr::select(date, estacion, chla)
 # Looks similar that they did, but with this criteria the RN12 for 2018-04-17 gets not excluded
 
+# Functiona that returns de value of Q99.5  
+q_calc<- function(x) {
+ q <- quantile(x, probs = c(0.995), names = F,na.rm = T)
+}
+
+# Apply de q_calc for each numeric column from Negro and Uruguay rivers
+  
+data_oan %>% 
+    filter(river %in% c("Negro","Uruguay")) %>% 
+    dplyr::select(all_of(bc_vars)) %>% 
+  summarise( across(is.numeric, q_calc))
+    
+
+# Will substitute all values that exceed 99.5 and replace by NA
+  # For Each variable in  Negro and Uruguay together (for similarity with the BC2021 procedure)
+# And for cuareim alone
+
+# Function that replace a values with NaN if it exceed 99.5 limit
+q99.5_remove <- function(x){
+  q = quantile(x, probs = c(0.995), na.rm = T)
+  x_c = ifelse(x <= q , x , NaN)
+}
+
+# For Negro and Uruguay together
+data_cut_NU <- data_oan %>% 
+  filter (river %in% c("Negro","Uruguay")) %>% 
+  mutate(across(where(is.numeric), q99.5_remove))
+
+# For Cuareim only
+data_cut_C <- data_oan %>% 
+  filter (river == "Cuareim") %>% 
+  mutate(across(where(is.numeric), q99.5_remove))
+
+bc_data_limit <- bind_rows(data_cut_NU,data_cut_C)
+
+
+# chla vs environment  -----------------------------------------------------
+# Figure 3 from BC 2021 recreation
 
 
