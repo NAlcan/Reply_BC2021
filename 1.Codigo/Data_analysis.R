@@ -76,7 +76,7 @@ summarize(across(where(is.numeric), q99.5_exceed))
   dplyr::select(date, estacion, chla)
 # Looks similar that they did, but with this criteria the RN12 for 2018-04-17 gets not excluded
 
-# Functiona that returns de value of Q99.5  
+# Function that returns de value of Q99.5  
 q_calc<- function(x) {
  q <- quantile(x, probs = c(0.995), names = F,na.rm = T)
 }
@@ -133,8 +133,6 @@ data_fig3 <- bc_data_limit %>%
   filter (river != "Cuareim") %>% 
   dplyr::select(!all_of(id_vars)) %>% 
   pivot_longer (cols =! chla) %>% 
-  mutate (label = fct_relevel(name,
-          `alk` = as.character(expression("Alkalinity (mg L"^-1,")"))))# %>% 
   group_by (name) %>% 
   nest()
 
@@ -349,7 +347,9 @@ figure4 <- wrap_plots(fig4_chla, fig4_alk,fig4_ec,
                       fig4_tp,fig4_sst,fig4_ph,
                       fig4_ta, ncol = 2)
 
-ggsave(figure4, filename = "3.Resultados/figure4_rivercomp.png", height = 6.7  , width = 6)
+ggsave(figure4, filename = "3.Resultados/figure4_rivercomp.tiff", 
+       dpi = "print",
+       height =5.94  , width = 8.35)
 
 
 # Generalized Least Squares for river comparision ---------------------------------------------------------
