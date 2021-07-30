@@ -320,7 +320,7 @@ figure3f <- ggdraw(fig3_ta + theme_half_open(12)) +
 
 ### Plot figure 3 
 
-```{r}
+```{r Figure 3, fig.align= 'center', fig.retina=2, fig.width= 9.35, fig.height= 6.94}
 plot_grid(fig3a, fig3_alk,
                            fig3b, fig3_ec,
                            fig3c, fig3_tp,
@@ -409,7 +409,7 @@ fig4_ta <- plots4[[1]][[7]] +
 
 
 Plot figure 4
-```{r}
+```{r Figure4, fig.align= 'center', fig.retina=2,  fig.width= 9.35, fig.height= 7.94 }
 wrap_plots(fig4_chla, fig4_alk,fig4_ec,
                       fig4_tp,fig4_sst,fig4_ph,
                       fig4_ta, ncol = 2)

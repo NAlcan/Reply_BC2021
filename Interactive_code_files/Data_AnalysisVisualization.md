@@ -382,7 +382,7 @@ plot_grid(fig3a, fig3_alk,
                            label_fontfamily = "times")
 ```
 
-![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+<img src="Data_AnalysisVisualization_files/figure-gfm/Figure 3-1.png" width="897.6" style="display: block; margin: auto;" />
 Biplots of Chl-a versus all environmental variables: a: alkalinity, b:
 EC, c: total phosphorous, d: pH, e:total suspended solids, f:
 temperature. In all comparative cases, the graphs redrawn from BC2021
@@ -469,7 +469,7 @@ wrap_plots(fig4_chla, fig4_alk,fig4_ec,
                       fig4_ta, ncol = 2)
 ```
 
-![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+<img src="Data_AnalysisVisualization_files/figure-gfm/Figure4-1.png" width="897.6" style="display: block; margin: auto;" />
 Violin plots for environmental variables for Negro River (NR, green),
 Uruguay River (UR, violet) and Cuareim River (CR, orange) respectively.
 NR and UR data were used to train the model and data from CR to test
