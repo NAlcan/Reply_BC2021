@@ -382,7 +382,8 @@ plot_grid(fig3a, fig3_alk,
                            label_fontfamily = "times")
 ```
 
-![Biplots of Chl-a versus all environmental variables: a: alkalinity, b:
+![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+Biplots of Chl-a versus all environmental variables: a: alkalinity, b:
 EC, c: total phosphorous, d: pH, e:total suspended solids, f:
 temperature. In all comparative cases, the graphs redrawn from BC2021
 are show to the left (letters) and our graphs to the right
@@ -391,8 +392,7 @@ BC2021 and this paper, the axes (x and y) of the biplots are drawn with
 the same scaling. Note that this procedure leaves out 58 pH values in
 our plot (d´) but incudes the Chl-a value of 55 µg L-1 that BC2021
 considered to as an outlier, which is not an outlier according to the
-analysis presented by
-us.](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-18-1.png)
+analysis presented by us.
 
 ### Differences within rivers used for train model (Negro and Uruguay)
 
@@ -469,7 +469,8 @@ wrap_plots(fig4_chla, fig4_alk,fig4_ec,
                       fig4_ta, ncol = 2)
 ```
 
-![Violin plots for environmental variables for Negro River (NR, green),
+![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+Violin plots for environmental variables for Negro River (NR, green),
 Uruguay River (UR, violet) and Cuareim River (CR, orange) respectively.
 NR and UR data were used to train the model and data from CR to test
 model performance. UR and NR exhibit significant differences (p-values
@@ -477,8 +478,7 @@ model performance. UR and NR exhibit significant differences (p-values
 for temperature variance. The full description of statistical test is
 shown in Table S4 of Supplementary Material. Note that the Cuareim River
 was subject to the same outlier removal procedure as explained in
-section 1c of the
-methodology](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-21-1.png)
+section 1c of the methodology
 
 ### Generalized Least Squares (GLS) for river comparision
 
