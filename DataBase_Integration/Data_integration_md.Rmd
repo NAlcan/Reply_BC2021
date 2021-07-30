@@ -112,6 +112,22 @@ oan_BC <- oan_complet %>%
   filter (date <= "2018-11-30") 
 ```
 
+### Check if samples are from bottom.
+This is identified by an `f` at the end of the site code (`estacion`)
+
+```{r}
+oan_BC %>% filter(str_detect(estacion, "F")) %>%
+  dplyr::select(estacion) %>% head() %>% kable()
+
+```
+
+
+### Remove the 109 rows that contains data from bottom samples
+```{r}
+oan_BC <- oan_BC %>%
+  filter(!(str_detect(estacion, "F")))
+```
+
 Generate new variable that identifies if data where used for model Train, Test or Not Used
 
 ```{r}

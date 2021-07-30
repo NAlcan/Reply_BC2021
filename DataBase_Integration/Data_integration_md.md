@@ -109,6 +109,31 @@ oan_BC <- oan_complet %>%
   filter (date <= "2018-11-30") 
 ```
 
+### Check if samples are from bottom.
+
+This is identified by an `f` at the end of the site code (`estacion`)
+
+``` r
+oan_BC %>% filter(str_detect(estacion, "F")) %>%
+  dplyr::select(estacion) %>% head() %>% kable()
+```
+
+| estacion |
+|:---------|
+| RN5F     |
+| RN9F     |
+| RN13F    |
+| RN5F     |
+| RN9F     |
+| RN13F    |
+
+### Remove the 109 rows that contains data from bottom samples
+
+``` r
+oan_BC <- oan_BC %>%
+  filter(!(str_detect(estacion, "F")))
+```
+
 Generate new variable that identifies if data where used for model
 Train, Test or Not Used
 
@@ -155,8 +180,8 @@ oan_BC %>% filter (river %in% c("Negro", "Uruguay")) %>%
 
 | variable                             | Special\_Characaters | prop |
 |:-------------------------------------|---------------------:|-----:|
-| clorofila\_a\_mg\_l                  |                  167 | 0.11 |
-| solidos\_suspendidos\_totales\_mg\_l |                  367 | 0.25 |
+| clorofila\_a\_mg\_l                  |                  166 | 0.12 |
+| solidos\_suspendidos\_totales\_mg\_l |                  287 | 0.21 |
 
 From here to ahead all variables will be converted to numeric. All
 special characters (“&lt;,&gt;, LC, LD”) will be subtituted by NA
@@ -181,7 +206,7 @@ bc_tidy <- oan_BC %>% dplyr::select(all_of(id_vars)) %>%
 glimpse(bc_tidy)
 ```
 
-    ## Rows: 1,473
+    ## Rows: 1,354
     ## Columns: 19
     ## $ date                                  <date> 2008-01-08, 2008-01-09, 2008-01…
     ## $ date_time                             <dttm> 2008-01-08, 2008-01-09, 2008-01…
@@ -230,10 +255,10 @@ bc_tidy %>%
 | river       |   n |
 |:------------|----:|
 | Cuareim     | 285 |
-| Negro       | 555 |
+| Negro       | 465 |
 | SanSalvador | 174 |
 | Tacuarembo  |  58 |
-| Uruguay     | 401 |
+| Uruguay     | 372 |
 
 Write database with all rivers and extra variables than used in BC2021
 
@@ -265,8 +290,8 @@ bc2021 %>%
 | river   |   n |
 |:--------|----:|
 | Cuareim | 285 |
-| Negro   | 555 |
-| Uruguay | 401 |
+| Negro   | 465 |
+| Uruguay | 372 |
 
 ### GIS data
 
