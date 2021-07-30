@@ -1,17 +1,9 @@
----
-title: "Data Analysis and Figures"
-output: github_document
-editor_options: 
-  chunk_output_type: console
----
+Data Analysis and Figures
+================
 
-```{r setup, include=FALSE}
-library(knitr)
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-```
+### Functions load
 
-### Functions load 
-```{r}
+``` r
 library(tidyverse) # Data load/manipulation and graphics build
 library(RColorBrewer) # Color Palettes
 library(lubridate) # Day/Time Manipulation
@@ -20,20 +12,44 @@ library(png) # Import `png` images
 ```
 
 ### Data Load
-```{r}
+
+``` r
 data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
 glimpse(data_oan)
 ```
 
-Define de row names that belongs to ID of data like: `date`, `site`, `river`...
+    ## Rows: 1,473
+    ## Columns: 19
+    ## $ date                                  <date> 2008-01-08, 2008-01-09, 2008-01…
+    ## $ date_time                             <dttm> 2008-01-08, 2008-01-09, 2008-01…
+    ## $ estacion                              <chr> "RC60", "RC35", "RC40", "RC35", …
+    ## $ river                                 <chr> "Cuareim", "Cuareim", "Cuareim",…
+    ## $ data_model                            <chr> "Test", "Test", "Test", "Test", …
+    ## $ alcalinidad_total_mg_ca_co3_l         <dbl> 84, 80, 79, 85, 110, 110, 68, 29…
+    ## $ clorofila_a_mg_l                      <dbl> NA, NA, NA, NA, NA, NA, NA, NA, …
+    ## $ conductividad_m_s_cm                  <dbl> 193.5, 154.7, 155.8, 185.0, 241.…
+    ## $ fosfato_ortofosfato_mg_po4_p_l        <dbl> NA, NA, NA, NA, 41, NA, NA, NA, …
+    ## $ fosforo_total_mg_p_l                  <dbl> NA, 42, 5, NA, 12, 51, 38, 34, 4…
+    ## $ ion_nitrito_mg_no2_n_l                <dbl> 0.096, NA, NA, 0.007, NA, NA, 0.…
+    ## $ nitrato_mg_no3_n_l                    <dbl> 0.900, NA, 0.067, 0.310, 0.290, …
+    ## $ nitrogeno_amoniacal_amonio_mg_nh4_n_l <dbl> 0.110, NA, 0.190, 0.049, 0.028, …
+    ## $ nitrogeno_total_mg_n_l                <dbl> 5.70, NA, NA, 0.65, 0.80, 0.73, …
+    ## $ oxigeno_disuelto_mg_l                 <dbl> 8.05, 7.30, 5.94, 7.24, 5.39, 7.…
+    ## $ potencial_de_hidrogeno_p_h_sin_unid   <dbl> 7.10, 6.71, 6.27, 8.22, 7.85, 7.…
+    ## $ solidos_suspendidos_totales_mg_l      <dbl> 16, 23, 120, NA, NA, 16, NA, NA,…
+    ## $ temperatura_o_c                       <dbl> 30.9, 32.0, 32.2, 28.0, 28.7, 28…
+    ## $ turbidez_ntu                          <dbl> 3.1, 3.0, 37.0, 3.8, 5.1, 6.4, 1…
 
-```{r}
+Define de row names that belongs to ID of data like: `date`, `site`,
+`river`…
+
+``` r
 id_vars <- c("date","date_time", "estacion","river","data_model")
-
 ```
 
 # Rename Variables for easy coding
-```{r}
+
+``` r
 data_oan <- data_oan %>% 
   rename(chla = "clorofila_a_mg_l",
          alk = "alcalinidad_total_mg_ca_co3_l",
@@ -51,10 +67,9 @@ data_oan <- data_oan %>%
          ntu = "turbidez_ntu")
 ```
 
-
 Identify Variables used only in BC2021
 
-```{r}
+``` r
 bc_vars <- c(
   "chla",
   "alk",
@@ -65,71 +80,102 @@ bc_vars <- c(
   "temp")
 ```
 
+### 99.5 percentile limits for Chl-a ————-
 
-### 99.5 percentile limits for Chl-a -------------
-What happend if `chla` was calculated for each river?. How many values should be eliminated?
+What happend if `chla` was calculated for each river?. How many values
+should be eliminated?
 
-```{r}
+``` r
 #Function that calcultaes the number of elements that exceed 99.5 limit
   q99.5_exceed <- function (x){
     q <- quantile(x, probs = c(0.95), na.rm =T)
   sum(x > q, na.rm = T)
     }
-
 ```
 
-Group by River and calculate the number of data exceeds 99.5 for each variable
+Group by River and calculate the number of data exceeds 99.5 for each
+variable
 
-```{r}
+``` r
 data_oan %>% group_by(river)  %>% 
 summarize(across(where(is.numeric), q99.5_exceed)) %>% 
   kable()
 ```
 
-  
+| river       | alk | chla | cond | po4 | tot\_phos | no2 | no3 | nh4 | tot\_nit |  o2 |  pH | tss | temp | ntu |
+|:------------|----:|-----:|-----:|----:|----------:|----:|----:|----:|---------:|----:|----:|----:|-----:|----:|
+| Cuareim     |  13 |    9 |   15 |   8 |        14 |   3 |  12 |   8 |       14 |  14 |  15 |  10 |   14 |  14 |
+| Negro       |  26 |   19 |   28 |  26 |        27 |   3 |  23 |  14 |       27 |  28 |  28 |  12 |   27 |   4 |
+| SanSalvador |   8 |    7 |    9 |   0 |         7 |   3 |   2 |   1 |        5 |   8 |   9 |   5 |    9 |   9 |
+| Tacuarembo  |   3 |    1 |    3 |   3 |         3 |   2 |   3 |   3 |        3 |   3 |   3 |   2 |    3 |   2 |
+| Uruguay     |  19 |   14 |   20 |  18 |        18 |  15 |  18 |  15 |       18 |  18 |  19 |  17 |   19 |  16 |
+
 Values limits for chla by river
-```{r}
+
+``` r
 data_oan %>% group_by(river) %>% 
   dplyr::select(date, estacion, chla, river) %>% 
   summarise(chla_99.5 = quantile(chla, probs = c(0.995), na.rm = T)) %>% kable()
-
 ```
- 
-We need to assume that BC2021 Calculated the 99.5 limit using Negro and Uruguay together. 
-Lets see how many data exceed this criteria
-```{r}
+
+| river       | chla\_99.5 |
+|:------------|-----------:|
+| Cuareim     |    21.3375 |
+| Negro       |   181.4050 |
+| SanSalvador |    50.7410 |
+| Tacuarembo  |    20.9550 |
+| Uruguay     |    19.9590 |
+
+We need to assume that BC2021 Calculated the 99.5 limit using Negro and
+Uruguay together. Lets see how many data exceed this criteria
+
+``` r
 data_oan %>% 
   filter(river %in% c("Negro","Uruguay")) %>% 
   filter(chla >= quantile(chla, probs = c(0.995), na.rm = T)) %>%
   dplyr::select(date, estacion, chla) %>% kable()
 ```
-* Looks similar that they did, but with this criteria the RN12 (2018-04-17) does not get excluded
+
+| date       | estacion |  chla |
+|:-----------|:---------|------:|
+| 2012-01-19 | RN5      |  72.5 |
+| 2012-08-15 | RN6      | 179.0 |
+| 2012-12-05 | RN3      | 276.0 |
+| 2012-12-06 | RN5      | 192.0 |
+
+-   Looks similar that they did, but with this criteria the RN12
+    (2018-04-17) does not get excluded
 
 ### Lets calculate de Q99.5 for any numeric variable
-```{r}
+
+``` r
 # Function that returns de value of Q99.5  
 q_calc<- function(x) {
  q <- quantile(x, probs = c(0.995), names = F,na.rm = T)
 }
-
 ```
 
-Apply de q_calc for each numeric column from Negro and Uruguay rivers
+Apply de q\_calc for each numeric column from Negro and Uruguay rivers
 
-```{r}
+``` r
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
     dplyr::select(all_of(bc_vars)) %>% 
   summarise( across(where(is.numeric), q_calc)) %>% 
   kable()
-
 ```
-  
-### Substitute all values that exceed 99.5 and replace by NA
- * For Each variable in  `Negro` and `Uruguay` together (for similarity with the BC2021 procedure)
- * For `Cuareim` this is done alone
 
-```{r}
+|   chla | alk |    cond | tot\_phos |   tss |     pH |    temp |
+|-------:|----:|--------:|----------:|------:|-------:|--------:|
+| 70.225 | 100 | 202.908 |    326.25 | 81.27 | 8.8925 | 29.7375 |
+
+### Substitute all values that exceed 99.5 and replace by NA
+
+-   For Each variable in `Negro` and `Uruguay` together (for similarity
+    with the BC2021 procedure)
+-   For `Cuareim` this is done alone
+
+``` r
 # Function that replace a values with NaN if it exceed 99.5 limit
 
 q99.5_remove <- function(x){
@@ -150,14 +196,15 @@ data_cut_C <- data_oan %>%
 
 bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) %>% 
   dplyr::select(all_of(c(id_vars,bc_vars)))
-
 ```
 
-## chla vs environment  
+## chla vs environment
+
 ### Figure 3 from BC 2021 recreation
 
 Store the maximum values for X axes according to BC2021(Figure 3)
-```{r}
+
+``` r
 plot_x_limits <- tribble(
   ~name, ~lmin, ~lmax,
   "alk", 0, 150,
@@ -167,13 +214,12 @@ plot_x_limits <- tribble(
   "tss", 0, 600,
   "temp", 0 , 40
 )
-
 ```
 
+Generate de data frame to make one plot for each variable. With a
+data-list each var transform into single data frame to make the plot
 
-Generate de data frame to make one plot for each variable. With a data-list each var transform into single data frame to make the plot
-
-```{r}
+``` r
 data_fig3 <- bc_data_limit %>% 
   filter (river != "Cuareim") %>% 
   dplyr::select(!all_of(id_vars)) %>% 
@@ -186,8 +232,7 @@ data_fig3 <- data_fig3 %>%
   left_join(plot_x_limits, id = "name")
 ```
 
-
-```{r}
+``` r
 # Function that generates a plot for any numerical variable vs chla
 # Set x axes range according to the same as BC2021
 fig3_function_plot <- function (data, lmin,lmax,xlab) {
@@ -210,11 +255,11 @@ data_fig3 <- data_fig3 %>%
 # Extract only plots information
 plots3<- data_fig3 %>%  ungroup() %>% 
   dplyr::select(plot) 
-
 ```
 
 Extract each plot for label variables adequately
-```{r}
+
+``` r
 fig3_alk <- plots3[[1]][[1]] +
   labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
 
@@ -232,11 +277,11 @@ fig3_ph <- plots3[[1]][[5]] +
 
 fig3_ta <- plots3[[1]][[6]] +
   labs(x = expression(paste("T (", degree,"C)")) ) 
-
 ```
 
 ### Load all panel figures copied from BC2021 that are saved each one ina differente `.png` file
-```{r}
+
+``` r
 # Special case functions for import png figure and combine with ours
 library(png) # To upload png images obtained from BC2021
 library(grid) # Convert PNG to Grob
@@ -315,12 +360,11 @@ figure3f <- ggdraw(fig3_ta + theme_half_open(12)) +
     c(1, 0.95),
     size = 12
   )
-
 ```
 
-### Plot figure 3 
+### Plot figure 3
 
-```{r, fig.cap = "Biplots of Chl-a versus all environmental variables: a: alkalinity, b: EC, c: total phosphorous, d: pH, e:total suspended solids, f: temperature. In all comparative cases, the graphs redrawn from BC2021 are show to the left (letters) and our graphs to the right (prime-letters). To facilitate the visual comparison between Figure 3 of BC2021 and this paper, the axes (x and y) of the biplots are drawn with the same scaling. Note that this procedure leaves out 58 pH values in our plot (d´) but incudes the Chl-a value of 55 µg L-1 that BC2021 considered to as an outlier, which is not an outlier according to the analysis presented by us."}
+``` r
 plot_grid(fig3a, fig3_alk,
                            fig3b, fig3_ec,
                            fig3c, fig3_tp,
@@ -338,13 +382,24 @@ plot_grid(fig3a, fig3_alk,
                            label_fontfamily = "times")
 ```
 
-
+![Biplots of Chl-a versus all environmental variables: a: alkalinity, b:
+EC, c: total phosphorous, d: pH, e:total suspended solids, f:
+temperature. In all comparative cases, the graphs redrawn from BC2021
+are show to the left (letters) and our graphs to the right
+(prime-letters). To facilitate the visual comparison between Figure 3 of
+BC2021 and this paper, the axes (x and y) of the biplots are drawn with
+the same scaling. Note that this procedure leaves out 58 pH values in
+our plot (d´) but incudes the Chl-a value of 55 µg L-1 that BC2021
+considered to as an outlier, which is not an outlier according to the
+analysis presented by
+us.](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-18-1.png)
 
 ### Differences within rivers used for train model (Negro and Uruguay)
 
-Generate de data frame to plot the variables for each river. With a data-list each var transform into single data frame to make the plot
+Generate de data frame to plot the variables for each river. With a
+data-list each var transform into single data frame to make the plot
 
-```{r}
+``` r
 diff_rivers_data <- bc_data_limit %>% 
   pivot_longer (!all_of(id_vars)) %>% 
   mutate (river_label = fct_recode(river,
@@ -377,12 +432,11 @@ fig4_rivers <- diff_rivers_data %>%
 # Extract only plots information
 plots4<-fig4_rivers %>%  ungroup() %>% 
   dplyr::select(plots) 
-
 ```
 
 Extract each plot for label variables adequately
 
-```{r}
+``` r
 fig4_chla <- plots4[[1]][[1]] +
   labs(y =  expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) )
 
@@ -407,18 +461,28 @@ fig4_ta <- plots4[[1]][[7]] +
   labs(y = expression(paste("T (", degree,"C)")) )
 ```
 
-
 Plot figure 4
-```{r, fig.cap = "Violin plots for environmental variables for Negro River (NR, green), Uruguay River (UR, violet) and Cuareim River (CR, orange) respectively. NR and UR data were used to train the model and data from CR to test model performance. UR and NR exhibit significant differences (p-values < 0.05) in mean and variance for all environmental variables, except for temperature variance. The full description of statistical test is shown in Table S4 of Supplementary Material. Note that the Cuareim River was subject to the same outlier removal procedure as explained in section 1c of the methodology"}
+
+``` r
 wrap_plots(fig4_chla, fig4_alk,fig4_ec,
                       fig4_tp,fig4_sst,fig4_ph,
                       fig4_ta, ncol = 2)
-
 ```
 
-### Generalized Least Squares (GLS) for river comparision 
+![Violin plots for environmental variables for Negro River (NR, green),
+Uruguay River (UR, violet) and Cuareim River (CR, orange) respectively.
+NR and UR data were used to train the model and data from CR to test
+model performance. UR and NR exhibit significant differences (p-values
+&lt; 0.05) in mean and variance for all environmental variables, except
+for temperature variance. The full description of statistical test is
+shown in Table S4 of Supplementary Material. Note that the Cuareim River
+was subject to the same outlier removal procedure as explained in
+section 1c of the
+methodology](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-21-1.png)
 
-```{r}
+### Generalized Least Squares (GLS) for river comparision
+
+``` r
 #This GLS function allows for compare differences between mean and variances
 library(nlme)
 gls.var.test<-function(data){
@@ -435,13 +499,12 @@ gls.var.test<-function(data){
   gls_data <- data.frame(VarTest=anova(modHeteroVar,modHomoVar)$`p-value`[2],
                          MeanTest=anova(modEqualMean,modHeteroVar)$`p-value`[2]) # Evaluar el loglikelyhood ratio test. p>0.01
 }
-
 ```
 
-Generate the data frame necessary for compare variables between rivers, run the gls and extact information to a table
+Generate the data frame necessary for compare variables between rivers,
+run the gls and extact information to a table
 
-
-```{r}
+``` r
  diff_rivers_data %>% 
   unnest(cols = data) %>% 
   filter (river != "Cuareim") %>% 
@@ -455,5 +518,14 @@ mutate (group = factor(group) )%>%
           MeanTest = ifelse( MeanTest <= 0.05, "p<0.05","n.s")) %>% 
   dplyr::select(name,VarTest, MeanTest) %>% 
   kable()
-
 ```
+
+| name      | VarTest   | MeanTest  |
+|:----------|:----------|:----------|
+| chla      | p&lt;0.05 | p&lt;0.05 |
+| alk       | p&lt;0.05 | p&lt;0.05 |
+| cond      | p&lt;0.05 | p&lt;0.05 |
+| tot\_phos | n.s       | p&lt;0.05 |
+| tss       | p&lt;0.05 | p&lt;0.05 |
+| pH        | p&lt;0.05 | p&lt;0.05 |
+| temp      | n.s       | p&lt;0.05 |
