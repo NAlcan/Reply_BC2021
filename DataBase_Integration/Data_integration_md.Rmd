@@ -181,7 +181,7 @@ bc_tidy <- oan_BC %>% dplyr::select(all_of(id_vars)) %>%
 ### Take a look at data frame
 
 ```{r}
-glimpse(bc_tidy) %>% kable()
+glimpse(bc_tidy)
 ```
 
 ### What about NA values now?
@@ -189,7 +189,7 @@ Is there an entire row with all numeric variable with NA values?
 ```{r}
 bc_tidy %>% dplyr::select(where(is.numeric)) %>% 
     filter(if_all(is.numeric, is.na)) %>% 
-  count() %>% 
+  count() %>% rename (`NA Count` = "n") %>% 
   kable()
 ```
 
