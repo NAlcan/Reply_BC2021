@@ -1,4 +1,4 @@
-# Function load -----------------------------------------------------
+# Functions load -----------------------------------------------------
 library(tidyverse) # Data load/manipulation and graphics build
 library(RColorBrewer) # Color Palettes
 library(lubridate) # Day/Time Manipulation
@@ -18,7 +18,7 @@ data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
 
 id_vars <- c("date","date_time", "estacion","river","data_model")
 
-# Rename Variables according to BC2021
+# Rename Variables for easy coding
 
 data_oan <- data_oan %>% 
   rename(chla = "clorofila_a_mg_l",
@@ -86,7 +86,7 @@ q_calc<- function(x) {
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
     dplyr::select(all_of(bc_vars)) %>% 
-  summarise( across(is.numeric, q_calc))
+  summarise( across(where(is.numeric), q_calc))
     
 
 # Will substitute all values that exceed 99.5 and replace by NA
