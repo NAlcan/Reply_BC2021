@@ -1,0 +1,92 @@
+---
+title: "Sites Spatail Data"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+#### Packages
+
+```{r}
+library(readxl) # to read xls files
+library(tidyverse) # Data load/manipulation and graphics build
+library(janitor)# Data headers make clean
+library(lubridate) # Day/Time Manipulation
+library(snakecase) # Factor levels and names manipulation
+
+```
+
+### Site Coordinates table
+
+```{r}
+sites <- read_excel("2.Datos/gis_data/sites_references.xls",
+                     .name_repair = make_clean_names) %>% 
+  mutate(
+    programa = to_snake_case(programa),
+    nombre_punto = to_snake_case (estacion),
+    .keep= "unused")
+```
+
+
+Delete station from the bottom idetified by and `F` and the code end label
+```{r}
+ sites <- sites %>% filter(!str_detect(codigo_estacion,"F"))
+
+```
+ 
+Also load  OAN Database, to match stations and calculte freqeuncy and dates
+```{r}
+oan_data <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
+
+```
+
+Filter by data points from oan data, generate the varyble type and arrange by `latitude`
+
+```{r}
+ sites_reply <- sites %>% 
+  filter(codigo_estacion %in% oan_data$estacion) %>% 
+     mutate(type = ifelse(str_detect(codigo_estacion, c("RN","RU")), "train", 
+                       ifelse( str_detect(codigo_estacion, "RC"),"test","not_used"))) %>%
+  arrange(latitud, .desc = TRUE)
+
+# Save to add points into map
+#write_csv(sites_reply, file = "2.Datos/gis_data/coordenadas_sitios.csv")
+```
+
+
+### Sampling stations data
+
+ Calculates n data per site and starting end dates
+
+```{r}
+sites_oan_data <- oan_data %>% 
+   group_by(estacion) %>% 
+   summarize ( N_Station = length(estacion),
+               Start_Date = min(date),
+               End_Date = max(date)) %>% 
+   rename (Sampling_Point = "estacion")
+
+```
+
+#### Table A1: Sampling station
+```{r}
+sites_reply %>% 
+   rename (Sampling_Point = "codigo_estacion",
+           Latitude = "latitud",
+           Longitude = "longitud") %>% 
+    mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC","RU","SSS")), "Uruguay","Negro")) %>% 
+     full_join(sites_oan_data, by = "Sampling_Point") %>% 
+      dplyr::select(Basin,Sampling_Point,Latitude,Longitude,type,N_Station,Start_Date,End_Date) %>% 
+  kable()
+
+```
+ 
+```{r}
+sessionInfo()
+```
+ 
+ 
