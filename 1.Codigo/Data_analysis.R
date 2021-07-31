@@ -10,7 +10,7 @@ theme_set(theme_minimal()) #  Graphic theme used for visualizations
 
 # Data Load ---------------------------------------------------------------
 
-data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
+data_oan <- read_csv("2.Datos/working_data/bc2021_data.csv")
 
 # glimpse(data_oan)
 
@@ -27,58 +27,37 @@ data_oan <- data_oan %>%
          tot_phos = "fosforo_total_mg_p_l",
          tss = "solidos_suspendidos_totales_mg_l",
          pH = "potencial_de_hidrogeno_p_h_sin_unid",
-         temp = "temperatura_o_c",
-         po4 = "fosfato_ortofosfato_mg_po4_p_l",
-         no2 = "ion_nitrito_mg_no2_n_l",
-         no3 = "nitrato_mg_no3_n_l",
-         nh4 = "nitrogeno_amoniacal_amonio_mg_nh4_n_l",
-         tot_nit = "nitrogeno_total_mg_n_l",
-         o2 = "oxigeno_disuelto_mg_l",
-         ntu = "turbidez_ntu")
-
-
-# Variables used only in BC2021
-
-bc_vars <- c(
-  "chla",
-  "alk",
-  "cond",
-  "tot_phos",
-  "tss",
-  "pH",
-  "temp")
+         temp = "temperatura_o_c")
 
 # 99.5 percentile of Chl-a -------------
-# First assume that it was calculated for each river
-# How many `chla` values are eliminated if one value for each river
+# We Assume that BC2021 Calculated the 99.5 limit using Negro and Uruguay together
+# Lets see how many data exceed with this criteria
 
-# Function that calcultaes the number of elements that exceed 99.5 limit
-  q99.5_exceed <- function (x){
-    q <- quantile(x, probs = c(0.995), na.rm =T)
+data_oan %>% 
+  filter(river %in% c("Negro","Uruguay")) %>% 
+  filter(chla >= quantile(chla, probs = c(0.995), na.rm = T)) %>%
+  dplyr::select(date, estacion, chla)
+# Looks similar that they did, but with this criteria the RN12 for 2018-04-17 gets not excluded
+
+# Function that calculates the number of elements that exceed 99.5 limit
+q99.5_exceed <- function (x){
+  q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
-    }
+}
+
+
+# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+  summarize(across(where(is.numeric), q99.5_exceed)) 
 
 # Group by River and calculate the number of data exceeds 99.5 for each variable
 data_oan %>% group_by(river)  %>% 
 summarize(across(where(is.numeric), q99.5_exceed)) 
   
 # Q99.5 limit values for chla by river
- data_oan %>% group_by(river) %>% 
+data_oan %>% group_by(river) %>% 
   dplyr::select(date, estacion, chla, river) %>% 
-  summarise(p99.5 = quantile(chla, probs = c(0.995), na.rm = T))
-
-# Number of data exceeds 99.5 for each variable in Uruguay and Negro
- data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
-   summarize(across(where(is.numeric), q99.5_exceed)) 
- 
-# I Assume that BC2021 Calculated the 99.5 limit using Negro and Uruguay together
- # Lets see how many data exceed with this criteria
-
-  data_oan %>% 
-  filter(river %in% c("Negro","Uruguay")) %>% 
-  filter(chla >= quantile(chla, probs = c(0.995), na.rm = T)) %>%
-  dplyr::select(date, estacion, chla)
-# Looks similar that they did, but with this criteria the RN12 for 2018-04-17 gets not excluded
+  summarise(Chla_q99.5 = quantile(chla, probs = c(0.995), na.rm = T))
 
 # Function that returns de value of Q99.5  
 q_calc<- function(x) {
@@ -89,13 +68,78 @@ q_calc<- function(x) {
   
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
-    dplyr::select(all_of(bc_vars)) %>% 
   summarise( across(where(is.numeric), q_calc))
-    
+
+
+# Chla vs All all values  ---------------------------------------------------
+# Generate de data frame to make one plot for each variable
+# With a data-list each var transform into single data frame to make the plot
+
+chla_allvalues <- data_oan %>%
+  filter (river %in% c("Negro", "Uruguay")) %>% 
+    pivot_longer(
+    cols = !c(all_of(id_vars), chla)) %>% 
+  group_by(name) %>% 
+  nest()
+
+# Function that make a plot for each variable 
+figa1_func <- function (data) { 
+  # Define de q99.5 limit  
+q <- quantile(data$value, probs = c(0.995), names = F,na.rm = T)
+  data %>% 
+    mutate(extra = ifelse(value > q, "1","0") ) %>% 
+  ggplot(aes(x = value , y = chla, fill = extra)) +
+    geom_point(alpha = 0.8, size = 1.5, pch = 21) +
+    scale_y_continuous(limits = c(0,60)) +
+    scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+    labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
+    theme(axis.title.y = element_text(size = 8)) +
+    guides (fill = "none")
+         }
+# Apply figa1_function for each variable
+
+data_chla_all <- chla_allvalues %>% 
+  mutate(plots = map(data, figa1_func)) 
+
+# Extract the plots information obly 
+chla_plots<- data_chla_all %>%  ungroup() %>% 
+  dplyr::select(plots) 
+
+# Extract each plot for label variables adequately
+
+figa1_alk <- chla_plots[[1]][[1]] +
+  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
+
+figa1_ec <- chla_plots[[1]][[2]] +
+  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
+
+figa1_tp <- chla_plots[[1]][[3]] +
+  labs(x = expression(paste("Total Phosphorus (", mu,"g L"^-1,")")) )
+
+figa1_sst <- chla_plots[[1]][[4]] +
+  labs(x = expression(paste("Total Suspended Solids ( mg L"^-1,")")) ) 
+
+figa1_ph <- chla_plots[[1]][[5]] +
+  labs(x = "pH" )
+
+figa1_ta <- chla_plots[[1]][[6]] +
+  labs(x = expression(paste("T (", degree,"C)")) ) 
+
+
+fig_A1 <- wrap_plots( figa1_alk,figa1_ec,
+                     figa1_tp,figa1_sst,figa1_ph,
+                     figa1_ta, ncol = 2) +
+  plot_annotation(tag_levels = 'a') &
+  theme(plot.tag.position = c(0, 1),
+        plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
+
+ggsave(fig_A1, filename = "3.Resultados/FigureA1.tiff",
+       dpi = "print",
+       height =5.94  , width = 8.35)
 
 # Will substitute all values that exceed 99.5 and replace by NA
-  # For Each variable in  Negro and Uruguay together (for similarity with the BC2021 procedure)
-# And for cuareim alone
+# For Each variable in  Negro and Uruguay together (for similarity with the BC2021 procedure)
+#  And for Cuareim alone
 
 # Function that replace a values with NaN if it exceed 99.5 limit
 q99.5_remove <- function(x){
@@ -113,13 +157,11 @@ data_cut_C <- data_oan %>%
   filter (river == "Cuareim") %>% 
   mutate(across(where(is.numeric), q99.5_remove))
 
-bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) %>% 
-  dplyr::select(all_of(c(id_vars,bc_vars)))
-
+bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) 
 
 # chla vs environment  -----------------------------------------------------
-# Figure 3 from BC 2021 recreation
 
+# Figure 3 from BC 2021 recreation
 # Maximum values for X axes according to BC2021(Figure 3)
 plot_x_limits <- tribble(
   ~name, ~lmin, ~lmax,
@@ -132,7 +174,6 @@ plot_x_limits <- tribble(
 )
 
 # Generate de data frame to make one plot for each variable
-# With a data-list each var transform into single data frame to make the plot
 data_fig3 <- bc_data_limit %>% 
   filter (river != "Cuareim") %>% 
   dplyr::select(!all_of(id_vars)) %>% 

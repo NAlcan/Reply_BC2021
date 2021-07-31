@@ -55,59 +55,7 @@ data_oan <- data_oan %>%
 
 ### 99.5 percentile limits for Chl-a
 
-What happens if `chla` was calculated for each river?. How many values
-should be eliminated?
-
-``` r
-#Function that calcultaes the number of elements that exceed 99.5 limit
-  q99.5_exceed <- function (x){
-    q <- quantile(x, probs = c(0.995), na.rm =T)
-  sum(x > q, na.rm = T)
-    }
-```
-
-Group by River and calculate the number of data exceeds 99.5 for each
-variable
-
-``` r
-data_oan %>% group_by(river)  %>% 
-summarize(across(where(is.numeric), q99.5_exceed)) %>% 
-  kable()
-```
-
-| river   | chla | alk | cond | tot\_phos | tss |  pH | temp |
-|:--------|-----:|----:|-----:|----------:|----:|----:|-----:|
-| Cuareim |    1 |   1 |    2 |         2 |   1 |   1 |    2 |
-| Negro   |    2 |   3 |    3 |         3 |   2 |   3 |    3 |
-| Uruguay |    2 |   2 |    2 |         2 |   2 |   1 |    1 |
-
-# Number of data exceeds 99.5 for each variable in Uruguay and Negro
-
-``` r
- data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
-   summarize(across(where(is.numeric), q99.5_exceed)) %>% 
-  kable()
-```
-
-| chla | alk | cond | tot\_phos | tss |  pH | temp |
-|-----:|----:|-----:|----------:|----:|----:|-----:|
-|    4 |   3 |    5 |         5 |   3 |   5 |    5 |
-
-Values limits for chla by river
-
-``` r
-data_oan %>% group_by(river) %>% 
-  dplyr::select(date, estacion, chla, river) %>% 
-  summarise(chla_99.5 = quantile(chla, probs = c(0.995), na.rm = T)) %>% kable()
-```
-
-| river   | chla\_99.5 |
-|:--------|-----------:|
-| Cuareim |    21.3375 |
-| Negro   |   181.4050 |
-| Uruguay |    19.9590 |
-
-### BC2021 outliers removed
+#### BC2021 outliers removed
 
 We need to assume that BC2021 Calculated the 99.5 limit using Negro and
 Uruguay together. Lets see how many data exceed this criteria
@@ -127,7 +75,57 @@ data_oan %>%
 | 2012-12-06 | RN5      | 192.0 |
 
 -   Looks similar that they did, but with this criteria the RN12
-    (2018-04-17) does not get excluded
+    (2018-04-17) does not get excluded What happens if `chla` was
+    calculated for each river?. How many values should be eliminated?
+
+``` r
+#Function that calcultaes the number of elements that exceed 99.5 limit
+  q99.5_exceed <- function (x){
+    q <- quantile(x, probs = c(0.995), na.rm =T)
+  sum(x > q, na.rm = T)
+    }
+```
+
+# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+
+``` r
+ data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+   summarize(across(where(is.numeric), q99.5_exceed)) %>% 
+  kable()
+```
+
+| chla | alk | cond | tot\_phos | tss |  pH | temp |
+|-----:|----:|-----:|----------:|----:|----:|-----:|
+|    4 |   3 |    5 |         5 |   3 |   5 |    5 |
+
+Group by River and calculate the number of data exceeds 99.5 for each
+variable
+
+``` r
+data_oan %>% group_by(river)  %>% 
+summarize(across(where(is.numeric), q99.5_exceed)) %>% 
+  kable()
+```
+
+| river   | chla | alk | cond | tot\_phos | tss |  pH | temp |
+|:--------|-----:|----:|-----:|----------:|----:|----:|-----:|
+| Cuareim |    1 |   1 |    2 |         2 |   1 |   1 |    2 |
+| Negro   |    2 |   3 |    3 |         3 |   2 |   3 |    3 |
+| Uruguay |    2 |   2 |    2 |         2 |   2 |   1 |    1 |
+
+Q99.5 values for chla by river
+
+``` r
+data_oan %>% group_by(river) %>% 
+  dplyr::select(date, estacion, chla, river) %>% 
+  summarise(chla_99.5 = quantile(chla, probs = c(0.995), na.rm = T)) %>% kable()
+```
+
+| river   | chla\_99.5 |
+|:--------|-----------:|
+| Cuareim |    21.3375 |
+| Negro   |   181.4050 |
+| Uruguay |    19.9590 |
 
 ### Lets calculate de Q99.5 for any numeric variable
 
@@ -143,14 +141,78 @@ Apply de q\_calc for each numeric column from Negro and Uruguay rivers
 ``` r
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
-    #dplyr::select(all_of(bc_vars)) %>% 
-  summarise( across(where(is.numeric), q_calc)) %>% 
+    summarise( across(where(is.numeric), q_calc)) %>% 
   kable()
 ```
 
 |   chla | alk |   cond | tot\_phos |    tss |      pH |   temp |
 |-------:|----:|-------:|----------:|-------:|--------:|-------:|
 | 70.225 | 100 | 214.57 |    279.65 | 81.855 | 8.92225 | 29.794 |
+
+### Chla vs All all values
+
+``` r
+# Generate de data frame to make one plot for each variable
+# With a data-list each var transform into single data frame to make the plot
+chla_allvalues <- data_oan %>%
+  filter (river %in% c("Negro", "Uruguay")) %>% 
+    pivot_longer(
+    cols = !c(all_of(id_vars), chla)) %>% 
+  group_by(name) %>% 
+  nest()
+
+# Function that make a plot for each variable 
+figa1_func <- function (data) { 
+  # Define de q99.5 limit  
+q <- quantile(data$value, probs = c(0.995), names = F,na.rm = T)
+  data %>% 
+    mutate(extra = ifelse(value > q, "1","0") ) %>% 
+  ggplot(aes(x = value , y = chla, fill = extra)) +
+    geom_point(alpha = 0.8, size = 1.5, pch = 21) +
+    scale_y_continuous(limits = c(0,60)) +
+    scale_fill_manual(na.translate = FALSE , values = c("#984ea3", "#66a61e")) +
+    labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
+    theme(axis.title.y = element_text(size = 8)) +
+    guides (fill = "none")
+         }
+# Apply figa1_function for each variable
+
+data_chla_all <- chla_allvalues %>% 
+  mutate(plots = map(data, figa1_func)) 
+
+# Extract the plots information obly 
+chla_plots<- data_chla_all %>%  ungroup() %>% 
+  dplyr::select(plots) 
+
+# Extract each plot for label variables adequately
+
+figa1_alk <- chla_plots[[1]][[1]] +
+  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
+
+figa1_ec <- chla_plots[[1]][[2]] +
+  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
+
+figa1_tp <- chla_plots[[1]][[3]] +
+  labs(x = expression(paste("Total Phosphorus (", mu,"g L"^-1,")")) )
+
+figa1_sst <- chla_plots[[1]][[4]] +
+  labs(x = expression(paste("Total Suspended Solids ( mg L"^-1,")")) ) 
+
+figa1_ph <- chla_plots[[1]][[5]] +
+  labs(x = "pH" )
+
+figa1_ta <- chla_plots[[1]][[6]] +
+  labs(x = expression(paste("T (", degree,"C)")) ) 
+
+wrap_plots( figa1_alk,figa1_ec,
+                     figa1_tp,figa1_sst,figa1_ph,
+                     figa1_ta, ncol = 2) +
+  plot_annotation(tag_levels = 'a') &
+  theme(plot.tag.position = c(0, 1),
+        plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
+```
+
+![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Substitute all values that exceed 99.5 and replace by NA
 
