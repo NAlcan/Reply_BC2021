@@ -148,7 +148,7 @@ bc_tidy %>%
   count()
 
 # Database with all rivers and extra variables than used in BC2021
-#write_csv(bc_tidy, file = "2.Datos/working_data/OAN_complet_data.csv")
+write_csv(bc_tidy, file = "2.Datos/working_data/OAN_complet_data.csv")
 
 # Same database as BC 2021
 
@@ -156,7 +156,7 @@ bc2021 <- bc_tidy %>%
   dplyr::select(all_of(c(bc_vars, id_vars))) %>%
   filter (data_model != "NotUsed")
 
-#write_csv(bc2021, file = "2.Datos/working_data/bc2021_data.csv")
+write_csv(bc2021, file = "2.Datos/working_data/bc2021_data.csv")
 
 # How many data per river considering only BC2021 Variables
 bc2021 %>%
