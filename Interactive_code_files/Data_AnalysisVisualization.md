@@ -80,9 +80,9 @@ bc_vars <- c(
   "temp")
 ```
 
-### 99.5 percentile limits for Chl-a ————-
+### 99.5 percentile limits for Chl-a
 
-What happend if `chla` was calculated for each river?. How many values
+What happens if `chla` was calculated for each river?. How many values
 should be eliminated?
 
 ``` r

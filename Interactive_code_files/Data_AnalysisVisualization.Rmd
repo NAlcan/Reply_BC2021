@@ -67,7 +67,7 @@ bc_vars <- c(
 
 
 ### 99.5 percentile limits for Chl-a
-What happend if `chla` was calculated for each river?. How many values should be eliminated?
+What happens if `chla` was calculated for each river?. How many values should be eliminated?
 
 ```{r}
 #Function that calcultaes the number of elements that exceed 99.5 limit
