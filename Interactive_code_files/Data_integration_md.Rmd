@@ -246,3 +246,9 @@ bc2021 %>%
   count() %>% 
   kable()
 ```
+
+#### Session Info
+```{r}
+sessionInfo()
+```
+

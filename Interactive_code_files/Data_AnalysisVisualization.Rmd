@@ -509,3 +509,10 @@ mutate (group = factor(group) )%>%
   kable()
 
 ```
+
+#### Session info
+
+```{r}
+sessionInfo()
+```
+
