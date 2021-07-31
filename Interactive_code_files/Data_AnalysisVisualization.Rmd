@@ -164,7 +164,9 @@ figa1_ph <- chla_plots[[1]][[5]] +
 
 figa1_ta <- chla_plots[[1]][[6]] +
   labs(x = expression(paste("T (", degree,"C)")) ) 
+```
 
+```{r figureA1,fig.align= 'center', fig.retina=2, fig.width= 9.35, fig.height= 6.94 }
 wrap_plots( figa1_alk,figa1_ec,
                      figa1_tp,figa1_sst,figa1_ph,
                      figa1_ta, ncol = 2) +
@@ -173,6 +175,7 @@ wrap_plots( figa1_alk,figa1_ec,
         plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
 
 ```
+Figure 3 from BC2021 replicated with the outliers highlighted in green according our analysis (values higher than the 99.5% percentile.
 
 ### Substitute all values that exceed 99.5 and replace by NA
  * For Each variable in  `Negro` and `Uruguay` together (for similarity with the BC2021 procedure)

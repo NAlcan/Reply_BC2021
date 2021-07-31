@@ -203,7 +203,9 @@ figa1_ph <- chla_plots[[1]][[5]] +
 
 figa1_ta <- chla_plots[[1]][[6]] +
   labs(x = expression(paste("T (", degree,"C)")) ) 
+```
 
+``` r
 wrap_plots( figa1_alk,figa1_ec,
                      figa1_tp,figa1_sst,figa1_ph,
                      figa1_ta, ncol = 2) +
@@ -212,7 +214,9 @@ wrap_plots( figa1_alk,figa1_ec,
         plot.tag = element_text(size = 12, hjust = 0, vjust = 0))
 ```
 
-![](Data_AnalysisVisualization_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+<img src="Data_AnalysisVisualization_files/figure-gfm/figureA1-1.png" width="897.6" style="display: block; margin: auto;" />
+Figure 3 from BC2021 replicated with the outliers highlighted in green
+according our analysis (values higher than the 99.5% percentile.
 
 ### Substitute all values that exceed 99.5 and replace by NA
 
