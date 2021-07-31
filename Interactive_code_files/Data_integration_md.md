@@ -28,7 +28,7 @@ load and decompression
 Function to read several csv file. The columns are set to character by
 default because there special characters (like “&lt;LD”) Three new
 columns are generated \* river: stores `river` name from file name \*
-date\_time = parse old `fecha` to date/time object \* date = stroe only
+date\_time = parse old `fecha` to date/time object \* date = store only
 date from `date_time`
 
 ``` r
@@ -111,11 +111,11 @@ oan_BC <- oan_complet %>%
 
 ### Check if samples are from bottom.
 
-This is identified by an `f` at the end of the site code (`estacion`)
+This is identified by an `F` at the end of the site code (`estacion`)
 
 ``` r
 oan_BC %>% filter(str_detect(estacion, "F")) %>%
-  dplyr::select(estacion) %>% head() %>% kable()
+  dplyr::select(estacion) %>% unique() %>% kable()
 ```
 
 | estacion |
@@ -123,9 +123,12 @@ oan_BC %>% filter(str_detect(estacion, "F")) %>%
 | RN5F     |
 | RN9F     |
 | RN13F    |
-| RN5F     |
-| RN9F     |
-| RN13F    |
+| RU1F     |
+| RU3F     |
+| RU5F     |
+| RU7F     |
+| RU12F    |
+| RU15F    |
 
 ### Remove the 109 rows that contains data from bottom samples
 

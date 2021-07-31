@@ -79,10 +79,10 @@ oan_BC <- oan_complet %>%
 
 
 # Check if samples are from bottom.
-# This is identified by an `f` at the end of the site code (`estacion`)
+# This is identified by an `F` at the end of the site code (`estacion`)
 
 oan_BC %>% filter(str_detect(estacion, "F")) %>%
-  dplyr::select(estacion)
+  dplyr::select(estacion) %>% unique()
 
 # Remove the 109 rows that contains data from bottom samples
 oan_BC <- oan_BC %>%
