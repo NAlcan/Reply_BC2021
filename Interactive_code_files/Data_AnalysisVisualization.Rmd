@@ -21,7 +21,7 @@ library(png) # Import `png` images
 
 ### Data Load
 ```{r}
-data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
+data_oan <- read_csv("2.Datos/working_data/bc2021_data.csv")
 glimpse(data_oan)
 ```
 
@@ -41,28 +41,7 @@ data_oan <- data_oan %>%
          tot_phos = "fosforo_total_mg_p_l",
          tss = "solidos_suspendidos_totales_mg_l",
          pH = "potencial_de_hidrogeno_p_h_sin_unid",
-         temp = "temperatura_o_c",
-         po4 = "fosfato_ortofosfato_mg_po4_p_l",
-         no2 = "ion_nitrito_mg_no2_n_l",
-         no3 = "nitrato_mg_no3_n_l",
-         nh4 = "nitrogeno_amoniacal_amonio_mg_nh4_n_l",
-         tot_nit = "nitrogeno_total_mg_n_l",
-         o2 = "oxigeno_disuelto_mg_l",
-         ntu = "turbidez_ntu")
-```
-
-
-Identify Variables used only in BC2021
-
-```{r}
-bc_vars <- c(
-  "chla",
-  "alk",
-  "cond",
-  "tot_phos",
-  "tss",
-  "pH",
-  "temp")
+         temp = "temperatura_o_c")
 ```
 
 
@@ -72,7 +51,7 @@ What happens if `chla` was calculated for each river?. How many values should be
 ```{r}
 #Function that calcultaes the number of elements that exceed 99.5 limit
   q99.5_exceed <- function (x){
-    q <- quantile(x, probs = c(0.95), na.rm =T)
+    q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
     }
 
@@ -86,6 +65,13 @@ summarize(across(where(is.numeric), q99.5_exceed)) %>%
   kable()
 ```
 
+# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+
+```{r}
+ data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+   summarize(across(where(is.numeric), q99.5_exceed)) %>% 
+  kable()
+```
   
 Values limits for chla by river
 ```{r}
@@ -121,7 +107,7 @@ Apply de q_calc for each numeric column from Negro and Uruguay rivers
 ```{r}
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
-    dplyr::select(all_of(bc_vars)) %>% 
+    #dplyr::select(all_of(bc_vars)) %>% 
   summarise( across(where(is.numeric), q_calc)) %>% 
   kable()
 
@@ -150,8 +136,7 @@ data_cut_C <- data_oan %>%
   filter (river == "Cuareim") %>% 
   mutate(across(where(is.numeric), q99.5_remove))
 
-bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) %>% 
-  dplyr::select(all_of(c(id_vars,bc_vars)))
+bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) 
 
 ```
 

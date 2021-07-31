@@ -14,31 +14,24 @@ library(png) # Import `png` images
 ### Data Load
 
 ``` r
-data_oan <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
+data_oan <- read_csv("2.Datos/working_data/bc2021_data.csv")
 glimpse(data_oan)
 ```
 
-    ## Rows: 1,473
-    ## Columns: 19
-    ## $ date                                  <date> 2008-01-08, 2008-01-09, 2008-01…
-    ## $ date_time                             <dttm> 2008-01-08, 2008-01-09, 2008-01…
-    ## $ estacion                              <chr> "RC60", "RC35", "RC40", "RC35", …
-    ## $ river                                 <chr> "Cuareim", "Cuareim", "Cuareim",…
-    ## $ data_model                            <chr> "Test", "Test", "Test", "Test", …
-    ## $ alcalinidad_total_mg_ca_co3_l         <dbl> 84, 80, 79, 85, 110, 110, 68, 29…
-    ## $ clorofila_a_mg_l                      <dbl> NA, NA, NA, NA, NA, NA, NA, NA, …
-    ## $ conductividad_m_s_cm                  <dbl> 193.5, 154.7, 155.8, 185.0, 241.…
-    ## $ fosfato_ortofosfato_mg_po4_p_l        <dbl> NA, NA, NA, NA, 41, NA, NA, NA, …
-    ## $ fosforo_total_mg_p_l                  <dbl> NA, 42, 5, NA, 12, 51, 38, 34, 4…
-    ## $ ion_nitrito_mg_no2_n_l                <dbl> 0.096, NA, NA, 0.007, NA, NA, 0.…
-    ## $ nitrato_mg_no3_n_l                    <dbl> 0.900, NA, 0.067, 0.310, 0.290, …
-    ## $ nitrogeno_amoniacal_amonio_mg_nh4_n_l <dbl> 0.110, NA, 0.190, 0.049, 0.028, …
-    ## $ nitrogeno_total_mg_n_l                <dbl> 5.70, NA, NA, 0.65, 0.80, 0.73, …
-    ## $ oxigeno_disuelto_mg_l                 <dbl> 8.05, 7.30, 5.94, 7.24, 5.39, 7.…
-    ## $ potencial_de_hidrogeno_p_h_sin_unid   <dbl> 7.10, 6.71, 6.27, 8.22, 7.85, 7.…
-    ## $ solidos_suspendidos_totales_mg_l      <dbl> 16, 23, 120, NA, NA, 16, NA, NA,…
-    ## $ temperatura_o_c                       <dbl> 30.9, 32.0, 32.2, 28.0, 28.7, 28…
-    ## $ turbidez_ntu                          <dbl> 3.1, 3.0, 37.0, 3.8, 5.1, 6.4, 1…
+    ## Rows: 1,122
+    ## Columns: 12
+    ## $ clorofila_a_mg_l                    <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA…
+    ## $ alcalinidad_total_mg_ca_co3_l       <dbl> 84, 80, 79, 85, 110, 110, 68, 29, …
+    ## $ conductividad_m_s_cm                <dbl> 193.5, 154.7, 155.8, 185.0, 241.0,…
+    ## $ fosforo_total_mg_p_l                <dbl> NA, 42, 5, NA, 12, 51, 38, 34, 48,…
+    ## $ solidos_suspendidos_totales_mg_l    <dbl> 16, 23, 120, NA, NA, 16, NA, NA, N…
+    ## $ potencial_de_hidrogeno_p_h_sin_unid <dbl> 7.10, 6.71, 6.27, 8.22, 7.85, 7.53…
+    ## $ temperatura_o_c                     <dbl> 30.9, 32.0, 32.2, 28.0, 28.7, 28.4…
+    ## $ date                                <date> 2008-01-08, 2008-01-09, 2008-01-0…
+    ## $ date_time                           <dttm> 2008-01-08, 2008-01-09, 2008-01-0…
+    ## $ estacion                            <chr> "RC60", "RC35", "RC40", "RC35", "R…
+    ## $ river                               <chr> "Cuareim", "Cuareim", "Cuareim", "…
+    ## $ data_model                          <chr> "Test", "Test", "Test", "Test", "T…
 
 Define de row names that belongs to ID of data like: `date`, `site`,
 `river`…
@@ -57,27 +50,7 @@ data_oan <- data_oan %>%
          tot_phos = "fosforo_total_mg_p_l",
          tss = "solidos_suspendidos_totales_mg_l",
          pH = "potencial_de_hidrogeno_p_h_sin_unid",
-         temp = "temperatura_o_c",
-         po4 = "fosfato_ortofosfato_mg_po4_p_l",
-         no2 = "ion_nitrito_mg_no2_n_l",
-         no3 = "nitrato_mg_no3_n_l",
-         nh4 = "nitrogeno_amoniacal_amonio_mg_nh4_n_l",
-         tot_nit = "nitrogeno_total_mg_n_l",
-         o2 = "oxigeno_disuelto_mg_l",
-         ntu = "turbidez_ntu")
-```
-
-Identify Variables used only in BC2021
-
-``` r
-bc_vars <- c(
-  "chla",
-  "alk",
-  "cond",
-  "tot_phos",
-  "tss",
-  "pH",
-  "temp")
+         temp = "temperatura_o_c")
 ```
 
 ### 99.5 percentile limits for Chl-a
@@ -88,7 +61,7 @@ should be eliminated?
 ``` r
 #Function that calcultaes the number of elements that exceed 99.5 limit
   q99.5_exceed <- function (x){
-    q <- quantile(x, probs = c(0.95), na.rm =T)
+    q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
     }
 ```
@@ -102,13 +75,23 @@ summarize(across(where(is.numeric), q99.5_exceed)) %>%
   kable()
 ```
 
-| river       | alk | chla | cond | po4 | tot\_phos | no2 | no3 | nh4 | tot\_nit |  o2 |  pH | tss | temp | ntu |
-|:------------|----:|-----:|-----:|----:|----------:|----:|----:|----:|---------:|----:|----:|----:|-----:|----:|
-| Cuareim     |  13 |    9 |   15 |   8 |        14 |   3 |  12 |   8 |       14 |  14 |  15 |  10 |   14 |  14 |
-| Negro       |  26 |   19 |   28 |  26 |        27 |   3 |  23 |  14 |       27 |  28 |  28 |  12 |   27 |   4 |
-| SanSalvador |   8 |    7 |    9 |   0 |         7 |   3 |   2 |   1 |        5 |   8 |   9 |   5 |    9 |   9 |
-| Tacuarembo  |   3 |    1 |    3 |   3 |         3 |   2 |   3 |   3 |        3 |   3 |   3 |   2 |    3 |   2 |
-| Uruguay     |  19 |   14 |   20 |  18 |        18 |  15 |  18 |  15 |       18 |  18 |  19 |  17 |   19 |  16 |
+| river   | chla | alk | cond | tot\_phos | tss |  pH | temp |
+|:--------|-----:|----:|-----:|----------:|----:|----:|-----:|
+| Cuareim |    1 |   1 |    2 |         2 |   1 |   1 |    2 |
+| Negro   |    2 |   3 |    3 |         3 |   2 |   3 |    3 |
+| Uruguay |    2 |   2 |    2 |         2 |   2 |   1 |    1 |
+
+# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+
+``` r
+ data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+   summarize(across(where(is.numeric), q99.5_exceed)) %>% 
+  kable()
+```
+
+| chla | alk | cond | tot\_phos | tss |  pH | temp |
+|-----:|----:|-----:|----------:|----:|----:|-----:|
+|    4 |   3 |    5 |         5 |   3 |   5 |    5 |
 
 Values limits for chla by river
 
@@ -118,13 +101,11 @@ data_oan %>% group_by(river) %>%
   summarise(chla_99.5 = quantile(chla, probs = c(0.995), na.rm = T)) %>% kable()
 ```
 
-| river       | chla\_99.5 |
-|:------------|-----------:|
-| Cuareim     |    21.3375 |
-| Negro       |   181.4050 |
-| SanSalvador |    50.7410 |
-| Tacuarembo  |    20.9550 |
-| Uruguay     |    19.9590 |
+| river   | chla\_99.5 |
+|:--------|-----------:|
+| Cuareim |    21.3375 |
+| Negro   |   181.4050 |
+| Uruguay |    19.9590 |
 
 ### BC2021 outliers removed
 
@@ -162,14 +143,14 @@ Apply de q\_calc for each numeric column from Negro and Uruguay rivers
 ``` r
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
-    dplyr::select(all_of(bc_vars)) %>% 
+    #dplyr::select(all_of(bc_vars)) %>% 
   summarise( across(where(is.numeric), q_calc)) %>% 
   kable()
 ```
 
-|   chla | alk |    cond | tot\_phos |   tss |     pH |    temp |
-|-------:|----:|--------:|----------:|------:|-------:|--------:|
-| 70.225 | 100 | 202.908 |    326.25 | 81.27 | 8.8925 | 29.7375 |
+|   chla | alk |   cond | tot\_phos |    tss |      pH |   temp |
+|-------:|----:|-------:|----------:|-------:|--------:|-------:|
+| 70.225 | 100 | 214.57 |    279.65 | 81.855 | 8.92225 | 29.794 |
 
 ### Substitute all values that exceed 99.5 and replace by NA
 
@@ -196,8 +177,7 @@ data_cut_C <- data_oan %>%
   filter (river == "Cuareim") %>% 
   mutate(across(where(is.numeric), q99.5_remove))
 
-bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) %>% 
-  dplyr::select(all_of(c(id_vars,bc_vars)))
+bc_data_limit <- bind_rows(data_cut_NU,data_cut_C) 
 ```
 
 ## chla vs environment
@@ -527,7 +507,7 @@ mutate (group = factor(group) )%>%
 | chla      | p&lt;0.05 | p&lt;0.05 |
 | alk       | p&lt;0.05 | p&lt;0.05 |
 | cond      | p&lt;0.05 | p&lt;0.05 |
-| tot\_phos | n.s       | p&lt;0.05 |
+| tot\_phos | p&lt;0.05 | p&lt;0.05 |
 | tss       | p&lt;0.05 | p&lt;0.05 |
 | pH        | p&lt;0.05 | p&lt;0.05 |
 | temp      | n.s       | p&lt;0.05 |
