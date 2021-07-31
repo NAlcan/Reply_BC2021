@@ -54,7 +54,7 @@ bc_vars <- c(
 
 # Function that calcultaes the number of elements that exceed 99.5 limit
   q99.5_exceed <- function (x){
-    q <- quantile(x, probs = c(0.95), na.rm =T)
+    q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
     }
 
@@ -67,6 +67,10 @@ summarize(across(where(is.numeric), q99.5_exceed))
   dplyr::select(date, estacion, chla, river) %>% 
   summarise(p99.5 = quantile(chla, probs = c(0.995), na.rm = T))
 
+# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+ data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+   summarize(across(where(is.numeric), q99.5_exceed)) 
+ 
 # I Assume that BC2021 Calculated the 99.5 limit using Negro and Uruguay together
  # Lets see how many data exceed with this criteria
 
