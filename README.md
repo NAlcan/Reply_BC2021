@@ -9,4 +9,4 @@
 
 ## [Data Analysis and Visualization](https://github.com/NAlcan/Reply_BC2021/blob/DevPublication/Interactive_code_files/Data_AnalysisVisualization.md)
 
-## [Supplementary Material]()
+## [Sampling Stations](https://github.com/NAlcan/Reply_BC2021/blob/DevPublication/Interactive_code_files/Sampling_Stations.md#table-a1-sampling-station)
