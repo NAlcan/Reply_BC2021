@@ -94,7 +94,9 @@ data_oan %>% group_by(river) %>%
   summarise(chla_99.5 = quantile(chla, probs = c(0.995), na.rm = T)) %>% kable()
 
 ```
- 
+
+### BC2021 outliers removed
+
 We need to assume that BC2021 Calculated the 99.5 limit using Negro and Uruguay together. 
 Lets see how many data exceed this criteria
 ```{r}

@@ -126,6 +126,8 @@ data_oan %>% group_by(river) %>%
 | Tacuarembo  |    20.9550 |
 | Uruguay     |    19.9590 |
 
+### BC2021 outliers removed
+
 We need to assume that BC2021 Calculated the 99.5 limit using Negro and
 Uruguay together. Lets see how many data exceed this criteria
 
