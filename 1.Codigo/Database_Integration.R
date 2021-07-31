@@ -162,33 +162,3 @@ write_csv(bc2021, file = "2.Datos/working_data/bc2021_data.csv")
 bc2021 %>%
   group_by(river) %>%
   count()
-
-
-# GIS data ----------------------------------------------------------------
-library(readxl)
-
-sitios <- read_excel("2.Datos/gis_data/sites_references.xls",
-                     .name_repair = make_clean_names) %>%
-  mutate(
-    programa = to_snake_case(programa),
-    estacion = to_snake_case (estacion),
-    status = ifelse(
-      codigo_estacion %in% bc_tidy$estacion &
-        str_detect(codigo_estacion, "RN"),
-      "Train_NR",
-      ifelse(
-        codigo_estacion %in% bc_tidy$estacion &
-          str_detect(codigo_estacion, "RU"),
-        "Train_UR",
-        ifelse(
-          codigo_estacion %in% bc_tidy$estacion &
-            str_detect(codigo_estacion, "RC"),
-          "Test_CR",
-          "Not_used"
-        )
-      )
-    )
-  ) %>%
-  arrange(latitud, .desc = TRUE)
-
-#write_csv(sitios, file = "2.Datos/gis_data/coordenadas_sitios.csv")
