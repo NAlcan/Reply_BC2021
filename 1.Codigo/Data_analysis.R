@@ -187,13 +187,13 @@ data_fig3 <- data_fig3 %>%
 
 fig3_function_plot <- function (data, lmin,lmax,xlab) {
   ggplot(data, aes(x = value , y = chla)) +
-    geom_point(alpha = 0.8, size = 1.5 ) +
+    geom_point(alpha = 0.8, size = 0.5 ) +
     scale_x_continuous(limits = c( xmin = lmin , xmax = lmax)) +
     scale_y_continuous(limits = c(0,45),
                        breaks = seq(from = 0,to=48,by = 5)) +
     labs( x = xlab, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
     theme_classic() +
-    theme(axis.title = element_text(size = 10))
+    theme(axis.title = element_text(size = rel(0.55)))
     
 }
 
@@ -244,87 +244,91 @@ fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE))
 f3f<-readPNG("2.Datos/Fig3BC/3f.png")
 fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE))
 
-# Paste together each variable fig from BC and our
-figure3a <- ggdraw(fig3_alk + theme_half_open(12)) +
-  draw_plot(fig3a, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("A", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-figure3b <- ggdraw(fig3_ec + theme_half_open(12)) +
-  draw_plot(fig3b, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("B", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-figure3c <- ggdraw(fig3_tp + theme_half_open(12)) +
-  draw_plot(fig3c, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("C", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-figure3d <- ggdraw(fig3_ph + theme_half_open(12)) +
-  draw_plot(fig3d, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("D", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-
-figure3e <- ggdraw(fig3_sst + theme_half_open(12)) +
-  draw_plot(fig3e, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("E", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-figure3f <- ggdraw(fig3_ta + theme_half_open(12)) +
-  draw_plot(fig3f, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("F", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
+# # Paste together each variable fig from BC and our
+# figure3a <- ggdraw(fig3_alk + theme_half_open(12)) +
+#   draw_plot(fig3a, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("A", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# figure3b <- ggdraw(fig3_ec + theme_half_open(12)) +
+#   draw_plot(fig3b, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("B", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# figure3c <- ggdraw(fig3_tp + theme_half_open(12)) +
+#   draw_plot(fig3c, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("C", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# 
+# figure3d <- ggdraw(fig3_ph + theme_half_open(12)) +
+#   draw_plot(fig3d, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("D", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# 
+# 
+# figure3e <- ggdraw(fig3_sst + theme_half_open(12)) +
+#   draw_plot(fig3e, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("E", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# 
+# figure3f <- ggdraw(fig3_ta + theme_half_open(12)) +
+#   draw_plot(fig3f, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("F", ""),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
 
 
-plots_juntos3 <- plot_grid(fig3a, fig3_alk,
-                           fig3b, fig3_ec,
-                           fig3c, fig3_tp,
-                           fig3d, fig3_ph,
-                           fig3e, fig3_sst,
-                           fig3f, fig3_ta,
+
+plots_juntos3_ac <- plot_grid(fig3a, (fig3_alk + coord_fixed(ratio =3 )),
+                           fig3b, (fig3_ec + coord_fixed(ratio = 6 )),
+                           fig3c, (fig3_tp + coord_fixed(ratio = 22)),
                            labels = c("", "a'",
-                                      "", "b'",
-                                      "", "c'",
-                                      "", "d'",
+                              "", "b'",
+                              "", "c'"),
+                           label_x=.8,
+                           label_fontface = "plain",
+                           label_fontfamily = "times", ncol = 2)
+                          
+plots_juntos3_df <- plot_grid(fig3d, (fig3_ph + coord_fixed(ratio = 0.05 )),
+                           fig3e, (fig3_sst + coord_fixed(ratio = 10)),
+                           fig3f, (fig3_ta + coord_fixed (ratio = 0.7)),
+                           labels = c("", "d'",
                                       "", "e'",
                                       "", "f'"),
                            label_x=.8,
                            label_fontface = "plain",
-                           label_fontfamily = "times")
+                           label_fontfamily = "times", ncol = 2)
 
-ggsave(plots_juntos3, filename = "3.Resultados/Figure3.tiff",
-       dpi = "print",
-       height =5.94  , width = 8.35)
+plots_juntos3 <- wrap_plots(plots_juntos3_ac,plots_juntos3_df, nrow = 2)
+
+ggsave(plots_juntos3_ac, filename = "3.Resultados/Figure3_ac.tiff",
+       dpi = "print")
 
 # By rivers ---------------------------------------------------------------
 
