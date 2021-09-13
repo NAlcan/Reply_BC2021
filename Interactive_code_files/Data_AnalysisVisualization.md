@@ -258,7 +258,7 @@ plot_x_limits <- tribble(
   "alk", 0, 150,
   "cond",0, 300,
   "tot_phos", 0, 1000,
-  "pH", 5,8,
+  "pH", 5,10,
   "tss", 0, 600,
   "temp", 0 , 40
 )
@@ -285,13 +285,14 @@ data_fig3 <- data_fig3 %>%
 # Set x axes range according to the same as BC2021
 fig3_function_plot <- function (data, lmin,lmax,xlab) {
   ggplot(data, aes(x = value , y = chla)) +
-    geom_point(alpha = 0.8, size = 1.5 ) +
+    geom_point(alpha = 0.8, size = rel(0.5)) +
     scale_x_continuous(limits = c( xmin = lmin , xmax = lmax)) +
     scale_y_continuous(limits = c(0,45),
                        breaks = seq(from = 0,to=48,by = 5)) +
     labs( x = xlab, y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
     theme_classic() +
-    theme(axis.title = element_text(size = 10))
+    theme(axis.title = element_text(size = rel(0.7)),
+           plot.margin = unit(c(0, 0, 0, 0), "cm"))
     
 }
 
@@ -309,22 +310,28 @@ Extract each plot for label variables adequately
 
 ``` r
 fig3_alk <- plots3[[1]][[1]] +
-  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
+  labs(x = expression(paste("Alkalinity (mg L"^-1,")")) ) +
+   coord_fixed(ratio = 3)
 
 fig3_ec <- plots3[[1]][[2]] +
-  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) )
+  labs(x = expression(paste("EC"[w] ," (", mu,"S cm"^-1,")")) ) + 
+   coord_fixed(ratio = 6)
 
 fig3_tp <- plots3[[1]][[3]] +
-  labs(x = expression(paste("Total Phosphorus (", mu,"g L"^-1,")")) )
+  labs(x = expression(paste("Total Phosphorus (", mu,"g L"^-1,")")) ) +
+ coord_fixed(ratio = 20)
 
 fig3_sst <- plots3[[1]][[4]] +
-  labs(x = expression(paste("Total Suspended Solids ( mg L"^-1,")")) ) 
+  labs(x = expression(paste("Total Suspended Solids ( mg L"^-1,")")) ) +
+   coord_fixed(ratio = 12)
 
 fig3_ph <- plots3[[1]][[5]] +
-  labs(x = "pH" )
+  labs(x = "pH" ) + 
+   coord_fixed(ratio = 0.1)
 
 fig3_ta <- plots3[[1]][[6]] +
-  labs(x = expression(paste("T (", degree,"C)")) ) 
+  labs(x = expression(paste("T (", degree,"C)")) ) +
+   coord_fixed(ratio = 0.8)
 ```
 
 ### Load all panel figures copied from BC2021 that are saved each one ina differente `.png` file
@@ -338,96 +345,48 @@ library(cowplot) # Paste plots together
 
 # Load `png` and transform
 f3a<-readPNG("2.Datos/Fig3BC/3a.png")
-fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate=TRUE))
+fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate=TRUE)) +
+    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+
 f3b<-readPNG("2.Datos/Fig3BC/3b.png")
-fig3b <-as.ggplot(grid::rasterGrob(f3b, interpolate=TRUE))
+fig3b <-as.ggplot(grid::rasterGrob(f3b, interpolate=TRUE)) +
+    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+
 f3c<-readPNG("2.Datos/Fig3BC/3c.png")
-fig3c <- as.ggplot(grid::rasterGrob(f3c, interpolate=TRUE))
+fig3c <- as.ggplot(grid::rasterGrob(f3c, interpolate=TRUE)) + 
+    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+
 f3d<-readPNG("2.Datos/Fig3BC/3d.png")
-fig3d <- as.ggplot(grid::rasterGrob(f3d, interpolate=TRUE))
+fig3d <- as.ggplot(grid::rasterGrob(f3d, interpolate=TRUE)) +
+    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+
 f3e<-readPNG("2.Datos/Fig3BC/3e.png")
-fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE))
+fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE)) +
+  theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+
 f3f<-readPNG("2.Datos/Fig3BC/3f.png")
-fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE))
-
-# Paste together each variable fig from BC and our
-figure3a <- ggdraw(fig3_alk + theme_half_open(12)) +
-  draw_plot(fig3a, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("A", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-figure3b <- ggdraw(fig3_ec + theme_half_open(12)) +
-  draw_plot(fig3b, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("B", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-figure3c <- ggdraw(fig3_tp + theme_half_open(12)) +
-  draw_plot(fig3c, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("C", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-figure3d <- ggdraw(fig3_ph + theme_half_open(12)) +
-  draw_plot(fig3d, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("D", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-
-figure3e <- ggdraw(fig3_sst + theme_half_open(12)) +
-  draw_plot(fig3e, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("E", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
-figure3f <- ggdraw(fig3_ta + theme_half_open(12)) +
-  draw_plot(fig3f, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("F", ""),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
+fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE)) +
+    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
 ```
 
 ### Plot figure 3
 
 ``` r
-plot_grid(fig3a, fig3_alk,
-                           fig3b, fig3_ec,
-                           fig3c, fig3_tp,
-                           fig3d, fig3_ph,
-                           fig3e, fig3_sst,
-                           fig3f, fig3_ta,
+plot_grid(fig3a, fig3_alk ,
+                           fig3b, fig3_ec ,
+                           fig3c, fig3_tp ,
+                           fig3d, fig3_ph ,
+                           fig3e, fig3_sst ,
+                           fig3f, fig3_ta ,
                            labels = c("", "a'",
-                                      "", "b'",
-                                      "", "c'",
-                                      "", "d'",
-                                      "", "e'",
-                                      "", "f'"),
-                           label_x=.8,
+                              "", "b'",
+                              "", "c'",
+                              "", "d'",
+                              "", "e'",
+                              "", "f'"),
+                           label_x=0.8,
                            label_fontface = "plain",
-                           label_fontfamily = "times")
+                           label_fontfamily = "times", ncol = 2)
 ```
 
 <img src="Data_AnalysisVisualization_files/figure-gfm/Figure 3-1.png" width="897.6" style="display: block; margin: auto;" />
@@ -437,10 +396,11 @@ temperature. In all comparative cases, the graphs redrawn from BC2021
 are show to the left (letters) and our graphs to the right
 (prime-letters). To facilitate the visual comparison between Figure 3 of
 BC2021 and this paper, the axes (x and y) of the biplots are drawn with
-the same scaling. Note that this procedure leaves out 58 pH values in
-our plot (d´) but incudes the Chl-a value of 55 µg L-1 that BC2021
-considered to as an outlier, which is not an outlier according to the
-analysis presented by us.
+the same scaling. Note that this was not applied for the pH (in BC2021
+the axis goes up to 8) and in our case that dropped 58 values on the
+outside(d´). The Chl-a value of 55 µg L-1 that BC2021 considered to as
+an outlier (RN 2018-04-17) is not shown in any of the biplots, because
+the Chl-a axis ends at 45 µg L-1.
 
 ### Differences within rivers used for train model (Negro and Uruguay)
 
@@ -449,6 +409,7 @@ data-list each var transform into single data frame to make the plot
 
 ``` r
 diff_rivers_data <- bc_data_limit %>% 
+   mutate(logChla = log10(chla)) %>% 
   pivot_longer (!all_of(id_vars)) %>% 
   mutate (river_label = fct_recode(river,
                                    UR = "Uruguay",
@@ -465,7 +426,8 @@ fig4_function <- function(data) {
     scale_fill_manual(na.translate = FALSE , 
                       values = c("#d95f02", "#1b9e77","#984ea3"))+
     theme(legend.position = "none",
-          axis.text.x = element_text(size = 12)) +
+          axis.text.x = element_text(size = rel(1.2)),
+          axis.text.y = element_text(size = rel (0.7))) +
     labs(x = NULL) +
     facet_grid( ~ fct_relevel(data_model,"Train","Test"),
                 scales = "free_x",
@@ -507,12 +469,16 @@ fig4_ph <- plots4[[1]][[6]] +
 
 fig4_ta <- plots4[[1]][[7]] +
   labs(y = expression(paste("T (", degree,"C)")) )
+
+fig4_logchla <- plots4[[1]][[8]] +
+  labs(y =  expression(paste("log"[10], "(Chlorophyll a)")) )
 ```
 
 Plot figure 4
 
 ``` r
-wrap_plots(fig4_chla, fig4_alk,fig4_ec,
+wrap_plots(fig4_chla, fig4_logchla,
+                      fig4_alk,fig4_ec,
                       fig4_tp,fig4_sst,fig4_ph,
                       fig4_ta, ncol = 2)
 ```
@@ -577,6 +543,7 @@ mutate (group = factor(group) )%>%
 | tss       | p&lt;0.05 | p&lt;0.05 |
 | pH        | p&lt;0.05 | p&lt;0.05 |
 | temp      | n.s       | p&lt;0.05 |
+| logChla   | n.s       | p&lt;0.05 |
 
 #### Session info
 
@@ -584,9 +551,9 @@ mutate (group = factor(group) )%>%
 sessionInfo()
 ```
 
-    ## R version 4.1.0 (2021-05-18)
+    ## R version 4.1.1 (2021-08-10)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 20.04.2 LTS
+    ## Running under: Ubuntu 20.04.3 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
@@ -605,30 +572,30 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] nlme_3.1-152       cowplot_1.1.1      ggplotify_0.0.7    png_0.1-7         
+    ##  [1] nlme_3.1-152       cowplot_1.1.1      ggplotify_0.0.8    png_0.1-7         
     ##  [5] patchwork_1.1.1    lubridate_1.7.10   RColorBrewer_1.1-2 forcats_0.5.1     
-    ##  [9] stringr_1.4.0      dplyr_1.0.7        purrr_0.3.4        readr_2.0.0       
-    ## [13] tidyr_1.1.3        tibble_3.1.3       ggplot2_3.3.5      tidyverse_1.3.1   
+    ##  [9] stringr_1.4.0      dplyr_1.0.7        purrr_0.3.4        readr_2.0.1       
+    ## [13] tidyr_1.1.3        tibble_3.1.4       ggplot2_3.3.5      tidyverse_1.3.1   
     ## [17] knitr_1.33        
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] Rcpp_1.0.7          lattice_0.20-44     assertthat_0.2.1   
-    ##  [4] digest_0.6.27       utf8_1.2.2          R6_2.5.0           
-    ##  [7] cellranger_1.1.0    backports_1.2.1     reprex_2.0.0       
+    ##  [4] digest_0.6.27       utf8_1.2.2          R6_2.5.1           
+    ##  [7] cellranger_1.1.0    backports_1.2.1     reprex_2.0.1       
     ## [10] evaluate_0.14       httr_1.4.2          highr_0.9          
-    ## [13] pillar_1.6.1        rlang_0.4.11        readxl_1.3.1       
-    ## [16] rstudioapi_0.13     rmarkdown_2.9       labeling_0.4.2     
+    ## [13] pillar_1.6.2        rlang_0.4.11        readxl_1.3.1       
+    ## [16] rstudioapi_0.13     rmarkdown_2.10      labeling_0.4.2     
     ## [19] bit_4.0.4           munsell_0.5.0       broom_0.7.9        
-    ## [22] compiler_4.1.0      modelr_0.1.8        xfun_0.24          
+    ## [22] compiler_4.1.1      modelr_0.1.8        xfun_0.25          
     ## [25] gridGraphics_0.5-1  pkgconfig_2.0.3     htmltools_0.5.1.1  
     ## [28] tidyselect_1.1.1    fansi_0.5.0         crayon_1.4.1       
     ## [31] tzdb_0.1.2          dbplyr_2.1.1        withr_2.4.2        
     ## [34] jsonlite_1.7.2      gtable_0.3.0        lifecycle_1.0.0    
     ## [37] DBI_1.1.1           magrittr_2.0.1      scales_1.1.1       
-    ## [40] cli_3.0.1           stringi_1.7.3       vroom_1.5.3        
+    ## [40] cli_3.0.1           stringi_1.7.3       vroom_1.5.4        
     ## [43] farver_2.1.0        fs_1.5.0            xml2_1.3.2         
     ## [46] rvcheck_0.1.8       ellipsis_0.3.2      generics_0.1.0     
-    ## [49] vctrs_0.3.8         tools_4.1.0         bit64_4.0.5        
-    ## [52] glue_1.4.2          hms_1.1.0           parallel_4.1.0     
+    ## [49] vctrs_0.3.8         tools_4.1.1         bit64_4.0.5        
+    ## [52] glue_1.4.2          hms_1.1.0           parallel_4.1.1     
     ## [55] yaml_2.2.1          colorspace_2.0-2    BiocManager_1.30.16
-    ## [58] rvest_1.0.1         haven_2.4.1
+    ## [58] rvest_1.0.1         haven_2.4.3
