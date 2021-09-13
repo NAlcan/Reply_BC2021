@@ -13,7 +13,7 @@ library(ggsflabel)
 
 # Data sites --------------------------------------------------------------
 # Load data site and project as points
-sites <- read_csv("2.Datos/coordenadas_sitios.csv")
+sites <- read_csv("2.Datos/gis_data/coordenadas_sitios.csv")
 
 # Convert it to spacial object with crs projection
 sites_longlat <- sites %>% 
@@ -71,9 +71,11 @@ river_labels <- study_rivers %>%
 # Map with site points filled if are used or not into BC2011
 
 mapa_listo <-  base_map +
-  geom_sf(data = sites_longlat, aes(fill = status), pch = 21 ,size = 2, color= "black") + 
-  scale_fill_viridis( option = "magma", discrete = T) +
-  labs (fill = "Point Status") + 
+  geom_sf(data = sites_longlat, aes(fill = type, shape = type),size = 1.5,
+          color= "black") +
+  scale_fill_viridis(option = "magma", discrete = T) +
+  scale_shape_manual(values = c(21,22,23),guide ="legend") + 
+  labs (fill = "Point Status", shape = "Point Status") + 
   annotation_scale(location = "br", width_hint = 0.2,
                    text_cex = 0.5) +
   annotation_north_arrow(location = "bl", which_north = "true", 
@@ -109,9 +111,7 @@ mapa_listo <-  base_map +
   )
 
 
-# Transform sites code into numbers
-sites_longlat <- sites_longlat %>% 
-  mutate(site_number = row_number())
+
 
 # # Generate a character with equivalencies between number site and its code
 caption_sites <- paste(sites_longlat$site_number,
@@ -122,9 +122,13 @@ caption_sites <- paste(sites_longlat$site_number,
 vers1 <- mapa_listo + 
   geom_sf_text_repel(data = sites_longlat, aes( label = site_number), 
                      size = 2, max.overlaps = 20, box.padding = unit(0.1, "lines"))
-  
+
+# Save in png format
+#ggsave(vers1, filename = "3.Resultados/map_siterivers_png.png")
+
 # to save in .svg format
-ggsave(vers1, filename = "3.Resultados/map_siterivers_svg.svg")
+#ggsave(vers1, filename = "3.Resultados/map_siterivers_svg.svg")
+
 
 # eps output #
 # To save in eps need to comment l87: family = "sans"

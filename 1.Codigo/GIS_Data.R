@@ -30,7 +30,8 @@ oan_data <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
  sites_reply <- sites_reply %>% 
   mutate(type = ifelse(str_detect(codigo_estacion, c("RN","RU")), "train", 
                        ifelse( str_detect(codigo_estacion, "RC"),"test","not_used"))) %>%
-  arrange(latitud, .desc = TRUE)
+  arrange(latitud, .desc = TRUE) %>% 
+   mutate(site_number = row_number()) # Number code for each site
 
 #write_csv(sites_reply, file = "2.Datos/gis_data/coordenadas_sitios.csv")
 
@@ -54,8 +55,9 @@ sites_oan_data <- oan_data %>%
  table1a_data <-  sites_reply %>% 
    rename (Sampling_Point = "codigo_estacion",
            Latitude = "latitud",
-           Longitude = "longitud") %>% 
+           Longitude = "longitud",
+           `Site Code` = "site_number") %>% 
     mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC","RU","SSS")), "Uruguay","Negro")) %>% 
      full_join(sites_oan_data, by = "Sampling_Point") %>% 
-      dplyr::select(Basin,Sampling_Point,Latitude,Longitude,type,N_Station,Start_Date,End_Date)  
+      dplyr::select(Basin,Sampling_Point,Latitude,Longitude,type,N_Station,Start_Date,End_Date, `Site Code`)  
  
