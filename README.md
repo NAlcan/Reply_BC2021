@@ -5,16 +5,11 @@
 
 # Highlights
 
-* BC2021 claim that temperature, pH and conductivity are the most relevant variables modulating chlorophyll-a in rivers
-
-* BC2021 used public data-base to demonstrate the above fact
-
-* BC2021 data analyses are not robust, generalizable, reproducible or replicable
-
-* How can any given aquatic eutrophication process be sustained on temperature, pH and conductivity?
-
-* Paradigm: nutrients enhance algal blooms
-
+* __BC2021 claims that pH, EC and T modulate river eutrophication__
+* __BC2021 claims that main factors controlling eutrophication are not directly linked to agriculture__
+* __We revisited BC2021’s database and detected arbitrary mishandling data analysis and sampling site selection to come to forced conclusions__
+* __Limnological paradigm: Increase in pH is a consequence (not a cause) of microalgae productivity__
+* __Limnological paradigm:  nutrients enhance algal blooms__
 
 ## [Original article](https://www.sciencedirect.com/science/article/pii/S0048969720368303) 
 
