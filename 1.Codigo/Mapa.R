@@ -67,12 +67,12 @@ river_labels <- study_rivers %>%
   mutate(
     name = fct_recode(
       nombre,
-      `Tacuarembó Chico` = "arroyo_tacuarembó_chico",
-      `Negro River` = "río_negro",
-      `Uruguay River` = "río_uruguay",
-      `Cuareim River` = "río_cuareim",
-      `San Salvador` = "río_san_salvador",
-      `Tacuarembó River` = "río_tacuarembó",
+      `Tbo Chico river` = "arroyo_tacuarembó_chico",
+      `Negro river` = "río_negro",
+      `Uruguay river` = "río_uruguay",
+      `Cuareim river` = "río_cuareim",
+      `San Salvador river` = "río_san_salvador",
+      `Tbo river` = "río_tacuarembó",
       `Río de la Plata` = "río_de_la_plata"
     )
   )
@@ -88,7 +88,7 @@ mapa_listo <-  base_map +
   ) +
   scale_fill_viridis(option = "magma", discrete = T) +
   scale_shape_manual(values = c(21, 22, 23), guide = "legend") +
-  labs (fill = "Point Status", shape = "Point Status") +
+  labs (fill = "Legend", shape = "Legend",) +
   annotation_scale(location = "br",
                    width_hint = 0.2,
                    text_cex = 0.5) +
@@ -96,10 +96,10 @@ mapa_listo <-  base_map +
     location = "bl",
     which_north = "true",
     pad_x = unit(2.2, "in"),
-    pad_y = unit(2.5, "in"),
+    pad_y = unit(2.6, "in"),
     style = north_arrow_fancy_orienteering
   ) +
-  labs (x = "longitud", y = "latitud") +
+  labs (x = "longitude", y = "latitude") +
   geom_sf_text(
     data = river_labels,
     aes(label = name),
@@ -107,30 +107,30 @@ mapa_listo <-  base_map +
     fontface = "bold",
     family = "serif",
     hjust = c(
-      `Tacuarembó Chico` = .7,
-      `Negro River` =  .2,
-      `Uruguay River` = 1,
-      `Cuareim River` =  .3,
-      `San Salvador` = -.5,
-      `Tacuarembó River` = .3,
+      `Tbo Chico river` = .7,
+      `Negro river` =  .2,
+      `Uruguay river` = 1,
+      `Cuareim river` =  .3,
+      `San Salvador river` = -.5,
+      `Tbo river` = .3,
       `Río de la Plata` = 0.8
     ) ,
     vjust = c(
-      `Tacuarembó Chico` = 1.8,
-      `Negro River` =  3,
-      `Uruguay River` = 1.7,
-      `Cuareim River` =  -1.2,
-      `San Salvador` = 0,
-      `Tacuarembó River` = -1.8,
+      `Tbo Chico river` = 1.8,
+      `Negro river` =  3,
+      `Uruguay river` = 1.7,
+      `Cuareim river` =  -1.2,
+      `San Salvador river` = 0,
+      `Tacuarembó river` = -1.8,
       `Río de la Plata` = 2
     ),
     angle = c(
-      `Tacuarembó Chico` = 310,
-      `Negro River` =  0,
-      `Uruguay River` = 260,
-      `Cuareim River` =  320,
-      `San Salvador` = 340,
-      `Tacuarembó River` = 300,
+      `Tbo Chico river` = 310,
+      `Negro river` =  0,
+      `Uruguay river` = 260,
+      `Cuareim river` =  320,
+      `San Salvador river` = 340,
+      `Tacuarembó river` = 300,
       `Río de la Plata` = 0
     )
   )
