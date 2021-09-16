@@ -383,30 +383,42 @@ plots4 <- fig4_rivers %>%  ungroup() %>%
 ##
 
 fig4_chla <- plots4[[1]][[1]] +
-  labs(y =  expression(paste("Chlorophyll a (", mu, "g L" ^ -1, ")")))
+  labs(y =  expression(paste("Chl-a (", mu, "g L" ^ -1, ")"))) +
+  theme(axis.text.x = element_blank())
 
 
 fig4_alk <- plots4[[1]][[2]] +
-  labs(y = expression(paste("Alkalinity (mg L" ^ -1, ")")))
+  labs(y = expression(paste("Alkalinity (mg L" ^ -1, ")")))+
+  theme(axis.text.x = element_blank())
+
 
 fig4_ec <- plots4[[1]][[3]] +
-  labs(y = expression(paste("EC"[w] , " (", mu, "S cm" ^ -1, ")")))
+  labs(y = expression(paste("EC"[w] , " (", mu, "S cm" ^ -1, ")")))+
+  theme(axis.text.x = element_blank())
+
 
 fig4_tp <- plots4[[1]][[4]] +
-  labs(y = expression(paste("Total phosphorus (", mu, "g L" ^ -1, ")")))
+  labs(y = expression(paste("Total phosphorus (", mu, "g L" ^ -1, ")")))+
+  theme(axis.text.x = element_blank())
+
 
 fig4_sst <- plots4[[1]][[5]] +
-  labs(y = expression(paste("Total Suspended Solid ( mg L" ^ -1, ")"))) +
-  theme(axis.title.y =  element_text(size = 10))
+  labs(y = expression(paste("TSS ( mg L" ^ -1, ")"))) +
+  theme(axis.title.y =  element_text(size = 10))+
+  theme(axis.text.x = element_blank())
+
 
 fig4_ph <- plots4[[1]][[6]] +
-  labs(y = "pH")
+  labs(y = "pH") 
+
 
 fig4_ta <- plots4[[1]][[7]] +
   labs(y = expression(paste("T (", degree, "C)")))
 
 fig4_logchla <- plots4[[1]][[8]] +
-  labs(y =  expression(paste("log"[10], "(Chlorophyll a)")))
+  labs(y =  expression(paste("log"[10], "(Chl-a)"))) +
+  theme(axis.text.x = element_blank())
+
 
 
 figure4 <- wrap_plots(fig4_chla,
@@ -421,10 +433,10 @@ figure4 <- wrap_plots(fig4_chla,
 
 ggsave(
   figure4,
-  filename = "3.Resultados/figure4_rivercomp.tiff",
+  filename = "3.Resultados/figure4_rivercomp.png",
   dpi = "print",
-  height = 5.94  ,
-  width = 8.35
+  height = 8  ,
+  width = 8
 )
 
 
