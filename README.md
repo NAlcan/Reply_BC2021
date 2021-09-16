@@ -1,5 +1,5 @@
 
-# Misinterpreting “Relevant factors in the eutrophication of the Uruguay River and the Río Negro” using ill-defined correlative approaches: a reply to Beretta-Blanco and Carrasco-Letelier (2021)
+# Misinterpreting “Relevant factors in the eutrophication of the Uruguay River and the Río Negro” using ill-defined correlative approaches and wrong limnological principles: a reply to Beretta-Blanco and Carrasco-Letelier (2021)
 
 # Graphical Abstract
 
