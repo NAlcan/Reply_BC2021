@@ -3,7 +3,7 @@
 
 # Graphical Abstract
 
-![](5.img/Graphical Abstract_15set21_red.png)
+![](5.img/GraphicalAbstract_15set21_red.png)
 
 
 # Highlights
