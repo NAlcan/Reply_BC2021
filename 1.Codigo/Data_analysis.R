@@ -328,18 +328,26 @@ plots_juntos3 <- plot_grid(
 )
 
 
+# To Save in PNG format
+# png(
+#   filename = "3.Resultados/Figure3.png",
+#   pointsize = 18,
+#   width = 10,
+#   height = 20,
+#   res = 300 ,
+#   units = "cm"
+# )
+# plots_juntos3
+# dev.off()
 
-png(
-  filename = "3.Resultados/Figure3.png",
-  pointsize = 18,
-  width = 10,
-  height = 20,
-  res = 300 ,
-  units = "cm"
-)
+# To save in tiff
+tiff(
+  filename = "3.Resultados/Figure3.tiff",
+  width = 600, height = 580)
+
 plots_juntos3
-dev.off()
 
+dev.off()
 
 # By rivers ---------------------------------------------------------------
 
@@ -433,7 +441,7 @@ figure4 <- wrap_plots(fig4_chla,
 
 ggsave(
   figure4,
-  filename = "3.Resultados/figure4_rivercomp.png",
+  filename = "3.Resultados/figure4_rivercomp.tiff",
   dpi = "print",
   height = 8  ,
   width = 8
