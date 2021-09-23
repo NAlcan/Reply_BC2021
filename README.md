@@ -21,8 +21,8 @@
 
 ## R Codes
 
-## [Data Base Integration](https://github.com/NAlcan/Reply_BC2021/blob/master/Interactive_code_files/Data_integration_md.md)
+## [Data Base Integration](https://github.com/NAlcan/Reply_BC2021/blob/master/6.Interactive_code_files/Data_integration_md.md)
 
-## [Data Analysis and Visualization](https://github.com/NAlcan/Reply_BC2021/blob/master/Interactive_code_files/Data_AnalysisVisualization.md)
+## [Data Analysis and Visualization](https://github.com/NAlcan/Reply_BC2021/blob/master/6.Interactive_code_files/Data_AnalysisVisualization.md)
 
-## [Sampling Stations](https://github.com/NAlcan/Reply_BC2021/blob/master/Interactive_code_files/Sampling_Stations.md#table-a1-sampling-station)
+## [Sampling Stations](https://github.com/NAlcan/Reply_BC2021/blob/master/6.Interactive_code_files/Sampling_Stations.md#table-a1-sampling-station)
