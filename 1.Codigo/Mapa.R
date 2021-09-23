@@ -91,12 +91,12 @@ mapa_listo <-  base_map +
   labs (fill = "Legend", shape = "Legend",) +
   annotation_scale(location = "br",
                    width_hint = 0.2,
-                   text_cex = 0.5) +
+                   text_cex = 0.8) +
   annotation_north_arrow(
     location = "bl",
     which_north = "true",
-    pad_x = unit(2.2, "in"),
-    pad_y = unit(2.6, "in"),
+    pad_x = unit(3.5, "in"),
+    pad_y = unit(4.2, "in"),
     style = north_arrow_fancy_orienteering
   ) +
   labs (x = "longitude", y = "latitude") +
@@ -154,8 +154,8 @@ vers1 <- mapa_listo +
     box.padding = unit(0.1, "lines")
   )
 
-# Save in png format
-#ggsave(vers1, filename = "3.Resultados/map_siterivers_png.png")
+# Save in tiff format
+ggsave(vers1, filename = "3.Resultados/Figure1.tiff")
 
 # to save in .svg format
 #ggsave(vers1, filename = "3.Resultados/map_siterivers_svg.svg")
