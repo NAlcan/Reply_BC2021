@@ -3,16 +3,16 @@
 
 # Graphical Abstract
 
-![](5.img/GraphicalAbstract_22set21.png)
+![](5.img/graphical abstract_plain.png)
 
 
 # Highlights
 
-* __BC2021 claims that pH, EC and T modulate river eutrophication__
-* __BC2021 claims that main factors controlling eutrophication are not directly linked to agriculture__
-* __We revisited BC2021’s database and detected arbitrary mishandling data analysis and sampling site selection to come to forced conclusions__
-* __Limnological paradigm: Increase in pH is a consequence (not a cause) of microalgae productivity__
-* __Limnological paradigm:  nutrients enhance algal blooms__
+* __BC2021 claims that pH, EC and T modulate river eutrophication.__
+* __BC2021 claims that main factors controlling eutrophication are not directly linked to agriculture.__
+* __We revisited BC2021’s database and detected arbitrary mishandling data analysis and sampling site selection to come to forced conclusions.__
+* __We confirmed that the increase in pH is a consequence (not a cause) of microalgae productivity.__
+* __We support the limnological paradigm that nutrients enhance algal blooms.__
 
 # Article and Data
 ## [Original article](https://www.sciencedirect.com/science/article/pii/S0048969720368303) 
