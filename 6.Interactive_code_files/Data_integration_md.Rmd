@@ -147,7 +147,7 @@ id_vars[5] <- "data_model"
 ### Special characters 
 
 Function to detect a patter of any special character like:
- * $>$ Bellow 
+ * $>$ Below 
  * $<$ Under 
  * $LD$ Limit Detection 
  * $LC$ Limit Quantification 
@@ -210,7 +210,7 @@ bc_tidy %>% dplyr::select(where(is.numeric)) %>%
 ```
 
 
-So, how many data per river is available?
+### How many data per river is available?
 ```{r}
 bc_tidy %>% 
   group_by(river) %>% 
@@ -225,7 +225,7 @@ Write database with all rivers and extra variables than used in BC2021
 #write_csv(bc_tidy, file ="2.Datos/working_data/OAN_complet_data.csv")
 ```
 
-Database with only rivers and variables used in BC 2021
+## Database with only rivers and variables used in BC 2021
 
 ```{r}
 bc2021 <- bc_tidy %>% 
@@ -238,7 +238,7 @@ bc2021 <- bc_tidy %>%
 ```
 
 
-How many data per river considering only BC2021 Variables
+## How many data per river considering only BC2021 Variables
 
 ```{r}
 bc2021 %>% 
