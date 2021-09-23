@@ -3,7 +3,7 @@
 
 # Graphical Abstract
 
-![](5.img/graphical abstract_plain.png)
+![](5.img/graphical_abstract_plain.png)
 
 
 # Highlights
