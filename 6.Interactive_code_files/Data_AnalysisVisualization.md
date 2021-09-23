@@ -40,7 +40,7 @@ Define de row names that belongs to ID of data like: `date`, `site`,
 id_vars <- c("date","date_time", "estacion","river","data_model")
 ```
 
-# Rename Variables for easy coding
+# Rename variables for easy coding
 
 ``` r
 data_oan <- data_oan %>% 
@@ -55,10 +55,9 @@ data_oan <- data_oan %>%
 
 ### 99.5 percentile limits for Chl-a
 
-#### BC2021 outliers removed
-
-We need to assume that BC2021 Calculated the 99.5 limit using Negro and
-Uruguay together. Lets see how many data exceed this criteria
+We need to assume that BC2021 calculated the `99.5 limit` using Negro
+and Uruguay together. Lets see how many data exceed the limit with this
+criteria
 
 ``` r
 data_oan %>% 
@@ -79,16 +78,17 @@ data_oan %>%
     calculated for each river?. How many values should be eliminated?
 
 ``` r
-#Function that calcultaes the number of elements that exceed 99.5 limit
+#Function that calculates the number of data points that exceed 99.5 limit for a numeric variable 
   q99.5_exceed <- function (x){
     q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
     }
 ```
 
-# Number of data exceeds 99.5 for each variable in Uruguay and Negro
+## Number of data exceeds 99.5 for each variable in Uruguay and Negro
 
 ``` r
+# Apply the function q99.5_exceed for Uruguay and Negro
  data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
    summarize(across(where(is.numeric), q99.5_exceed)) %>% 
   kable()
@@ -98,10 +98,11 @@ data_oan %>%
 |-----:|----:|-----:|----------:|----:|----:|-----:|
 |    4 |   3 |    5 |         5 |   3 |   5 |    5 |
 
-Group by River and calculate the number of data exceeds 99.5 for each
-variable
+-   Group by River and calculate the number of data exceeds 99.5 for
+    each variable
 
 ``` r
+# Apply the function q99.5_exceed for each river separated
 data_oan %>% group_by(river)  %>% 
 summarize(across(where(is.numeric), q99.5_exceed)) %>% 
   kable()
@@ -113,7 +114,7 @@ summarize(across(where(is.numeric), q99.5_exceed)) %>%
 | Negro   |    2 |   3 |    3 |         3 |   2 |   3 |    3 |
 | Uruguay |    2 |   2 |    2 |         2 |   2 |   1 |    1 |
 
-Q99.5 values for chla by river
+### Calculate Q99.5 values of chla by river
 
 ``` r
 data_oan %>% group_by(river) %>% 
@@ -130,7 +131,7 @@ data_oan %>% group_by(river) %>%
 ### Lets calculate de Q99.5 for any numeric variable
 
 ``` r
-# Function that returns de value of Q99.5  
+# Function that returns de value of quantile 99.5  
 q_calc<- function(x) {
  q <- quantile(x, probs = c(0.995), names = F,na.rm = T)
 }
