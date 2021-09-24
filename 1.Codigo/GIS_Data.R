@@ -30,7 +30,7 @@ sites_reply <- sites %>%
 
 sites_reply <- sites_reply %>%
   mutate(type = ifelse(
-    str_detect(codigo_estacion, c("RN", "RU")),
+    str_detect(codigo_estacion, "RN|RU"),
     "train",
     ifelse(str_detect(codigo_estacion, "RC"), "test", "not_used")
   )) %>%
@@ -39,6 +39,10 @@ sites_reply <- sites_reply %>%
 
 #write_csv(sites_reply, file = "2.Datos/gis_data/coordenadas_sitios.csv")
 
+# How many data sites are from reservoirs?
+sites_reply %>% filter (type %in% c("train")) %>% 
+  filter(str_detect(nombre_punto,("embalse|represa|
+                                   bonete|palmar|baygorria")))
 
 # Table A1 variables ------------------------------------------------------
 
@@ -65,7 +69,7 @@ table1a_data <-  sites_reply %>%
     Longitude = "longitud",
     `Site Code` = "site_number"
   ) %>%
-  mutate (Basin = ifelse(str_detect(Sampling_Point, c("RC", "RU", "SSS")), "Uruguay", "Negro")) %>%
+  mutate (Basin = ifelse(str_detect(Sampling_Point, "RC|RU|SSS"), "Uruguay", "Negro")) %>%
   full_join(sites_oan_data, by = "Sampling_Point") %>%
   dplyr::select(
     Basin,

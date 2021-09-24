@@ -93,13 +93,16 @@ mapa_listo <-  base_map +
                    width_hint = 0.2,
                    text_cex = 0.8) +
   annotation_north_arrow(
-    location = "bl",
+    location = "br",
     which_north = "true",
-    pad_x = unit(3.5, "in"),
-    pad_y = unit(4.2, "in"),
+    height = unit(1, "cm"),
+    width = unit(1, "cm"),
+    pad_y = unit(0.45, "cm"),
     style = north_arrow_fancy_orienteering
   ) +
   labs (x = "longitude", y = "latitude") +
+  theme(legend.position = c(0.81, 0.85),
+        legend.background  = element_blank()) +
   geom_sf_text(
     data = river_labels,
     aes(label = name),
@@ -132,7 +135,7 @@ mapa_listo <-  base_map +
       `San Salvador river` = 340,
       `Tacuarembó river` = 300,
       `Río de la Plata` = 0
-    )
+    ) 
   )
 
 
@@ -155,7 +158,7 @@ vers1 <- mapa_listo +
   )
 
 # Save in tiff format
-ggsave(vers1, filename = "3.Resultados/Figure1.tiff")
+ggsave(vers1, filename = "3.Resultados/Figure2.tiff")
 
 # to save in .svg format
 #ggsave(vers1, filename = "3.Resultados/map_siterivers_svg.svg")

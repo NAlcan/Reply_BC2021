@@ -78,7 +78,7 @@ sites_reply %>%
            Latitude = "latitud",
            Longitude = "longitud",
            `Site Code` = "site_number") %>% 
-    mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC","RU","SSS")), "Uruguay","Negro")) %>% 
+    mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC|RU|SSS")), "Uruguay","Negro")) %>% 
      full_join(sites_oan_data, by = "Sampling_Point") %>% 
       dplyr::select(Basin,Sampling_Point,Latitude,Longitude,type,N_Station,Start_Date,End_Date, `Site Code`) %>% 
   kable()
@@ -87,13 +87,13 @@ sites_reply %>%
 | Basin   | Sampling\_Point | Latitude   | Longitude  | type      | N\_Station | Start\_Date | End\_Date  | Site Code |
 |:--------|:----------------|:-----------|:-----------|:----------|-----------:|:------------|:-----------|----------:|
 | Uruguay | RC50            | -30.153338 | -56.784112 | test      |         31 | 2012-07-24  | 2018-07-31 |         1 |
-| Negro   | RC60            | -30.27903  | -57.41578  | test      |         39 | 2008-01-08  | 2017-08-01 |         2 |
-| Negro   | RC3C70          | -30.335783 | -57.046419 | test      |         24 | 2014-03-11  | 2018-07-31 |         3 |
+| Uruguay | RC60            | -30.27903  | -57.41578  | test      |         39 | 2008-01-08  | 2017-08-01 |         2 |
+| Uruguay | RC3C70          | -30.335783 | -57.046419 | test      |         24 | 2014-03-11  | 2018-07-31 |         3 |
 | Uruguay | RCYU80          | -30.347013 | -57.328938 | test      |         23 | 2014-03-11  | 2018-07-31 |         4 |
-| Negro   | RC40            | -30.357963 | -56.547252 | test      |         49 | 2008-01-09  | 2018-07-31 |         5 |
-| Negro   | RC35            | -30.395397 | -56.455783 | test      |         49 | 2008-01-09  | 2018-08-02 |         6 |
+| Uruguay | RC40            | -30.357963 | -56.547252 | test      |         49 | 2008-01-09  | 2018-07-31 |         5 |
+| Uruguay | RC35            | -30.395397 | -56.455783 | test      |         49 | 2008-01-09  | 2018-08-02 |         6 |
 | Uruguay | RC20            | -30.503327 | -56.367441 | test      |         41 | 2009-05-05  | 2018-08-01 |         7 |
-| Negro   | RC10            | -30.694941 | -56.150588 | test      |         29 | 2012-07-25  | 2018-08-01 |         8 |
+| Uruguay | RC10            | -30.694941 | -56.150588 | test      |         29 | 2012-07-25  | 2018-08-01 |         8 |
 | Negro   | CU1             | -30.917365 | -55.541327 | not\_used |          7 | 2017-02-08  | 2018-08-21 |         9 |
 | Negro   | TG1             | -31.177506 | -55.762436 | not\_used |          1 | 2018-08-21  | 2018-08-21 |        10 |
 | Negro   | CU2             | -31.340686 | -55.475883 | not\_used |          1 | 2018-08-21  | 2018-08-21 |        11 |
@@ -118,23 +118,23 @@ sites_reply %>%
 | Negro   | RN14            | -33.049706 | -57.453616 | train     |         31 | 2009-06-02  | 2018-10-02 |        30 |
 | Negro   | RN13            | -33.066936 | -57.45417  | not\_used |         31 | 2009-06-02  | 2018-10-02 |        31 |
 | Uruguay | RU1             | -33.074944 | -58.151806 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        32 |
-| Negro   | RU2             | -33.086556 | -58.136611 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        33 |
-| Negro   | RU4             | -33.0945   | -58.211889 | not\_used |         21 | 2014-07-22  | 2018-09-04 |        34 |
+| Uruguay | RU2             | -33.086556 | -58.136611 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        33 |
+| Uruguay | RU4             | -33.0945   | -58.211889 | not\_used |         21 | 2014-07-22  | 2018-09-04 |        34 |
 | Negro   | RN11            | -33.097219 | -57.126662 | not\_used |         31 | 2009-06-02  | 2018-10-02 |        35 |
-| Negro   | RU7             | -33.104111 | -58.25775  | train     |         22 | 2014-07-22  | 2018-09-04 |        36 |
-| Negro   | RU12            | -33.104667 | -58.301994 | train     |         22 | 2014-07-23  | 2018-09-05 |        37 |
+| Uruguay | RU7             | -33.104111 | -58.25775  | train     |         22 | 2014-07-22  | 2018-09-04 |        36 |
+| Uruguay | RU12            | -33.104667 | -58.301994 | train     |         22 | 2014-07-23  | 2018-09-05 |        37 |
 | Uruguay | RU5             | -33.105167 | -58.216583 | train     |         22 | 2014-07-22  | 2018-09-04 |        38 |
-| Negro   | RU11            | -33.106111 | -58.2955   | not\_used |         22 | 2014-07-23  | 2018-09-05 |        39 |
-| Negro   | RU3             | -33.107472 | -58.186444 | train     |         22 | 2014-07-22  | 2018-09-04 |        40 |
+| Uruguay | RU11            | -33.106111 | -58.2955   | not\_used |         22 | 2014-07-23  | 2018-09-05 |        39 |
+| Uruguay | RU3             | -33.107472 | -58.186444 | train     |         22 | 2014-07-22  | 2018-09-04 |        40 |
 | Uruguay | RU8             | -33.109417 | -58.265111 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        41 |
-| Negro   | RU6             | -33.1115   | -58.219361 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        42 |
-| Negro   | RU10            | -33.1155   | -58.282139 | train     |         22 | 2014-07-23  | 2018-09-05 |        43 |
+| Uruguay | RU6             | -33.1115   | -58.219361 | not\_used |         22 | 2014-07-22  | 2018-09-04 |        42 |
+| Uruguay | RU10            | -33.1155   | -58.282139 | train     |         22 | 2014-07-23  | 2018-09-05 |        43 |
 | Uruguay | RU13            | -33.118056 | -58.3365   | not\_used |         22 | 2014-07-23  | 2018-09-05 |        44 |
-| Negro   | RU9             | -33.119361 | -58.269472 | train     |         22 | 2014-07-23  | 2018-09-05 |        45 |
+| Uruguay | RU9             | -33.119361 | -58.269472 | train     |         22 | 2014-07-23  | 2018-09-05 |        45 |
 | Negro   | RN12            | -33.143322 | -57.101672 | train     |         30 | 2009-09-22  | 2018-10-02 |        46 |
 | Uruguay | RU15            | -33.165111 | -58.391917 | not\_used |         22 | 2014-07-23  | 2018-09-05 |        47 |
-| Negro   | RU16            | -33.168    | -58.358167 | train     |         22 | 2014-07-23  | 2018-09-05 |        48 |
-| Negro   | RU14            | -33.177139 | -58.359972 | train     |         22 | 2014-07-23  | 2018-09-05 |        49 |
+| Uruguay | RU16            | -33.168    | -58.358167 | train     |         22 | 2014-07-23  | 2018-09-05 |        48 |
+| Uruguay | RU14            | -33.177139 | -58.359972 | train     |         22 | 2014-07-23  | 2018-09-05 |        49 |
 | Negro   | RN15            | -33.234717 | -58.009994 | not\_used |         29 | 2009-06-03  | 2018-10-03 |        50 |
 | Negro   | RN16            | -33.240824 | -58.056944 | train     |         30 | 2009-06-03  | 2018-10-03 |        51 |
 | Negro   | RN17            | -33.388324 | -58.317224 | not\_used |         31 | 2009-06-03  | 2018-10-03 |        52 |
@@ -276,15 +276,18 @@ mapa_listo <-  base_map +
   labs (fill = "Legend", shape = "Legend",) +
   annotation_scale(location = "br",
                    width_hint = 0.2,
-                   text_cex = 0.5) +
+                   text_cex = 0.8) +
   annotation_north_arrow(
-    location = "bl",
+    location = "br",
     which_north = "true",
-    pad_x = unit(3, "in"),
-    pad_y = unit(3.5, "in"),
+    height = unit(1, "cm"),
+    width = unit(1, "cm"),
+    pad_y = unit(0.45, "cm"),
     style = north_arrow_fancy_orienteering
   ) +
   labs (x = "longitude", y = "latitude") +
+  theme(legend.position = c(0.81, 0.85),
+        legend.background  = element_blank()) +
   geom_sf_text(
     data = river_labels,
     aes(label = name),
@@ -317,7 +320,7 @@ mapa_listo <-  base_map +
       `San Salvador river` = 340,
       `Tacuarembó river` = 300,
       `Río de la Plata` = 0
-    )
+    ) 
   )
 ```
 

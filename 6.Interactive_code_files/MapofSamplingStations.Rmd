@@ -86,7 +86,7 @@ sites_reply %>%
            Latitude = "latitud",
            Longitude = "longitud",
            `Site Code` = "site_number") %>% 
-    mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC","RU","SSS")), "Uruguay","Negro")) %>% 
+    mutate (Basin = ifelse(str_detect(Sampling_Point,c("RC|RU|SSS")), "Uruguay","Negro")) %>% 
      full_join(sites_oan_data, by = "Sampling_Point") %>% 
       dplyr::select(Basin,Sampling_Point,Latitude,Longitude,type,N_Station,Start_Date,End_Date, `Site Code`) %>% 
   kable()
@@ -196,15 +196,18 @@ mapa_listo <-  base_map +
   labs (fill = "Legend", shape = "Legend",) +
   annotation_scale(location = "br",
                    width_hint = 0.2,
-                   text_cex = 0.5) +
+                   text_cex = 0.8) +
   annotation_north_arrow(
-    location = "bl",
+    location = "br",
     which_north = "true",
-    pad_x = unit(3, "in"),
-    pad_y = unit(3.5, "in"),
+    height = unit(1, "cm"),
+    width = unit(1, "cm"),
+    pad_y = unit(0.45, "cm"),
     style = north_arrow_fancy_orienteering
   ) +
   labs (x = "longitude", y = "latitude") +
+  theme(legend.position = c(0.81, 0.85),
+        legend.background  = element_blank()) +
   geom_sf_text(
     data = river_labels,
     aes(label = name),
@@ -237,9 +240,8 @@ mapa_listo <-  base_map +
       `San Salvador river` = 340,
       `Tacuarembó river` = 300,
       `Río de la Plata` = 0
-    )
+    ) 
   )
-
 
 ```
 
