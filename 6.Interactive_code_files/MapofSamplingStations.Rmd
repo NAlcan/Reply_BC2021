@@ -55,12 +55,15 @@ oan_data <- read_csv("2.Datos/working_data/OAN_complet_data.csv")
 Filter by data points from oan data, generate the varyble type and arrange by `latitude`
 
 ```{r}
- sites_reply <- sites %>% 
-  filter(codigo_estacion %in% oan_data$estacion) %>% 
-     mutate(type = ifelse(str_detect(codigo_estacion, c("RN","RU")), "train", 
-                       ifelse( str_detect(codigo_estacion, "RC"),"test","not_used"))) %>%
-  arrange(latitud, .desc = TRUE) %>% 
-   mutate(site_number = row_number())
+ sites_reply <-sites %>%
+  mutate(type = ifelse(
+    str_detect(codigo_estacion, "RN|RU"),
+    "train",
+    ifelse(str_detect(codigo_estacion, "RC"), "test", "not_used")
+  )) %>%
+  arrange(latitud, .desc = TRUE) %>%
+  mutate(site_number = row_number()) # Number code for each site
+
 
 ```
 
