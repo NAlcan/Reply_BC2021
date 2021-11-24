@@ -1,5 +1,5 @@
 
-# Misinterpreting “Relevant factors in the eutrophication of the Uruguay River and the Río Negro” using ill-defined correlative approaches and wrong limnological principles: a reply to Beretta-Blanco and Carrasco-Letelier (2021)
+# A reply to “Relevant factors in the eutrophication of the Uruguay River and the Río Negro”
 
 # Graphical Abstract
 
@@ -10,14 +10,14 @@
 
 * __BC2021 claims that pH, EC and T modulate river eutrophication.__
 * __BC2021 claims that main factors controlling eutrophication are not directly linked to agriculture.__
-* __We revisited BC2021’s database and detected arbitrary mishandling data analysis and sampling site selection to come to forced conclusions.__
+* __We revisited BC2021’s database and detected arbitrary mishandling analysis and site selection to come to forced conclusions.__
 * __We confirmed that the increase in pH is a consequence (not a cause) of microalgae productivity.__
 * __We support the limnological paradigm that nutrients enhance algal blooms.__
 
 # Article and Data
-## [Original article](https://www.sciencedirect.com/science/article/pii/S0048969720368303) 
+## [Original BC2021 article](https://www.sciencedirect.com/science/article/pii/S0048969720368303) 
 
-## [Original data from OAN and Working paper data](https://github.com/NAlcan/Reply_BC2021/tree/master/2.Datos)
+## [Data from OAN and Working paper data](https://github.com/NAlcan/Reply_BC2021/tree/master/2.Datos)
 
 ## R Codes
 
