@@ -1,6 +1,11 @@
 Data Analysis and Figures
 ================
 
+This script include all analysis of the paper: “A reply to” Relevant
+factors in the eutrophication of the Uruguay River and the Río Negro"
+This script contain two main sections: \* Part 1: Replication of BC2021
+\* Part 2: Analysis of river comparisons
+
 ### Functions load
 
 ``` r
@@ -9,38 +14,41 @@ library(RColorBrewer) # Color Palettes
 library(lubridate) # Day/Time Manipulation
 library(patchwork) # Plot Layout
 library(png) # Import `png` images
+
+theme_set(theme_minimal()) #  Graphic theme used for visualizations
 ```
 
-### Data Load
+# Part 1: Replication of BC2021:
+
+### 1.1 Data loading
 
 ``` r
-data_oan <- read_csv("2.Datos/working_data/bc2021_data.csv")
-glimpse(data_oan)
+urlfile <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/master/2.Datos/working_data/bc2021_data.csv"
+data_oan <- read.csv(urlfile)
+str(data_oan)
 ```
 
-    ## Rows: 1,122
-    ## Columns: 12
-    ## $ clorofila_a_mg_l                    <dbl> NA, NA, NA, NA, NA, NA, NA, NA, NA…
-    ## $ alcalinidad_total_mg_ca_co3_l       <dbl> 84, 80, 79, 85, 110, 110, 68, 29, …
-    ## $ conductividad_m_s_cm                <dbl> 193.5, 154.7, 155.8, 185.0, 241.0,…
-    ## $ fosforo_total_mg_p_l                <dbl> NA, 42, 5, NA, 12, 51, 38, 34, 48,…
-    ## $ solidos_suspendidos_totales_mg_l    <dbl> 16, 23, 120, NA, NA, 16, NA, NA, N…
-    ## $ potencial_de_hidrogeno_p_h_sin_unid <dbl> 7.10, 6.71, 6.27, 8.22, 7.85, 7.53…
-    ## $ temperatura_o_c                     <dbl> 30.9, 32.0, 32.2, 28.0, 28.7, 28.4…
-    ## $ date                                <date> 2008-01-08, 2008-01-09, 2008-01-0…
-    ## $ date_time                           <dttm> 2008-01-08, 2008-01-09, 2008-01-0…
-    ## $ estacion                            <chr> "RC60", "RC35", "RC40", "RC35", "R…
-    ## $ river                               <chr> "Cuareim", "Cuareim", "Cuareim", "…
-    ## $ data_model                          <chr> "Test", "Test", "Test", "Test", "T…
+    ## 'data.frame':    1122 obs. of  12 variables:
+    ##  $ clorofila_a_mg_l                   : num  NA NA NA NA NA NA NA NA NA NA ...
+    ##  $ alcalinidad_total_mg_ca_co3_l      : num  84 80 79 85 110 110 68 29 47 30 ...
+    ##  $ conductividad_m_s_cm               : num  194 155 156 185 241 ...
+    ##  $ fosforo_total_mg_p_l               : num  NA 42 5 NA 12 51 38 34 48 3 ...
+    ##  $ solidos_suspendidos_totales_mg_l   : num  16 23 120 NA NA 16 NA NA NA NA ...
+    ##  $ potencial_de_hidrogeno_p_h_sin_unid: num  7.1 6.71 6.27 8.22 7.85 7.53 6.23 6.48 6.71 6.49 ...
+    ##  $ temperatura_o_c                    : num  30.9 32 32.2 28 28.7 28.4 15.6 16.9 17.1 17.5 ...
+    ##  $ date                               : chr  "2008-01-08" "2008-01-09" "2008-01-09" "2008-02-26" ...
+    ##  $ date_time                          : chr  "2008-01-08T00:00:00Z" "2008-01-09T00:00:00Z" "2008-01-09T00:00:00Z" "2008-02-26T00:00:00Z" ...
+    ##  $ estacion                           : chr  "RC60" "RC35" "RC40" "RC35" ...
+    ##  $ river                              : chr  "Cuareim" "Cuareim" "Cuareim" "Cuareim" ...
+    ##  $ data_model                         : chr  "Test" "Test" "Test" "Test" ...
 
-Define de row names that belongs to ID of data like: `date`, `site`,
-`river`…
+Definition of the columns of the type “ID” (names and dates)
 
 ``` r
 id_vars <- c("date","date_time", "estacion","river","data_model")
 ```
 
-# Rename variables for easy coding
+# Renaming of variables for easy coding
 
 ``` r
 data_oan <- data_oan %>% 
@@ -53,11 +61,15 @@ data_oan <- data_oan %>%
          temp = "temperatura_o_c")
 ```
 
+## 1.2 Data cleaning
+
 ### 99.5 percentile limits for Chl-a
 
-We need to assume that BC2021 calculated the `99.5 limit` using Negro
-and Uruguay together. Lets see how many data exceed the limit with this
-criteria
+Calculation of the 99.5 percentiles of chlorophyll a for exclusion of
+outliers.
+
+For this calculation it was assumed that BC2021 used Rio Negro and Rio
+Uruguay data altogether.
 
 ``` r
 data_oan %>% 
@@ -78,7 +90,9 @@ data_oan %>%
     calculated for each river?. How many values should be eliminated?
 
 ``` r
-#Function that calculates the number of data points that exceed 99.5 limit for a numeric variable 
+# Calculation of the number of data that exceeds the 99.5 percentile:
+# Definition of function for this calculation:
+
   q99.5_exceed <- function (x){
     q <- quantile(x, probs = c(0.995), na.rm =T)
   sum(x > q, na.rm = T)
@@ -88,8 +102,9 @@ data_oan %>%
 ## Number of data exceeds 99.5 for each variable in Uruguay and Negro
 
 ``` r
-# Apply the function q99.5_exceed for Uruguay and Negro
- data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
+# Data that exceeds the 99.5 quantile for each variable grouped by river systems
+
+data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>% 
    summarize(across(where(is.numeric), q99.5_exceed)) %>% 
   kable()
 ```
@@ -102,7 +117,7 @@ data_oan %>%
     each variable
 
 ``` r
-# Apply the function q99.5_exceed for each river separated
+# Data that exceeds the 99.5 quantile for each variable grouped by river systems
 data_oan %>% group_by(river)  %>% 
 summarize(across(where(is.numeric), q99.5_exceed)) %>% 
   kable()
@@ -131,7 +146,8 @@ data_oan %>% group_by(river) %>%
 ### Lets calculate de Q99.5 for any numeric variable
 
 ``` r
-# Function that returns de value of quantile 99.5  
+# Definition of function that returns the 99.5 quantile
+
 q_calc<- function(x) {
  q <- quantile(x, probs = c(0.995), names = F,na.rm = T)
 }
@@ -140,6 +156,8 @@ q_calc<- function(x) {
 Apply de q\_calc for each numeric column from Negro and Uruguay rivers
 
 ``` r
+# Calculation of the 99.5 quantile for all variables using the q_calc function for Negro and Uruguay river separately.
+
 data_oan %>% 
     filter(river %in% c("Negro","Uruguay")) %>% 
     summarise( across(where(is.numeric), q_calc)) %>% 
@@ -153,8 +171,9 @@ data_oan %>%
 ### Chla vs All all values
 
 ``` r
-# Generate de data frame to make one plot for each variable
-# With a data-list each var transform into single data frame to make the plot
+# Comparison of bi-plots reported by BC2021 
+# Creation of dataframe for each variable:
+
 chla_allvalues <- data_oan %>%
   filter (river %in% c("Negro", "Uruguay")) %>% 
     pivot_longer(
@@ -162,7 +181,8 @@ chla_allvalues <- data_oan %>%
   group_by(name) %>% 
   nest()
 
-# Function that make a plot for each variable 
+# Definition of function to create a plot for each variable
+
 figa1_func <- function (data) { 
   # Define de q99.5 limit  
 q <- quantile(data$value, probs = c(0.995), names = F,na.rm = T)
@@ -175,17 +195,19 @@ q <- quantile(data$value, probs = c(0.995), names = F,na.rm = T)
     labs(y = expression(paste("Chlorophyll a (", mu,"g L"^-1,")"))) +
     theme(axis.title.y = element_text(size = 8)) +
     guides (fill = "none")
-         }
-# Apply figa1_function for each variable
+}
+```
 
+### Application of the “figa1\_func” function to each variable
+
+``` r
 data_chla_all <- chla_allvalues %>% 
   mutate(plots = map(data, figa1_func)) 
 
-# Extract the plots information obly 
+# Extraction of each plot and labelling: 
 chla_plots<- data_chla_all %>%  ungroup() %>% 
   dplyr::select(plots) 
 
-# Extract each plot for label variables adequately
 
 figa1_alk <- chla_plots[[1]][[1]] +
   labs(x = expression(paste("Alkalinity (mg L"^-1,")")) )
@@ -221,25 +243,26 @@ according our analysis (values higher than the 99.5% percentile.
 
 ### Substitute all values that exceed 99.5 and replace by NA
 
--   For Each variable in `Negro` and `Uruguay` together (for similarity
-    with the BC2021 procedure)
--   For `Cuareim` this is done alone
+-   For replication purposes all values exceeding the 99.5 percentile
+    was replaced with NA values.
+-   For the same reason Negro and Uruguay were analyzed altogether,
+    while Cuareim alone
 
 ``` r
-# Function that replace a values with NaN if it exceed 99.5 limit
+# Definition of function that replaces data above the 99.5 percentile with NaN:
 
 q99.5_remove <- function(x){
   q = quantile(x, probs = c(0.995), na.rm = T)
   x_c = ifelse(x <= q , x , NaN)
 }
 
-# For Negro and Uruguay together
+# Replacement for Negro and Uruguay:
 
 data_cut_NU <- data_oan %>% 
   filter (river %in% c("Negro","Uruguay")) %>% 
   mutate(across(where(is.numeric), q99.5_remove))
 
-# For Cuareim only
+# Replacement for Cuareim:
 data_cut_C <- data_oan %>% 
   filter (river == "Cuareim") %>% 
   mutate(across(where(is.numeric), q99.5_remove))
@@ -251,22 +274,21 @@ bc_data_limit <- bind_rows(data_cut_NU,data_cut_C)
 
 ### Figure 3 from BC 2021 recreation
 
-Store the maximum values for X axes according to BC2021(Figure 3)
-
 ``` r
+# # Maximum values for X axis according to BC2021 (Figure 3)
+
 plot_x_limits <- tribble(
   ~name, ~lmin, ~lmax,
   "alk", 0, 150,
   "cond",0, 300,
   "tot_phos", 0, 1000,
-  "pH", 5,10,
+  "pH", 5,10, # This value differ from the BC2020. They report "8" and not "10".
   "tss", 0, 600,
   "temp", 0 , 40
 )
 ```
 
-Generate de data frame to make one plot for each variable. With a
-data-list each var transform into single data frame to make the plot
+## \# Creation of dataframe to make plots for each variable (excluding Rio Cuareim)
 
 ``` r
 data_fig3 <- bc_data_limit %>% 
@@ -276,14 +298,16 @@ data_fig3 <- bc_data_limit %>%
   group_by (name) %>% 
   nest()
 
-# Add x limits
+## Addition of limits for x-axis
 data_fig3 <- data_fig3 %>% 
   left_join(plot_x_limits, id = "name")
 ```
 
+### Definition of function to plot variables
+
 ``` r
-# Function that generates a plot for any numerical variable vs chla
 # Set x axes range according to the same as BC2021
+
 fig3_function_plot <- function (data, lmin,lmax,xlab) {
   ggplot(data, aes(x = value , y = chla)) +
     geom_point(alpha = 0.8, size = rel(0.5)) +
@@ -297,19 +321,18 @@ fig3_function_plot <- function (data, lmin,lmax,xlab) {
     
 }
 
-# Apply the plot function for each variable
+## Creation of plot for each variable using the plot function defined:
 
 data_fig3 <- data_fig3 %>% 
   mutate (plot = pmap(list(data,lmin,lmax,name), fig3_function_plot))
-
-# Extract only plots information
-plots3<- data_fig3 %>%  ungroup() %>% 
-  dplyr::select(plot) 
 ```
 
-Extract each plot for label variables adequately
+### Extraction of each plot to label variables accordingly
 
 ``` r
+plots3<- data_fig3 %>%  ungroup() %>% 
+  dplyr::select(plot) 
+
 fig3_alk <- plots3[[1]][[1]] +
   labs(x = expression(paste("Alkalinity (mg L"^-1,")")) ) +
    coord_fixed(ratio = 3)
@@ -335,7 +358,7 @@ fig3_ta <- plots3[[1]][[6]] +
    coord_fixed(ratio = 0.8)
 ```
 
-### Load all panel figures copied from BC2021 that are saved each one ina differente `.png` file
+### Loading all panel figures copied from BC2021 that are saved each one ina differente `.png` file
 
 ``` r
 # Special case functions for import png figure and combine with ours
@@ -345,29 +368,41 @@ library(ggplotify) # Convert Grob to GGPLOT
 library(cowplot) # Paste plots together
 
 # Load `png` and transform
-f3a<-readPNG("2.Datos/Fig3BC/3a.png")
-fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate=TRUE)) +
-    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3a <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3a.png"
+download.file(f3a, "3a.png",mode="wb")
+f3a <- readPNG("3a.png")
+fig3a <- as.ggplot(grid::rasterGrob(f3a, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1, 0,-1), "cm"))
 
-f3b<-readPNG("2.Datos/Fig3BC/3b.png")
-fig3b <-as.ggplot(grid::rasterGrob(f3b, interpolate=TRUE)) +
-    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3b <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3b.png"
+download.file(f3b, "3b.png",mode="wb")
+f3b <- readPNG("3b.png")
+fig3b <- as.ggplot(grid::rasterGrob(f3b, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1, 0,-1), "cm"))
 
-f3c<-readPNG("2.Datos/Fig3BC/3c.png")
-fig3c <- as.ggplot(grid::rasterGrob(f3c, interpolate=TRUE)) + 
-    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3c <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3c.png"
+download.file(f3c, "3c.png",mode="wb")
+f3c <- readPNG("3c.png")
+fig3c <- as.ggplot(grid::rasterGrob(f3c, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1, 0,-1), "cm"))
 
-f3d<-readPNG("2.Datos/Fig3BC/3d.png")
-fig3d <- as.ggplot(grid::rasterGrob(f3d, interpolate=TRUE)) +
-    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3d <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3d.png"
+download.file(f3d, "3d.png",mode="wb")
+f3d <- readPNG("3d.png")
+fig3d <- as.ggplot(grid::rasterGrob(f3d, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1, 0,-1), "cm"))
 
-f3e<-readPNG("2.Datos/Fig3BC/3e.png")
-fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate=TRUE)) +
-  theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3e <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3e.png"
+download.file(f3e, "3e.png",mode="wb")
+f3e <- readPNG("3e.png")
+fig3e <- as.ggplot(grid::rasterGrob(f3e, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1, 0,-1), "cm"))
 
-f3f<-readPNG("2.Datos/Fig3BC/3f.png")
-fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate=TRUE)) +
-    theme(plot.margin = unit(c(0, -1, 0, -1), "cm"))
+f3f <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3f.png"
+download.file(f3f, "3f.png",mode="wb")
+f3f <- readPNG("3f.png")
+fig3f <- as.ggplot(grid::rasterGrob(f3f, interpolate = TRUE)) +
+  theme(plot.margin = unit(c(0,-1,-.2,-1), "cm"))
 ```
 
 ### Plot figure 3
@@ -403,9 +438,13 @@ outside(d´). The Chl-a value of 55 µg L-1 that BC2021 considered to as
 an outlier (RN 2018-04-17) is not shown in any of the biplots, because
 the Chl-a axis ends at 45 µg L-1.
 
+# Part 2: Analysis of river comparisons
+
+### 2.1 Comparison of environmental variables between Uruguay and Negro River
+
 ### Differences within rivers used for train model (Negro and Uruguay)
 
-Generate de data frame to plot the variables for each river. With a
+Generate the data frame to plot the variables for each river. With a
 data-list each var transform into single data frame to make the plot
 
 ``` r
@@ -419,7 +458,7 @@ diff_rivers_data <- bc_data_limit %>%
   group_by(name) %>% 
   nest()
 
-# Function that for each variable plot the violins seprating each river and facetting if data were used for model train or test
+#Definition of function to plot the data
 
 fig4_function <- function(data) {
   p1 <- ggplot(data, aes(y = value, x = river_label)) + 
@@ -436,18 +475,18 @@ fig4_function <- function(data) {
   
 }
 
-# Apply the plot function for each variable 
+## Application of the plot function defined
+
 fig4_rivers <- diff_rivers_data %>% 
   mutate(plots = map(data, fig4_function))
-
-# Extract only plots information
-plots4<-fig4_rivers %>%  ungroup() %>% 
-  dplyr::select(plots) 
 ```
 
-Extract each plot for label variables adequately
+Extraction of each plot to label variables accordingly
 
 ``` r
+plots4<-fig4_rivers %>%  ungroup() %>% 
+  dplyr::select(plots) 
+
 fig4_chla <- plots4[[1]][[1]] +
   labs(y =  expression(paste("Chlorophyll a (", mu,"g L"^-1,")")) )
 
@@ -505,8 +544,8 @@ gls.var.test<-function(data){
   group = data$group
   if(is.null(group)){ data.gls<-x; colnames(data.gls)<-c("x","group")} else data.gls<-data.frame(x,group)
   
-  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# SACA LOS NAN
-  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# SACA LOS NAN
+  if(any(!is.finite(data.gls[,1]))){ data.gls<-data.gls[which(is.finite(data.gls[,1])),]; warning("there were NaNs in the original x data")}# #NANs are removed
+  if(any(!is.finite(data.gls[,2]))){ data.gls<-data.gls[which(is.finite(data.gls[,2])),]; warning("there were NaNs in the original group data")}# #NANs are removed
   
   modHeteroVar = gls(x~group, data=data.gls, weights = varIdent(form = ~1|group), method="ML") # Heterogeneous variance
   modHomoVar   = gls(x~group, data=data.gls, method="ML") # Homogeneous Variance
@@ -552,7 +591,7 @@ mutate (group = factor(group) )%>%
 sessionInfo()
 ```
 
-    ## R version 4.1.1 (2021-08-10)
+    ## R version 4.1.2 (2021-11-01)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
     ## Running under: Ubuntu 20.04.3 LTS
     ## 
@@ -576,27 +615,26 @@ sessionInfo()
     ##  [1] nlme_3.1-152       cowplot_1.1.1      ggplotify_0.0.8    png_0.1-7         
     ##  [5] patchwork_1.1.1    lubridate_1.7.10   RColorBrewer_1.1-2 forcats_0.5.1     
     ##  [9] stringr_1.4.0      dplyr_1.0.7        purrr_0.3.4        readr_2.0.1       
-    ## [13] tidyr_1.1.3        tibble_3.1.4       ggplot2_3.3.5      tidyverse_1.3.1   
+    ## [13] tidyr_1.1.4        tibble_3.1.6       ggplot2_3.3.5      tidyverse_1.3.1   
     ## [17] knitr_1.33        
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] Rcpp_1.0.7          lattice_0.20-44     assertthat_0.2.1   
-    ##  [4] digest_0.6.27       utf8_1.2.2          R6_2.5.1           
+    ##  [1] Rcpp_1.0.7          lattice_0.20-45     assertthat_0.2.1   
+    ##  [4] digest_0.6.28       utf8_1.2.2          R6_2.5.1           
     ##  [7] cellranger_1.1.0    backports_1.2.1     reprex_2.0.1       
     ## [10] evaluate_0.14       httr_1.4.2          highr_0.9          
-    ## [13] pillar_1.6.2        rlang_0.4.11        readxl_1.3.1       
+    ## [13] pillar_1.6.4        rlang_0.4.12        readxl_1.3.1       
     ## [16] rstudioapi_0.13     rmarkdown_2.10      labeling_0.4.2     
-    ## [19] bit_4.0.4           munsell_0.5.0       broom_0.7.9        
-    ## [22] compiler_4.1.1      modelr_0.1.8        xfun_0.25          
-    ## [25] gridGraphics_0.5-1  pkgconfig_2.0.3     htmltools_0.5.1.1  
-    ## [28] tidyselect_1.1.1    fansi_0.5.0         crayon_1.4.1       
-    ## [31] tzdb_0.1.2          dbplyr_2.1.1        withr_2.4.2        
-    ## [34] jsonlite_1.7.2      gtable_0.3.0        lifecycle_1.0.0    
-    ## [37] DBI_1.1.1           magrittr_2.0.1      scales_1.1.1       
-    ## [40] cli_3.0.1           stringi_1.7.3       vroom_1.5.4        
-    ## [43] farver_2.1.0        fs_1.5.0            xml2_1.3.2         
-    ## [46] rvcheck_0.1.8       ellipsis_0.3.2      generics_0.1.0     
-    ## [49] vctrs_0.3.8         tools_4.1.1         bit64_4.0.5        
-    ## [52] glue_1.4.2          hms_1.1.0           parallel_4.1.1     
-    ## [55] yaml_2.2.1          colorspace_2.0-2    BiocManager_1.30.16
-    ## [58] rvest_1.0.1         haven_2.4.3
+    ## [19] munsell_0.5.0       broom_0.7.9         compiler_4.1.2     
+    ## [22] modelr_0.1.8        xfun_0.25           pkgconfig_2.0.3    
+    ## [25] gridGraphics_0.5-1  htmltools_0.5.1.1   tidyselect_1.1.1   
+    ## [28] fansi_0.5.0         crayon_1.4.2        tzdb_0.1.2         
+    ## [31] dbplyr_2.1.1        withr_2.4.2         jsonlite_1.7.2     
+    ## [34] gtable_0.3.0        lifecycle_1.0.1     DBI_1.1.1          
+    ## [37] magrittr_2.0.1      scales_1.1.1        cli_3.1.0          
+    ## [40] stringi_1.7.3       farver_2.1.0        fs_1.5.0           
+    ## [43] xml2_1.3.2          ellipsis_0.3.2      rvcheck_0.1.8      
+    ## [46] generics_0.1.1      vctrs_0.3.8         tools_4.1.2        
+    ## [49] glue_1.5.0          hms_1.1.0           yaml_2.2.1         
+    ## [52] colorspace_2.0-2    BiocManager_1.30.16 rvest_1.0.1        
+    ## [55] haven_2.4.3

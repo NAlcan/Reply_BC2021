@@ -1,32 +1,36 @@
+
 ################################################################################
-# This script include all analysis of the paper:
-# "A reply to" Relevant factors in the eutrophication of the Uruguay River and the Río Negro"
+# This script include all analysis of the paper XXXXXX/
+# [Decir algo mas aca?]
 # This script contain two main sections: Part 1: Replication of BC2021
 #                                       Part 2: Analysis of river comparisons
 
 ################################################################################
 
-# Functions load -----------------------------------------------------
-library(tidyverse) # Data load/manipulation and graphics build
+# Functions load ---------------------------------------------------------
+library(tidyverse) # Data manipulation and graphics build
 library(RColorBrewer) # Color Palettes
 library(lubridate) # Day/Time Manipulation
-library(patchwork) # Plot Layout
+library(patchwork) # Plot layout
 library(png) # Import `png` images
 
 theme_set(theme_minimal()) #  Graphic theme used for visualizations
 
 
-# Part 1: Replication of BC2021:
+#Part 1: Replication of BC2021:
 
 # 1.1 Data loading ---------------------------------------------------------------
 urlfile <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/master/2.Datos/working_data/bc2021_data.csv"
 data_oan <- read.csv(urlfile)
 str(data_oan) # [Sugerencia para simplificar]
 
+#library(pillar) [sacar para simplificar]
+#glimpse(data_oan) [sacar para simplificar]
+
 # Definition of the columns of the type "ID" (names and dates). 
 id_vars <- c("date", "date_time", "estacion", "river", "data_model")
 
-# Renaming of variables for easy coding
+#Renaming of variables for easy coding
 data_oan <- data_oan %>%
   rename(
     chla = "clorofila_a_mg_l",
@@ -38,7 +42,7 @@ data_oan <- data_oan %>%
     temp = "temperatura_o_c"
   )
 
-# 1.2 Data cleaning ---------------------------------------------------------------
+#  1.2 Data cleaning ---------------------------------------------------------------
 # Calculation of the 99.5 percentiles of chlorophyll a for exclusion of outliers
 # For this calculation it was assumed that BC2021 used Rio Negro and Rio Uruguay data altogether.
 
@@ -47,13 +51,14 @@ data_oan %>%
   filter(chla >= quantile(chla, probs = c(0.995), na.rm = T)) %>%
   dplyr::select(date, estacion, chla)
 
+# The "RN12 2018-04-17" is not an outlier using this criteria. [ver si dejar esto o no. suena mas como un resultado]
+
 # Calculation of the number of data that exceeds the 99.5 percentile:
 # Definition of function for this calculation:
 q99.5_exceed <- function (x) {
   q <- quantile(x, probs = c(0.995), na.rm = T)
   sum(x > q, na.rm = T)
 }
-
 
 # The number of data that exceeds 99.5 for each variable (Rio Negro and Rio Uruguay altogether):
 data_oan %>% filter(river %in% c("Uruguay", "Negro"))  %>%
@@ -68,7 +73,7 @@ data_oan %>% group_by(river) %>%
   dplyr::select(date, estacion, chla, river) %>%
   summarise(Chla_q99.5 = quantile(chla, probs = c(0.995), na.rm = T))
 
-# Definition of function that returns the 99.5 quantile
+# Definition of function that returns the 99.5 quantile  [simplificar usando solamente la funtion quantile?]
 q_calc <- function(x) {
   q <- quantile(x,
                 probs = c(0.995),
@@ -77,7 +82,6 @@ q_calc <- function(x) {
 }
 
 # Calculation of the 99.5 quantile for all variables using the q_calc function for Negro and Uruguay river separately.
-
 data_oan %>%
   filter(river %in% c("Negro", "Uruguay")) %>%
   summarise(across(where(is.numeric), q_calc))
@@ -86,8 +90,7 @@ data_oan %>%
 # 1.3 Chla versus environmental variables ---------------------------------------------------
 
 # Comparison of bi-plots reported by BC2021 
-# Creation of dataframe for each variable:
-
+#Creation of dataframe for each variable:
 chla_allvalues <- data_oan %>%
   filter (river %in% c("Negro", "Uruguay")) %>%
   pivot_longer(cols = !c(all_of(id_vars), chla)) %>%
@@ -95,9 +98,7 @@ chla_allvalues <- data_oan %>%
   nest()
 
 # Definition of function to create a plot for each variable
-
 figa1_func <- function (data) {
-  # Define de q99.5 limit
   q <- quantile(
     data$value,
     probs = c(0.995),
@@ -117,9 +118,7 @@ figa1_func <- function (data) {
     theme(axis.title.y = element_text(size = 8)) +
     guides (fill = "none")
 }
-
 # Application of the "figa1_func" function to each variable
-
 data_chla_all <- chla_allvalues %>%
   mutate(plots = map(data, figa1_func))
 
@@ -145,7 +144,8 @@ figa1_ph <- chla_plots[[1]][[5]] +
 figa1_ta <- chla_plots[[1]][[6]] +
   labs(x = expression(paste("T (", degree, "C)")))
 
-# Creation and saving of Figure 1A:
+
+#Creation and saving of Figure 1A:
 fig_A1 <- wrap_plots(figa1_alk,
                      figa1_ec,
                      figa1_tp,
@@ -163,11 +163,12 @@ fig_A1 <- wrap_plots(figa1_alk,
 
 ggsave(
   fig_A1,
-  filename = "FigureA1.tiff",
+  filename = "FigureA1.tiff", #[cambie aca para decir solamente "FigureA1.tiff"]
   dpi = "print",
   height = 5.94  ,
   width = 8.35
 )
+
 
 # For replication purposes all values exceeding the 99.5 percentile was replaced with NA values. 
 # For the same reason Negro and Uruguay were analyzed altogether, while Cuareim alone
@@ -190,6 +191,7 @@ data_cut_C <- data_oan %>%
 
 bc_data_limit <- bind_rows(data_cut_NU, data_cut_C)
 
+
 # Replication of figure 3 (bi-plots)
 
 # Maximum values for X axis according to BC2021 (Figure 3)
@@ -208,7 +210,8 @@ plot_x_limits <- tribble(
   1000,
   "pH",
   5,
-  10, # This value differ from the BC2020. They report "8" and not "10".
+  10,
+  # The original BC2021 is 8 [Decir algo asi mejor:]. This value differ from the BC2020. They report "8" and not "10". 
   "tss",
   0,
   600,
@@ -217,8 +220,8 @@ plot_x_limits <- tribble(
   40
 )
 
-# Creation of dataframe to make plots for each variable (excluding Rio Cuareim)
 
+# Creation of dataframe to make plots for each variable (excluding Rio Cuareim)
 data_fig3 <- bc_data_limit %>%
   filter (river != "Cuareim") %>%
   dplyr::select(!all_of(id_vars)) %>%
@@ -245,7 +248,6 @@ fig3_function_plot <- function (data, lmin, lmax, xlab) {
 }
 
 ## Creation of plot for each variable using the plot function defined:
-
 data_fig3 <- data_fig3 %>%
   mutate (plot = pmap(list(data, lmin, lmax, name), fig3_function_plot))
 
@@ -253,7 +255,6 @@ plots3 <- data_fig3 %>%  ungroup() %>%
   dplyr::select(plot)
 
 ## Extraction of each plot to label variables accordingly
-
 fig3_alk <- plots3[[1]][[1]] +
   labs(x = expression(paste("Alkalinity (mg L" ^ -1, ")"))) +
   coord_fixed(ratio = 3)
@@ -278,11 +279,13 @@ fig3_ta <- plots3[[1]][[6]] +
   labs(x = expression(paste("T (", degree, "C)"))) +
   coord_fixed(ratio = 0.8)
 
+
 # Loading of all panel figures copied from BC2021
-library(png) # Upload png images scanned from BC2021
+library(png) # upload png images scanned from BC2021
 library(grid) # Convert PNG to Grob
 library(ggplotify) # Convert Grob to GGPLOT
 library(cowplot) # Paste plots together
+
 
 f3a <-"https://raw.githubusercontent.com/NAlcan/Reply_BC2021/bca34bc1ac7399cd2197d2f986ab8f1c3a1a5a8d/2.Datos/Fig3BC/3a.png"
 download.file(f3a, "3a.png",mode="wb")
@@ -346,15 +349,26 @@ plots_juntos3 <- plot_grid(
   ncol = 2
 )
 
+plots_juntos3
 
+#[SACAR ESTO? Capaz no es necesario esta opcion?]
+# To Save in PNG format
+# png(
+#   filename = "3.Resultados/Figure3.png",
+#   pointsize = 18,
+#   width = 10,
+#   height = 20,
+#   res = 300 ,
+#   units = "cm"
+# )
+# plots_juntos3
+# dev.off()
 
 # Save figure
-
 tiff(
-  filename = "Figure3.tiff",
+  filename = "Figure3.tiff", #[cambie para decir solamente "Figure 3.tiff" aqui]
   width = 600, height = 580)
 
-plots_juntos3
 
 dev.off()
 
@@ -362,7 +376,7 @@ dev.off()
 
 # 2.1 Comparison of environmental variables between Uruguay and Negro River ---------------------------------------------------------------
 # Figure 4 in the paper
-
+# Differences within the rivers used to train the model (Negro and Uruguay) [ESTO NO LO ENTIENDO?]
 
 diff_rivers_data <- bc_data_limit %>%
   mutate(logChla = log10(chla)) %>%
@@ -396,7 +410,7 @@ fig4_function <- function(data) {
 fig4_rivers <- diff_rivers_data %>%
   mutate(plots = map(data, fig4_function))
 
-## Extraction of each plot to label variables accordingly
+# Extraction of plots
 plots4 <- fig4_rivers %>%  ungroup() %>%
   dplyr::select(plots)
 
@@ -404,31 +418,25 @@ fig4_chla <- plots4[[1]][[1]] +
   labs(y =  expression(paste("Chl-a (", mu, "g L" ^ -1, ")"))) +
   theme(axis.text.x = element_blank())
 
-
 fig4_alk <- plots4[[1]][[2]] +
   labs(y = expression(paste("Alkalinity (mg L" ^ -1, ")")))+
   theme(axis.text.x = element_blank())
-
 
 fig4_ec <- plots4[[1]][[3]] +
   labs(y = expression(paste("EC"[w] , " (", mu, "S cm" ^ -1, ")")))+
   theme(axis.text.x = element_blank())
 
-
 fig4_tp <- plots4[[1]][[4]] +
   labs(y = expression(paste("Total phosphorus (", mu, "g L" ^ -1, ")")))+
   theme(axis.text.x = element_blank())
-
 
 fig4_sst <- plots4[[1]][[5]] +
   labs(y = expression(paste("TSS ( mg L" ^ -1, ")"))) +
   theme(axis.title.y =  element_text(size = 10))+
   theme(axis.text.x = element_blank())
 
-
 fig4_ph <- plots4[[1]][[6]] +
   labs(y = "pH") 
-
 
 fig4_ta <- plots4[[1]][[7]] +
   labs(y = expression(paste("T (", degree, "C)")))
@@ -436,8 +444,6 @@ fig4_ta <- plots4[[1]][[7]] +
 fig4_logchla <- plots4[[1]][[8]] +
   labs(y =  expression(paste("log"[10], "(Chl-a)"))) +
   theme(axis.text.x = element_blank())
-
-
 
 figure4 <- wrap_plots(fig4_chla,
                       fig4_logchla,
@@ -449,10 +455,9 @@ figure4 <- wrap_plots(fig4_chla,
                       fig4_ta,
                       ncol = 2)
 
-# Save Figure
 ggsave(
   figure4,
-  filename = "figure4_rivercomp.tiff",
+  filename = "figure4_rivercomp.tiff", #[aca lo mismo que los otros casos]
   dpi = "print",
   height = 8  ,
   width = 8
@@ -461,7 +466,6 @@ ggsave(
 
 # 2.2 Generalized Least Squares for river comparison ---------------------------------------------------------
 ## This GLS function allows to compare differences between mean and variances
-
 library(nlme)
 gls.var.test <- function(data) {
   x = data$x
@@ -478,12 +482,12 @@ gls.var.test <- function(data) {
     data.gls <-
       data.gls[which(is.finite(data.gls[, 1])), ]
     warning("there were NaNs in the original x data")
-  } #NANs are removed
+  }# NANs are removed
   if (any(!is.finite(data.gls[, 2]))) {
     data.gls <-
       data.gls[which(is.finite(data.gls[, 2])), ]
     warning("there were NaNs in the original group data")
-  }#NANs are removed
+  }# NANs are removed
   
   modHeteroVar = gls(
     x ~ group,
@@ -504,7 +508,7 @@ gls.var.test <- function(data) {
     data.frame(
       VarTest = anova(modHeteroVar, modHomoVar)$`p-value`[2],
       MeanTest = anova(modEqualMean, modHeteroVar)$`p-value`[2]
-    ) # Evaluar el loglikelyhood ratio test. p>0.01
+    ) # log likelihood ratio tested. p>0.01
 }
 
 
