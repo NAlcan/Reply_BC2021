@@ -1,12 +1,12 @@
-.Rproj.user
+*.Rproj.user
 .Rproj
 .Rhistory
 .RData
 .Ruserdata
 Datos 2009 - 2018 RN.RU.1.xlsx
-.csv
+*.csv
 3.Resultados
 4.Manuscript/
-.svg
-.odp
-.eps
+*.svg
+*.odp
+*.eps
