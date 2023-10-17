@@ -1,0 +1,226 @@
+---
+title: "¿Afirmaciones extraordinarias exigen evidencia extraordinaria?; Reproducibilidad y datos abiertos en calidad de agua"
+date: '2023-10-20'
+author:
+  - name: "Ignacio Alcántara"
+    affiliations: "Ud. Bioestadística - Facultad de Veterinaria, UdelaR"
+  - name: "Andrea Somma"
+    affiliations: "Polo Ecología Fluvial - CENUR Litoral Norte, UdelaR"
+  - name: "Felipe García-Rodríguez"
+    affiliations: "Dpto. Geociencias - CURE, UdelaR"
+from: markdown+emoji
+format:
+  revealjs:
+    theme: dark
+    slide-number: true
+    preview-links: true
+    logo: img/logo_R_FVet_chico.png
+    footer: "https://github.com/NAlcan/Reply_BC2021"
+    embed-resources: true
+    mouse-wheel: true
+    height: 864
+    width: 1536
+    incremental: true
+execute: 
+  eval: true
+  echo: false
+---
+
+## Contenido :page_facing_up:
+
+<br/>
+
+* Origen: __BC2021__
+
+<br/>
+
+* Construcción de una respuesta (reproducible)
+
+<br/>
+
+* ¿Y después?
+
+<br/>
+
+* Lecciones aprendidas
+
+<br/>
+
+
+---
+
+# Origen: __BC2021__
+
+##  Articulo de BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+
+:::: {.columns}
+
+::: {.column width="70%"}
+![](img/01_portada_bc.png){.absolute top=150 left=50 width="900" height="600"}
+:::
+
+::: {.column width="30%"}
+* Revista STOTEN: 
+  - Impact Factor 9.8
+  - CiteScore 16.8
+  
+* Afilición de los autores:
+  - Ministerio Ganadería Agricultura y Pesca
+  - Instituto Nacional de Investigación Agropecuaria
+:::
+
+::::
+
+
+---
+
+##  El Articulo: BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+
+
+* El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de Clorofila-a (_Chl-a_).
+
+* La reducción de las emisiones de fósforo agrícola a los ríos no evitaría los altos niveles de clorofila-a.
+
+* La sustitución de la agricultura por pradera natural no evitaría la proliferación de algas.
+
+* Los principales factores que controlan la eutrofización no están directamente relacionados con la agricultura
+
+* La proliferación de algas en Uruguay es impulsada por el Cambio Climático.
+
+
+---
+
+## Paradigma actual
+
+### Mecanismos determinantes de las floraciones algales
+
+
+![](img/02_cyanohabs_factors.png){.incremental top=450 left=50 width="1200" height="450"}
+
+::: {.incremental}
+
+* Nutrientes
+
+* Temperatura
+
+* Tiempo de residencia
+
+* Luz solar
+
+:::
+
+---
+
+## Paradigma actual
+
+### Consecuencias de las floraciones algales
+
+![](img/03_ciano1.jpg){.absolute top=150 left=1050 width="370" height="320"}
+![](img/03_ciano2.jpg){.absolute top=450 left=1050 width="370" height="320"}
+
+* Pérdida de Biodiversidad
+
+* Anoxia
+
+* Olor y sabor en el agua
+
+* Cianotoxinas
+
+* Acidificación (aumento de pH)
+
+![](img/04_ph_cycle.png){.fragment width="600" height="300"}
+
+---
+
+##  Articulo de BC2021
+
+### Metodología
+
+
+* Datos Públicos de calidad de agua (Observatorio Ambiental Nacional - Min. Ambiente). 
+
+* Seleccionaron dos ríos para entrenar una red neuronal (NNet)
+
+* Validaron modelo con datos de un tercer río
+
+* No declararon criterios para incluir variables
+
+* Proponen que las NNet son una herramienta libre de sesgo para determinar la influencia de las variables en el fenómeno
+
+
+![](img/05_GA_bc2021.png){.fragment top=550 width="700" height="250"}
+
+---
+
+## Reacción de la comunidad "Limnológica"
+
+1. Organizarse frente a un "enemigo común"
+
+<br/>
+
+2. Escribir al editor de la revista resaltando algunos de los errores conceptuales 
+  + Respuesta del editor: "Escriban un réplica al articulo original"
+
+<br/>
+
+3. Diversas propuestas de como debía realizarse un "correcto" análisis de la información
+
+
+---
+
+# Construcción de una respuesta (reproducible)
+
+---
+
+## Construcción de una respuesta (reproducible)
+
+
+* __Reproducibilidad:__ trabajo que puede ser revisado y recreado de forma independiente, utilizando los mismos datos y análisis publicados por los autores originales.
+
+
+* La Reproducibilidad puede entenderse:
+
+  - a nivel informático (códigos, software, hardware, etc.)
+
+  - a nivel empírico (experimentos y observaciones que permiten una adquisición y disponibilidad transparente de datos)
+  
+  - a nivel estadístico (análisis estadísticos, valores umbral de detección y potencia estadística de las pruebas, así como los parámetros de los modelos)
+
+
+![](img/07_reproducibility.png){.fragment width="600" height="300"}
+
+::: {.footnote}
+White et al., 2013; Culina et al., 2020
+:::
+
+---
+
+
+## Datos: Observatorio Ambiental Nacional
+
+:::: {.columns}
+
+::: {.column width="65%"}
+
+* Repositorio de datos públicos de calidad de Agua en Uruguay
+
+* Programas de monitoreo no estandarizados a nivel país
+
+* **Además:**
+
+ - Más de un archivo _.csv_ para cada río 
+ 
+ - Presencia de caracteres especiales como datos ($<LD; <LC;  LD<X<LC$)
+ 
+ - Estaciones de superficie y fondo solo identificadas por un código en su nombre
+
+:::
+
+::::
+
+
+![](img/06_OAN.png){.fragment width="600" height="300"}
+
+---
+
+
