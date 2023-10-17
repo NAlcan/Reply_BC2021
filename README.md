@@ -7,7 +7,7 @@ A recent paper by Beretta-Blanco and Carrasco-Letelier (BC2021) claims that agri
 
 # Graphical Abstract
 
-![](6.interactive_code_files/graphical_abstract_plain.png)
+![](6.Interactive_code_files/graphical_abstract_plain.png)
 
 
 # Highlights
