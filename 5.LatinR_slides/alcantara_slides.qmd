@@ -206,21 +206,34 @@ White et al., 2013; Culina et al., 2020
 
 * Programas de monitoreo no estandarizados a nivel país
 
-* **Además:**
-
- - Más de un archivo _.csv_ para cada río 
- 
- - Presencia de caracteres especiales como datos ($<LD; <LC;  LD<X<LC$)
- 
- - Estaciones de superficie y fondo solo identificadas por un código en su nombre
-
+* 
 :::
 
 ::::
-
 
 ![](img/06_OAN.png){.fragment width="600" height="300"}
 
 ---
 
+## Repositorio Público
 
+* Brindar a los investigadores una fuente de consulta centralizada
+
+* Compartir códigos de avance en el análisis
+
+* Transparentar el proceso de análisis y publicación
+
+
+---
+
+## Prcesamiento de datos del OAN 
+
+* 2059 observaciones y 19 variables
+
+* Más de un archivo _.csv_ para cada río 
+ 
+* Presencia de caracteres especiales como datos: $<LD; <LC;  LD<X<LC$
+ 
+* Estaciones de superficie y fondo solo identificadas por un código en su nombre
+
+* Valores extremos en los datos (ej. temperatura = $257 ^{\circ}C$)
