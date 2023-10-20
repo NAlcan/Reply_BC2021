@@ -228,7 +228,7 @@ data_fig3 <- bc_data_limit %>%
 
 ## Addition of limits for x-axis
 data_fig3 <- data_fig3 %>%
-  left_join(plot_x_limits, id = "name")
+  left_join(plot_x_limits, by = "name")
 
 ## Definition of function to plot variables
 fig3_function_plot <- function (data, lmin, lmax, xlab) {
