@@ -161,13 +161,13 @@ fig_A1 <- wrap_plots(figa1_alk,
           vjust = 0
         ))
 
-ggsave(
-  fig_A1,
-  filename = "FigureA1.tiff",
-  dpi = "print",
-  height = 5.94  ,
-  width = 8.35
-)
+# ggsave(
+#   fig_A1,
+#   filename = "FigureA1.tiff",
+#   dpi = "print",
+#   height = 5.94  ,
+#   width = 8.35
+# )
 
 # For replication purposes all values exceeding the 99.5 percentile was replaced with NA values. 
 # For the same reason Negro and Uruguay were analyzed altogether, while Cuareim alone
@@ -350,13 +350,13 @@ plots_juntos3 <- plot_grid(
 
 # Save figure
 
-tiff(
-  filename = "Figure3.tiff",
-  width = 600, height = 580)
-
-plots_juntos3
-
-dev.off()
+# tiff(
+#   filename = "Figure3.tiff",
+#   width = 600, height = 580)
+# 
+# plots_juntos3
+# 
+# dev.off()
 
 #Part 2: Analysis of river comparisons
 
@@ -450,13 +450,13 @@ figure4 <- wrap_plots(fig4_chla,
                       ncol = 2)
 
 # Save Figure
-ggsave(
-  figure4,
-  filename = "figure4_rivercomp.tiff",
-  dpi = "print",
-  height = 8  ,
-  width = 8
-)
+# ggsave(
+#   figure4,
+#   filename = "figure4_rivercomp.tiff",
+#   dpi = "print",
+#   height = 8  ,
+#   width = 8
+# )
 
 
 # 2.2 Generalized Least Squares for river comparison ---------------------------------------------------------
