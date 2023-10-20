@@ -26,7 +26,25 @@ execute:
   echo: false
 ---
 
-## Contenido :page_facing_up:
+## Me presento
+
+* Montevideo, Uruguay (1991)
+
+* Lic. Ciencias Biológicas (F.Ciencias UdelaR - 2015) `r emo::ji("microscope")`
+
+* Msc. Geociencias (PEDECIBA UdelaR - 2019) :computer:
+
+* Estudiante PhD Producción Animal (F. Veterinaria - UdelaR) :computer:
+
+* Docente Ud. Bioestadística, F. Veterinaria, UdelaR (2017 - actualidad) `r emo::ji("teacher")`
+
+* :swimmer: `r emo::ji("drum")` :sunflower: :mushroom: :palm_tree: :maple_leaf: :paw_prints: :fish: :whale: :goat: :penguin: :turtle: :bug: :ant: :dromedary_camel:
+
+
+---
+
+
+## Contenido
 
 <br/>
 
@@ -51,7 +69,7 @@ execute:
 
 # Origen: __BC2021__
 
-##  Articulo de BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+##  Articulo BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
 
 :::: {.columns}
 
@@ -63,10 +81,6 @@ execute:
 * Revista STOTEN: 
   - Impact Factor 9.8
   - CiteScore 16.8
-  
-* Afilición de los autores:
-  - Ministerio Ganadería Agricultura y Pesca
-  - Instituto Nacional de Investigación Agropecuaria
 :::
 
 ::::
@@ -77,15 +91,13 @@ execute:
 ##  El Articulo: BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
 
 
-* El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de Clorofila-a (_Chl-a_).
+* El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de microalgas (_Chl-a_).
 
-* La reducción de las emisiones de fósforo agrícola a los ríos no evitaría los altos niveles de clorofila-a.
+* La reducción de las emisiones de fósforo agrícola a los ríos no evitaría los altos niveles de _chl-a_
 
-* La sustitución de la agricultura por pradera natural no evitaría la proliferación de algas.
+* La sustitución de la agricultura por pradera natural no evitaría las floraciones algales.
 
-* Los principales factores que controlan la eutrofización no están directamente relacionados con la agricultura
-
-* La proliferación de algas en Uruguay es impulsada por el Cambio Climático.
+* La floraciones algales en Uruguay es impulsada por el Cambio Climático.
 
 
 ---
@@ -97,26 +109,33 @@ execute:
 
 ![](img/02_cyanohabs_factors.png){.incremental top=450 left=50 width="1200" height="450"}
 
-::: {.incremental}
+:::: {.columns}
 
-* Nutrientes
+::: {.column}
+* Nutrientes (N,P)
 
-* Temperatura
-
-* Tiempo de residencia
-
-* Luz solar
-
+* Temperatura del agua
 :::
 
+::: {.column}
+* Tiempo de residencia del agua
+
+* Luz solar
+:::
+
+::::
+
+:::{.footnote}
+Imagen: Graham _et al_., 2017
+:::
 ---
 
 ## Paradigma actual
 
 ### Consecuencias de las floraciones algales
 
-![](img/03_ciano1.jpg){.absolute top=150 left=1050 width="370" height="320"}
-![](img/03_ciano2.jpg){.absolute top=450 left=1050 width="370" height="320"}
+![](img/03_ciano1.jpg){.absolute top=50 left=1050 width="35%"}
+![](img/03_ciano2.jpg){.absolute top=450 left=1050 width="35%"}
 
 * Pérdida de Biodiversidad
 
@@ -132,23 +151,38 @@ execute:
 
 ---
 
+
+# El peso de la evidencia para una afirmación extraordinaria debe ser proporcional a su rareza  {background-color="#f4dbba"}
+
+_Pierre-Simon Laplace_
+
+---
+
 ##  Articulo de BC2021
 
 ### Metodología
 
 
-* Datos Públicos de calidad de agua (Observatorio Ambiental Nacional - Min. Ambiente). 
-
-* Seleccionaron dos ríos para entrenar una red neuronal (NNet)
-
-* Validaron modelo con datos de un tercer río
-
-* No declararon criterios para incluir variables
-
-* Proponen que las NNet son una herramienta libre de sesgo para determinar la influencia de las variables en el fenómeno
+![](img/05_GA_bc2021.png){.absolute left=800 top=150 width="60%"}
 
 
-![](img/05_GA_bc2021.png){.fragment top=550 width="700" height="250"}
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Datos Públicos de calidad de agua (OAN - Min. Ambiente). 
+
+* Dos ríos de Uy para entrenar una red neuronal (NNet)
+
+* Validaron NNet con un tercer río
+
+* Predicen concentración de algas (_chl-a_) simulando distintos usos del suelo
+
+* "NNet herramienta libre de sesgo para determinar la influencia de variables sobre el fenómeno"
+
+:::
+
+::::
 
 ---
 
@@ -159,7 +193,7 @@ execute:
 <br/>
 
 2. Escribir al editor de la revista resaltando algunos de los errores conceptuales 
-  + Respuesta del editor: "Escriban un réplica al articulo original"
+  + R: <span style="color:orange">"Escriban un réplica al articulo original"<span/>
 
 <br/>
 
@@ -168,23 +202,66 @@ execute:
 
 ---
 
-# Construcción de una respuesta (reproducible)
+# Construcción de una respuesta
+
+---
+
+## Datos: Observatorio Ambiental Nacional (2021)
+
+
+* Repositorio de datos públicos de calidad de Agua en Uruguay
+
+* Programas de monitoreo no estandarizados a nivel país
+
+* Fácil selección y descarga de archivos en formato _.csv_ o _.xls_
+
+* Pobre documentación y metadata
+
+![](img/06_OAN.png){.absolute width="45%"}
+![](img/06_Oan_datos.png){.absolute left=700 width="65%"}
+
+---
+
+## Prcesamiento de datos del OAN 
+
+* 2059 observaciones y 19 variables
+
+* Más de un archivo _.csv_ para cada río 
+ 
+* Presencia de hasta un 20% de caracteres especiales como datos: $<LD; <LC;  LD<X<LC$
+ 
+* Estaciones de superficie y fondo solo separadas por una letra en su nombre (RN5 y RN5<span style="color:red">F</span>)
+
+* Valores extremos en los datos (ej. temperatura agua = 257 $^{\circ}C$)
+
+---
+
+## Del análisis propio a la respuesta
+
+* Los datos de origen presentaban ciertas inconsistencias o artefactos que había que tomar decisiones claras
+
+* Pero en BC2021 no se hacia mención alguna a estas particularidades
+
+* Y cuando se aclaraban no coincidían con nuestros resultados
+
+* ![](img/08_outliers.png){.absolute left=0 width="50%"}
+
+* ![](img/08_outliers2.png){.absolute right=50 width="20%"}
 
 ---
 
 ## Construcción de una respuesta (reproducible)
 
-
-* __Reproducibilidad:__ trabajo que puede ser revisado y recreado de forma independiente, utilizando los mismos datos y análisis publicados por los autores originales.
+* __Reproducibilidad:__ <span style="color:orange">trabajo<span/> que puede ser __revisado y recreado__ de forma <span style="color:orange">independiente<span/>, utilizando los __mismos__ datos y/o análisis publicados por los autores originales.
 
 
 * La Reproducibilidad puede entenderse:
 
   - a nivel informático (códigos, software, hardware, etc.)
 
-  - a nivel empírico (experimentos y observaciones que permiten una adquisición y disponibilidad transparente de datos)
+  - a nivel empírico (diseño experimental/observacional, forma de adquisición y disponibilidad transparente de datos)
   
-  - a nivel estadístico (análisis estadísticos, valores umbral de detección y potencia estadística de las pruebas, así como los parámetros de los modelos)
+  - a nivel estadístico (análisis, potencia estadística, parámetros de los modelos)
 
 
 ![](img/07_reproducibility.png){.fragment width="600" height="300"}
@@ -195,45 +272,46 @@ White et al., 2013; Culina et al., 2020
 
 ---
 
+## Ejemplo recreando Figura 1
 
-## Datos: Observatorio Ambiental Nacional
 
-:::: {.columns}
-
-::: {.column width="65%"}
-
-* Repositorio de datos públicos de calidad de Agua en Uruguay
-
-* Programas de monitoreo no estandarizados a nivel país
-
-* 
-:::
-
-::::
-
-![](img/06_OAN.png){.fragment width="600" height="300"}
-
----
-
-## Repositorio Público
-
-* Brindar a los investigadores una fuente de consulta centralizada
-
-* Compartir códigos de avance en el análisis
-
-* Transparentar el proceso de análisis y publicación
+![](https://github.com/NAlcan/Reply_BC2021/raw/master/6.Interactive_code_files/Data_AnalysisVisualization_files/figure-gfm/Figure%203-1.png){.r-stretch}
 
 
 ---
 
-## Prcesamiento de datos del OAN 
+## Sesgo de selección de sitios para análisis
 
-* 2059 observaciones y 19 variables
+```{r}
+knitr::include_graphics(here::here("3.Resultados/map_siterivers_svg.svg"))
+```
 
-* Más de un archivo _.csv_ para cada río 
- 
-* Presencia de caracteres especiales como datos: $<LD; <LC;  LD<X<LC$
- 
-* Estaciones de superficie y fondo solo identificadas por un código en su nombre
+---
 
-* Valores extremos en los datos (ej. temperatura = $257 ^{\circ}C$)
+## 
+
+![](img/09_reply.png){.absolute top=0 left=0 width="650" height="500"}
+
+![](img/09_grabs.png){.absolute bottom=0 right=0 width="950" height="350"}
+
+
+---
+
+
+# ¿Y después?
+
+
+---
+
+## ¿Y después? :smiley:
+
+![](img/10_ladiaria.png){.absolute top=100 left=0 height="90%"}
+
+
+![](img/11_limnouy.jpg){.absolute top=100 left=900 height="90%"}
+
+
+---
+
+## ¿Y después? :weary:
+
