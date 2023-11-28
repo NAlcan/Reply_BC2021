@@ -1,0 +1,490 @@
+---
+title: "¿Afirmaciones extraordinarias exigen evidencia extraordinaria?; Reproducibilidad y datos abiertos en calidad de agua"
+date: '2023-10-20'
+author:
+  - name: "Ignacio Alcántara"
+    affiliations: "Ud. Bioestadística - Facultad de Veterinaria, UdelaR"
+  - name: "Andrea Somma"
+    affiliations: "Polo Ecología Fluvial - CENUR Litoral Norte, UdelaR"
+  - name: "Felipe García-Rodríguez"
+    affiliations: "Dpto. Geociencias - CURE, UdelaR"
+from: markdown+emoji
+format:
+  revealjs:
+    theme: moon
+    slide-number: true
+    preview-links: true
+    logo: img/logo_R_FVet_chico.png
+    footer: "https://github.com/NAlcan/Reply_BC2021"
+    embed-resources: true
+    mouse-wheel: true
+    height: 864
+    width: 1536
+    incremental: true
+execute: 
+  eval: true
+  echo: false
+  error: false
+  warning: false
+---
+
+## Me presento
+
+* Montevideo, Uruguay (1991)
+
+* Lic. Ciencias Biológicas (F.Ciencias UdelaR - 2015) `r emo::ji("microscope")`
+
+* Msc. Geociencias (PEDECIBA UdelaR - 2019) :computer:
+
+* Estudiante PhD Producción Animal (F. Veterinaria - UdelaR) :computer:
+
+* Docente Ud. Bioestadística, F. Veterinaria, UdelaR (2017 - actualidad) `r emo::ji("teacher")`
+
+* :swimmer: `r emo::ji("drum")` :sunflower: :mushroom: :palm_tree: :maple_leaf: :paw_prints: :fish: :whale: :goat: :penguin: :turtle: :bug: :ant: :dromedary_camel:
+
+
+---
+
+
+## Contenido
+
+<br/>
+
+* Origen: __BC2021__
+
+<br/>
+
+* Construcción de una respuesta (reproducible)
+
+<br/>
+
+* ¿Y después?
+
+<br/>
+
+* Lecciones aprendidas
+
+<br/>
+
+
+
+# Origen: __BC2021__
+
+##  Articulo BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+
+:::: {.columns}
+
+::: {.column width="70%"}
+![](img/01_portada_bc.png){.absolute top=150 left=50 width="900" height="600"}
+:::
+
+::: {.column width="30%"}
+
+* _Eutrofización:_ enriquecimiento excesivo en nutrientes de un ecosistema acuático.
+
+
+* Revista STOTEN: 
+  - Impact Factor 9.8
+  - CiteScore 16.8
+:::
+
+::::
+
+
+---
+
+## Paradigma actual
+
+### Mecanismos determinantes de las floraciones algales
+
+
+![](img/02_cyanohabs_factors.png){.incremental top=450 left=50 width="300" height="450"}
+
+:::: {.columns}
+
+::: {.column}
+
+:::
+
+::: {.column}
+* Nutrientes (N,P)
+
+* Temperatura del agua
+
+* Tiempo de residencia del agua
+
+* Luz solar
+:::
+
+::::
+
+:::{.footer}
+
+:::
+
+---
+
+## Paradigma actual
+
+### Consecuencias de las floraciones algales
+
+![](img/03_ciano1.jpg){.absolute top=50 left=1050 width="35%"}
+![](img/03_ciano2.jpg){.absolute top=450 left=1050 width="35%"}
+
+* Pérdida de Biodiversidad
+
+* Anoxia
+
+* Olor y sabor en el agua
+
+* Cianotoxinas
+
+* Aumento de pH
+
+![The Biology of Lakes and Ponds](img/04_ph_cycle.png){.fragment left=0 width="35%"}
+
+---
+
+##  Principales conclusiones en BC2021
+
+
+* El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de microalgas (_Chl-a_).
+
+* La reducción de las emisiones de fósforo agrícola a los ríos no evitaría los altos niveles de _Chl-a_
+
+* La sustitución de la agricultura por pradera natural no evitaría las floraciones algales.
+
+* La floraciones algales en Uruguay son impulsadas por el Cambio Climático.
+
+![](img/01_portada_bc.png){.absolute bottom=0 right=50 width="40%"}
+
+---
+
+## Evidencia nacional
+
+
+
+
+
+# El peso de la evidencia para una afirmación extraordinaria debe ser proporcional a su rareza  {background-color="#f4dbba"}
+
+_Pierre-Simon Laplace_
+
+
+
+##  Articulo de BC2021
+
+### Metodología
+
+
+![](img/05_GA_bc2021.png){.absolute left=800 top=150 width="60%"}
+
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Datos Públicos de calidad de agua (OAN - Min. Ambiente)
+
+* Dos ríos de Uy para entrenar una red neuronal (NNet)
+
+* Validaron NNet con un tercer río
+
+* Predicen concentración de algas (_Chl-a_) simulando distintos usos del suelo
+
+* "NNet herramienta libre de sesgo para determinar la influencia de variables sobre el fenómeno"
+
+:::
+
+::::
+
+---
+
+## Reacción de la comunidad "Limnológica"
+
+1. Organizarse frente a un "enemigo común"
+
+<br/>
+
+2. Escribir al editor de la revista resaltando algunos de los errores conceptuales 
+  + R: <span style="color:orange">"Escriban un réplica al artículo original"<span/>
+
+<br/>
+
+3. Diversas propuestas de como debía realizarse un "correcto" análisis de la información
+
+
+
+
+# Construcción de una respuesta
+
+
+
+## Datos: Observatorio Ambiental Nacional (2021)
+
+
+* Repositorio de datos públicos de calidad de Agua en Uruguay
+
+* Programas de monitoreo no estandarizados a nivel país
+
+* Fácil selección y descarga de archivos en formato _.csv_ o _.xls_
+
+* Pobre documentación y metadata
+
+<!-- ![](img/06_OAN_stations.png){.absolute width="30%"} -->
+<!-- ![](img/06_Oan_datos.png){.absolute left=700 width="65%"} -->
+
+---
+
+## Procesamiento de datos del OAN 
+
+:::: {.columns}
+
+::: {.column width="55%"}
+* 2059 observaciones y 19 variables (2009 - 2018)
+
+* Más de un archivo _.csv_ para cada río 
+ 
+* Presencia de hasta un 20% de caracteres especiales como datos: $<LD; <LC;  LD<X<LC$
+ 
+* Estaciones de superficie y fondo solo separadas por una letra en su nombre (RN5 y RN5<span style="color:red">F</span>)
+
+* Valores extremos en los datos (ej. temperatura agua = 257 $^{\circ}C$)
+:::
+
+::::
+
+
+<!-- ![](img/07_tidy.png){.absolute top=120 width="40%" right=0} -->
+<!-- ![](img/07_snakecase.png){.absolute top=700 width="10%" left=1200} -->
+<!-- ![](img/07_janitor.png){.absolute top=700 width="10%" left=1000} -->
+<!-- ![](img/07_lubridate.png){.absolute top=700 width="10%" left=1400} -->
+
+
+---
+
+## Del análisis propio a la respuesta
+
+* Los datos de origen presentaban ciertas inconsistencias o artefactos que había que tomar decisiones claras
+
+* Pero en BC2021 no se hacia mención alguna a estas particularidades
+
+* Y cuando se aclaraban no coincidían con nuestros resultados
+
+* ![](img/08_outliers.png){.absolute left=0 width="50%"}
+
+* ![](img/08_outliers2.png){.absolute right=50 width="30%"}
+
+---
+
+## Construcción de una respuesta (reproducible)
+
+* __Reproducibilidad:__ <span style="color:orange">Trabajo que puede ser __revisado y recreado__ de forma __independiente__ utilizando los __mismos__ datos y/o análisis publicados por los autores originales
+
+
+* La Reproducibilidad puede entenderse:
+
+  - a nivel informático (códigos, software, hardware, etc.)
+
+  - a nivel empírico (diseño experimental/observacional, forma de adquisición y disponibilidad transparente de datos)
+  
+  - a nivel estadístico (análisis, potencia estadística, parámetros de los modelos)
+
+
+![](img/07_reproducibility.png){.fragment width="600" height="300"}
+
+::: {.footnote}
+White et al., 2013; Culina et al., 2020
+:::
+
+---
+
+## Repositorio Público en GitHub
+
+* Transparencia en la comunidad
+
+* Facilidad para compartir códigos y BBDD entre los investigadores
+
+* Documentar el proceso
+
+<!-- ![](img/09_qrcode.png){.absolute width="25%" top=0 right=0} -->
+<!-- ![https://happygitwithr.com/](img/09_happy_git.png){ top=700 width="40%" left=0} -->
+
+::: aside
+Happy Git and GitHub for the useR (https://happygitwithr.com/)
+:::
+
+
+---
+
+## Ejemplo recreando la Figura 2
+
+
+```{r}
+#| include: false
+source(here::here("1.Codigo/Data_analysis.R"))
+```
+
+```{r}
+#| out-width: "85%"
+plots_juntos3
+```
+
+
+<!-- ![](img/07_patchwork.png){.absolute top=100 width="10%" right=0} -->
+<!-- ![](img/07_ggplot2.png){.absolute top=300 width="10%" right=0} -->
+
+---
+
+## Ejemplo recreando la Figura 2
+
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+
+wrap_plots( (fig3d + 
+              labs(title = "BC2021")),
+            (fig3_ph + 
+              labs(title = "Our analysis") +
+              theme(text = element_text(size = 24))),
+           ncol = 2)
+```
+:::
+
+::: {.column width="50%}
+
+```{r}
+
+wrap_plots( (fig3e +
+               labs(title = "BC2021")),
+            (fig3_sst +
+               labs(title = "Our analysis") +
+              theme(text = element_text(size = 24))),
+            ncol = 2)
+```
+
+:::
+
+::::
+
+---
+
+## Sesgo de selección de sitios para análisis
+
+```{r}
+#| out-width: 80%
+knitr::include_graphics(here::here("3.Resultados/map_siterivers_svg.svg"))
+```
+
+
+<!-- ![](img/10_geouy.png){.absolute top=100 width="10%" right=0} -->
+<!-- ![](img/10_mapsf.png){.absolute top=300 width="10%" right=0} -->
+
+
+---
+
+## Respondimos
+
+![](img/09_reply.png){.absolute top=150 left=0 width="45%"}
+
+![](img/09_grabs.png){.absolute bottom=100 left=700 width="65%"}
+
+
+::: aside
+Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & García-Rodríguez, F. (2022). A reply to “Relevant factors in the eutrophication of the Uruguay River and the Río Negro”. Science of the Total Environment, 818, 151854.
+:::
+
+
+# ¿Y después?
+
+
+## ¿Y después? :smiley:
+
+![](img/10_ladiaria.png){.absolute top=100 left=0 height="90%"}
+
+
+![](img/11_limnouy.jpg){.absolute top=100 left=900 height="90%"}
+
+
+---
+
+## ¿Y después? :weary:
+
+![](img/12_response_alc.png){.absolute width="45%"}
+
+
+::: aside
+Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et al.'s (2021) comments. The Science of the total environment, 837, 155555.
+:::
+
+
+
+# Lecciones aprendidas
+
+
+
+## Lecciones aprendidas
+
+</br>
+
+* Cambio de cultura: es posible una comunidad colaborativa
+
+</br>
+
+* Las editoriales siguen siendo un modelo de negocio
+
+</br>
+
+* "Un gran poder conlleva una gran responsabilidad"
+
+</br>
+
+* Animarse a hacer y aportar por más chiquites que seamos
+
+---
+
+## Reflexión {background-color="#f4dbba"}
+
+</br>
+
+
+* Reproducibilidad "material" vs "intelectual"
+
+</br>
+
+* ¿Cuántos trabajos con sesgos no tan evidentes se nos escaparán?
+
+
+---
+
+## Muchas Gracias 
+
+::: {.nonincremental}
+
+* Presentación realizada con `Quarto`
+
+* Referencias
+
+::: aside
+
++ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & García-Rodríguez, F. (2022). A reply to “Relevant factors in the eutrophication of the Uruguay River and the Río Negro”. Science of the Total Environment, 818, 151854.
+
++ Brönmark, C., & Hansson, L. A. (2017). The biology of lakes and ponds. Oxford university press.
+
++ Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.
+
++ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et al.'s (2021) comments. The Science of the total environment, 837, 155555.
+
++ Culina, A., van den Berg, I., Evans, S., & Sánchez-Tójar, A. (2020). Low availability of code in ecology: A call for urgent action. PLoS Biology, 18(7), e3000763.
+
++ Graham, J. L., Dubrovsky, N. M., & Eberts, S. M. (2016). Cyanobacterial harmful algal blooms and US Geological Survey science capabilities. US Department of the Interior, US Geological Survey.
+
++ White, E. P., Baldridge, E., Brym, Z. T., Locey, K. J., McGlinn, D. J., & Supp, S. R. (2013). Nine simple ways to make it easier to (re) use your data. Ideas in Ecology and Evolution, 6(2).
+
+
+:::
+
+:::
+
