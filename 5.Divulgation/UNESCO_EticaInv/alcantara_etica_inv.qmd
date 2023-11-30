@@ -1,20 +1,15 @@
 ---
-title: "¿Afirmaciones extraordinarias exigen evidencia extraordinaria?; Reproducibilidad y datos abiertos en calidad de agua"
+title: "Reproducibilidad y datos abiertos en calidad de agua"
 date: '2023-10-20'
 author:
   - name: "Ignacio Alcántara"
     affiliations: "Ud. Bioestadística - Facultad de Veterinaria, UdelaR"
-  - name: "Andrea Somma"
-    affiliations: "Polo Ecología Fluvial - CENUR Litoral Norte, UdelaR"
-  - name: "Felipe García-Rodríguez"
-    affiliations: "Dpto. Geociencias - CURE, UdelaR"
 from: markdown+emoji
 format:
   revealjs:
     theme: moon
     slide-number: true
     preview-links: true
-    logo: img/logo_R_FVet_chico.png
     footer: "https://github.com/NAlcan/Reply_BC2021"
     embed-resources: true
     mouse-wheel: true
@@ -60,6 +55,7 @@ execute:
 
 * ¿Y después?
 
+
 <br/>
 
 * Lecciones aprendidas
@@ -98,27 +94,31 @@ execute:
 ### Mecanismos determinantes de las floraciones algales
 
 
-![](img/02_cyanohabs_factors.png){.incremental top=450 left=50 width="300" height="450"}
 
 :::: {.columns}
 
-::: {.column}
+::: {.column width="90%"}
 
+![](img/02_cyanohabs_factors.png){.incremental top=450 left=50 width="1400" height="550"}
 :::
 
-::: {.column}
-* Nutrientes (N,P)
+::: {.column width="10%"}
 
-* Temperatura del agua
 
-* Tiempo de residencia del agua
++ Nutrientes (N,P)
 
-* Luz solar
++ Temperatura del agua
+
++ Tiempo de residencia del agua
+
++ Luz solar
 :::
 
 ::::
 
 :::{.footer}
+
+Imagen: Graham _et al_., 2016
 
 :::
 
@@ -141,7 +141,7 @@ execute:
 
 * Aumento de pH
 
-![The Biology of Lakes and Ponds](img/04_ph_cycle.png){.fragment left=0 width="35%"}
+![The Biology of Lakes and Ponds (1998)](img/04_ph_cycle.png){.fragment left=0 width="35%"}
 
 ---
 
@@ -150,11 +150,11 @@ execute:
 
 * El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de microalgas (_Chl-a_).
 
-* La reducción de las emisiones de fósforo agrícola a los ríos no evitaría los altos niveles de _Chl-a_
+* La __reducción de las emisiones de fósforo agrícola__ a los ríos no evitaría los altos niveles de _Chl-a_
 
-* La sustitución de la agricultura por pradera natural no evitaría las floraciones algales.
+* __La sustitución de la agricultura por pradera natural no evitaría las floraciones algales__
 
-* La floraciones algales en Uruguay son impulsadas por el Cambio Climático.
+* __La floraciones algales en Uruguay son impulsadas por el Cambio Climático__
 
 ![](img/01_portada_bc.png){.absolute bottom=0 right=50 width="40%"}
 
@@ -163,7 +163,7 @@ execute:
 ## Evidencia nacional
 
 
-
+![](img/evidencia_nacion.png){.r-stretch}
 
 
 # El peso de la evidencia para una afirmación extraordinaria debe ser proporcional a su rareza  {background-color="#f4dbba"}
@@ -211,7 +211,7 @@ _Pierre-Simon Laplace_
 
 <br/>
 
-3. Diversas propuestas de como debía realizarse un "correcto" análisis de la información
+3. Diversas propuestas de como debía realizarse un "adecuado" análisis de la información
 
 
 
@@ -231,35 +231,8 @@ _Pierre-Simon Laplace_
 
 * Pobre documentación y metadata
 
-<!-- ![](img/06_OAN_stations.png){.absolute width="30%"} -->
-<!-- ![](img/06_Oan_datos.png){.absolute left=700 width="65%"} -->
-
----
-
-## Procesamiento de datos del OAN 
-
-:::: {.columns}
-
-::: {.column width="55%"}
-* 2059 observaciones y 19 variables (2009 - 2018)
-
-* Más de un archivo _.csv_ para cada río 
- 
-* Presencia de hasta un 20% de caracteres especiales como datos: $<LD; <LC;  LD<X<LC$
- 
-* Estaciones de superficie y fondo solo separadas por una letra en su nombre (RN5 y RN5<span style="color:red">F</span>)
-
-* Valores extremos en los datos (ej. temperatura agua = 257 $^{\circ}C$)
-:::
-
-::::
-
-
-<!-- ![](img/07_tidy.png){.absolute top=120 width="40%" right=0} -->
-<!-- ![](img/07_snakecase.png){.absolute top=700 width="10%" left=1200} -->
-<!-- ![](img/07_janitor.png){.absolute top=700 width="10%" left=1000} -->
-<!-- ![](img/07_lubridate.png){.absolute top=700 width="10%" left=1400} -->
-
+![](img/06_OAN_stations.png){.absolute width="30%"}
+![](img/06_Oan_datos.png){.absolute left=700 width="65%"}
 
 ---
 
@@ -282,13 +255,6 @@ _Pierre-Simon Laplace_
 * __Reproducibilidad:__ <span style="color:orange">Trabajo que puede ser __revisado y recreado__ de forma __independiente__ utilizando los __mismos__ datos y/o análisis publicados por los autores originales
 
 
-* La Reproducibilidad puede entenderse:
-
-  - a nivel informático (códigos, software, hardware, etc.)
-
-  - a nivel empírico (diseño experimental/observacional, forma de adquisición y disponibilidad transparente de datos)
-  
-  - a nivel estadístico (análisis, potencia estadística, parámetros de los modelos)
 
 
 ![](img/07_reproducibility.png){.fragment width="600" height="300"}
@@ -296,24 +262,6 @@ _Pierre-Simon Laplace_
 ::: {.footnote}
 White et al., 2013; Culina et al., 2020
 :::
-
----
-
-## Repositorio Público en GitHub
-
-* Transparencia en la comunidad
-
-* Facilidad para compartir códigos y BBDD entre los investigadores
-
-* Documentar el proceso
-
-<!-- ![](img/09_qrcode.png){.absolute width="25%" top=0 right=0} -->
-<!-- ![https://happygitwithr.com/](img/09_happy_git.png){ top=700 width="40%" left=0} -->
-
-::: aside
-Happy Git and GitHub for the useR (https://happygitwithr.com/)
-:::
-
 
 ---
 
@@ -410,15 +358,63 @@ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & 
 
 ---
 
-## ¿Y después? :weary:
+## ¿Y después? :pensive:
 
 ![](img/12_response_alc.png){.absolute width="45%"}
 
+:::: {.columns}
+
+::: {.column width="50%"}
+:::
+
+::: {.column width="50%"}
+
+* Aclararon procedimientos con los datos $NA, > LD, \leq LC$ :+1:
+
+* Reconocen "errores de edición gráfica" en figuras :+1:
+
+* No responden a los cuestionamientos sobre la interpretación de la información :-1:
+
+* Sostienen su interpretación de que el pH potencia el aumento de la _Chl-a_ :-1:
+:::
+
+::::
 
 ::: aside
 Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et al.'s (2021) comments. The Science of the total environment, 837, 155555.
 :::
 
+## El ciclo cientifico
+
+* La ciencia no es una simple colección de "hechos y números", es una herramienta cognitiva
+
+
+![](img/science_cycle.png){.absolute width="45%"}
+
+:::: {.columns}
+
+::: {.column}
+:::
+
+::: {.column}
+
+* "La ciencia es _cómo_, no un _qué_, y mucho menos un _quién_" [Nogués 2018] {.r-fit}
+
+:::
+
+::::
+
+---
+
+## Publicaciones científicas en la era digital
+
+* La revisión por pares ayuda a garantizar que la investigación publicada cumpla con los estándares mínimos de calidad científica
+
+
+![](img/peerreview.gif){.absolute width="45%"}
+
+
+* Dado que el conocimiento científico es acumulativo y se construye sobre sí mismo, la confianza en el sistema es particularmente importante
 
 
 # Lecciones aprendidas
