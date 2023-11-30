@@ -23,47 +23,6 @@ execute:
   warning: false
 ---
 
-## Me presento
-
-* Montevideo, Uruguay (1991)
-
-* Lic. Ciencias Biológicas (F.Ciencias UdelaR - 2015) `r emo::ji("microscope")`
-
-* Msc. Geociencias (PEDECIBA UdelaR - 2019) :computer:
-
-* Estudiante PhD Producción Animal (F. Veterinaria - UdelaR) :computer:
-
-* Docente Ud. Bioestadística, F. Veterinaria, UdelaR (2017 - actualidad) `r emo::ji("teacher")`
-
-* :swimmer: `r emo::ji("drum")` :sunflower: :mushroom: :palm_tree: :maple_leaf: :paw_prints: :fish: :whale: :goat: :penguin: :turtle: :bug: :ant: :dromedary_camel:
-
-
----
-
-
-## Contenido
-
-<br/>
-
-* Origen: __BC2021__
-
-<br/>
-
-* Construcción de una respuesta (reproducible)
-
-<br/>
-
-* ¿Y después?
-
-
-<br/>
-
-* Lecciones aprendidas
-
-<br/>
-
-
-
 # Origen: __BC2021__
 
 ##  Articulo BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
@@ -214,7 +173,57 @@ _Pierre-Simon Laplace_
 3. Diversas propuestas de como debía realizarse un "adecuado" análisis de la información
 
 
+## El ciclo cientifico
 
+* La ciencia no es una simple colección de "hechos y números", es una herramienta cognitiva que funciona en base a consensos
+
+
+![](img/science_cycle.png){.absolute width="45%"}
+
+:::: {.columns}
+
+::: {.column}
+:::
+
+::: {.column}
+
+
+* "La ciencia es _cómo_, no un _qué_, y mucho menos un _quién_" [Nogués 2018]
+
+</br>
+
+*  <span style="color:orange"> __Revisión por pares:__ </span> estándar de oro en la ciencia porque garantiza el rigor, la novedad y la consistencia de los resultados académicos
+
+:::
+
+::::
+
+---
+
+## Publicaciones científicas y revisión por pares
+
+
+
+
+![](img/peerreview.gif){.absolute width="45%"}
+
+
+:::: {.columns}
+
+::: {.column width="45%"}
+:::
+
+::: {.column width="55%"}
+
+* La revisión por pares ayuda a garantizar que el trabajo sea riguroso, coherente, utilice la investigación pasada y aumente lo que ya sabíamos
+
+* Dado que el conocimiento científico es <span style="color:orange">__acumulativo y se construye sobre sí mismo__</span>, la __confianza__ en el sistema es particularmente importante
+
+* El objetivo principal de la revisión por pares debe ser proporcionar retroalimentación a los autores para mejorar un manuscrito antes de su publicación
+
+:::
+
+::::
 
 # Construcción de una respuesta
 
@@ -229,7 +238,7 @@ _Pierre-Simon Laplace_
 
 * Fácil selección y descarga de archivos en formato _.csv_ o _.xls_
 
-* Pobre documentación y metadata
+* Pobre documentación y metadata (hasta el 2021)
 
 ![](img/06_OAN_stations.png){.absolute width="30%"}
 ![](img/06_Oan_datos.png){.absolute left=700 width="65%"}
@@ -257,7 +266,7 @@ _Pierre-Simon Laplace_
 
 
 
-![](img/07_reproducibility.png){.fragment width="600" height="300"}
+![](img/07_reproducibility.png){.fragment width="600" height="300" left="50%"}
 
 ::: {.footnote}
 White et al., 2013; Culina et al., 2020
@@ -265,79 +274,13 @@ White et al., 2013; Culina et al., 2020
 
 ---
 
-## Ejemplo recreando la Figura 2
-
-
-```{r}
-#| include: false
-source(here::here("1.Codigo/Data_analysis.R"))
-```
-
-```{r}
-#| out-width: "85%"
-plots_juntos3
-```
-
-
-<!-- ![](img/07_patchwork.png){.absolute top=100 width="10%" right=0} -->
-<!-- ![](img/07_ggplot2.png){.absolute top=300 width="10%" right=0} -->
-
----
-
-## Ejemplo recreando la Figura 2
-
-
-:::: {.columns}
-
-::: {.column width="50%"}
-```{r}
-
-wrap_plots( (fig3d + 
-              labs(title = "BC2021")),
-            (fig3_ph + 
-              labs(title = "Our analysis") +
-              theme(text = element_text(size = 24))),
-           ncol = 2)
-```
-:::
-
-::: {.column width="50%}
-
-```{r}
-
-wrap_plots( (fig3e +
-               labs(title = "BC2021")),
-            (fig3_sst +
-               labs(title = "Our analysis") +
-              theme(text = element_text(size = 24))),
-            ncol = 2)
-```
-
-:::
-
-::::
-
----
-
-## Sesgo de selección de sitios para análisis
-
-```{r}
-#| out-width: 80%
-knitr::include_graphics(here::here("3.Resultados/map_siterivers_svg.svg"))
-```
-
-
-<!-- ![](img/10_geouy.png){.absolute top=100 width="10%" right=0} -->
-<!-- ![](img/10_mapsf.png){.absolute top=300 width="10%" right=0} -->
-
-
----
-
 ## Respondimos
+
+* 53 Autores nacionales de 18 afiliaciones diferentes! 
 
 ![](img/09_reply.png){.absolute top=150 left=0 width="45%"}
 
-![](img/09_grabs.png){.absolute bottom=100 left=700 width="65%"}
+![](img/09_grabs.png){.absolute bottom=300 left=700 width="65%"}
 
 
 ::: aside
@@ -369,7 +312,7 @@ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & 
 
 ::: {.column width="50%"}
 
-* Aclararon procedimientos con los datos $NA, > LD, \leq LC$ :+1:
+* Aclararon procedimientos con los datos faltantes y erróneos :+1:
 
 * Reconocen "errores de edición gráfica" en figuras :+1:
 
@@ -384,64 +327,32 @@ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & 
 Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et al.'s (2021) comments. The Science of the total environment, 837, 155555.
 :::
 
-## El ciclo cientifico
 
-* La ciencia no es una simple colección de "hechos y números", es una herramienta cognitiva
-
-
-![](img/science_cycle.png){.absolute width="45%"}
-
-:::: {.columns}
-
-::: {.column}
-:::
-
-::: {.column}
-
-* "La ciencia es _cómo_, no un _qué_, y mucho menos un _quién_" [Nogués 2018] {.r-fit}
-
-:::
-
-::::
-
----
-
-## Publicaciones científicas en la era digital
-
-* La revisión por pares ayuda a garantizar que la investigación publicada cumpla con los estándares mínimos de calidad científica
-
-
-![](img/peerreview.gif){.absolute width="45%"}
-
-
-* Dado que el conocimiento científico es acumulativo y se construye sobre sí mismo, la confianza en el sistema es particularmente importante
-
-
-# Lecciones aprendidas
+# Lecciones aprendidas y reflexiones
 
 
 
-## Lecciones aprendidas
+## Lecciones aprendidas {background-color="#f4dbba"}
 
-</br>
 
 * Cambio de cultura: es posible una comunidad colaborativa
 
-</br>
-
 * Las editoriales siguen siendo un modelo de negocio
 
-</br>
+* Datos abiertos: "Un gran poder conlleva una gran responsabilidad"
 
-* "Un gran poder conlleva una gran responsabilidad"
+* La revisión por pares se ha transformado en un medio para ayudar a los editores a decidir si un artículo es adecuado para su revista o no
 
-</br>
+* Animarse a hacer y aportar por más _chiquites_ que seamos
 
-* Animarse a hacer y aportar por más chiquites que seamos
 
 ---
 
-## Reflexión {background-color="#f4dbba"}
+## Reflexiones {background-color="#f4dbba"}
+
+</br>
+
+* ¿Cómo podemos hacer el sistema de revisión más transparente y eficiente para no perder la confianza en el mismo?
 
 </br>
 
@@ -450,6 +361,7 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 
 </br>
 
+
 * ¿Cuántos trabajos con sesgos no tan evidentes se nos escaparán?
 
 
@@ -457,11 +369,26 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 
 ## Muchas Gracias 
 
+* Co-auores: 
+
+  + Andrea Somma 
+
+  + Claudia Piccini
+
+  + Felipe Garcia-Rodriguez
+  
+* Al resto de los autores que participaron de la respuesta
+
+* Cátedra UNESCO de DDHH de Udelar y RETEMA
+
+
+
+## Referencias
+
 ::: {.nonincremental}
 
-* Presentación realizada con `Quarto`
+* Presentación realizada con [Quarto](https://quarto.org/)
 
-* Referencias
 
 ::: aside
 
@@ -477,10 +404,11 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 
 + Graham, J. L., Dubrovsky, N. M., & Eberts, S. M. (2016). Cyanobacterial harmful algal blooms and US Geological Survey science capabilities. US Department of the Interior, US Geological Survey.
 
++ Stern BM, O’Shea EK (2019) A proposal for the future of scientific publishing in the life sciences. PLoS Biol 17(2): e3000116. https://doi.org/10.1371/journal.pbio.3000116
+
 + White, E. P., Baldridge, E., Brym, Z. T., Locey, K. J., McGlinn, D. J., & Supp, S. R. (2013). Nine simple ways to make it easier to (re) use your data. Ideas in Ecology and Evolution, 6(2).
 
 
 :::
 
 :::
-
