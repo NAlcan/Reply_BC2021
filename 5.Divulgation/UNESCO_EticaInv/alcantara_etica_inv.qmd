@@ -1,6 +1,6 @@
 ---
 title: "Reproducibilidad y datos abiertos en calidad de agua"
-date: '2023-10-20'
+date: '2023-12-01'
 author:
   - name: "Ignacio Alcántara"
     affiliations: "Ud. Bioestadística - Facultad de Veterinaria, UdelaR"
@@ -23,36 +23,32 @@ execute:
   warning: false
 ---
 
-# Origen: __BC2021__
 
-##  Articulo BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+## Floraciones algales
 
-:::: {.columns}
+![](img/floraciones2.jpg){.absolute top=150 left=0 width="60%"}
 
-::: {.column width="70%"}
-![](img/01_portada_bc.png){.absolute top=150 left=50 width="900" height="600"}
-:::
-
-::: {.column width="30%"}
-
-* _Eutrofización:_ enriquecimiento excesivo en nutrientes de un ecosistema acuático.
-
-
-* Revista STOTEN: 
-  - Impact Factor 9.8
-  - CiteScore 16.8
-:::
-
-::::
-
+![](img/floraciones1.jpg){.absolute top=450 left=900 width="45%"}
 
 ---
 
-## Paradigma actual
-
-### Mecanismos determinantes de las floraciones algales
+## Consecuencias de las Floraciones algales
 
 
+* Pérdida de biodiversidad
+
+* Mal olor y sabor en el agua
+
+* Toxinas
+
+* Limitación de usos recreativos y potabilización
+
+
+![](img/floraciones3.jpg){.absolute top=450 left=500 width="40%"}
+
+---
+
+## Causas de las floraciones
 
 :::: {.columns}
 
@@ -81,33 +77,58 @@ Imagen: Graham _et al_., 2016
 
 :::
 
+
 ---
 
-## Paradigma actual
+## Sustentado por evidencia nacional
 
-### Consecuencias de las floraciones algales
 
-![](img/03_ciano1.jpg){.absolute top=50 left=1050 width="35%"}
-![](img/03_ciano2.jpg){.absolute top=450 left=1050 width="35%"}
+![](img/evidencia_nacional.jpg){.r-stretch}
 
-* Pérdida de Biodiversidad
 
-* Anoxia
+---
 
-* Olor y sabor en el agua
+## Sustentado por evidencia nacional
 
-* Cianotoxinas
+![](img/goyen_phos.png){.absolute top=150 left=50 width="30%"}
 
-* Aumento de pH
+![](img/kruk_cyan.png){.absolute top=150 left=950 width="40%"}
 
-![The Biology of Lakes and Ponds (1998)](img/04_ph_cycle.png){.fragment left=0 width="35%"}
+::: {.footer}
+Goyenola 2016; Kruk et al., 2023
+:::
+
+---
+
+##  Articulo BC2021^[Beretta-Blanco, A., & Carrasco-Letelier, L. (2021). Relevant factors in the eutrophication of the Uruguay River and the Río Negro. Science of the Total Environment, 761, 143299.]
+
+:::: {.columns}
+
+::: {.column width="70%"}
+![](img/01_portada_bc.png){.absolute top=150 left=50 width="900" height="600"}
+:::
+
+::: {.column width="30%"}
+
+* _Eutrofización:_ enriquecimiento excesivo en nutrientes de un ecosistema acuático.
+
+* Autores del MGAP e INIA
+
+* Revista STOTEN: 
+  - Impact Factor 9.8
+  - CiteScore 16.8
+
+:::
+
+::::
+
 
 ---
 
 ##  Principales conclusiones en BC2021
 
 
-* El pH, la conductividad eléctrica($EC_{w}$) y la temperatura (T) modulan los niveles de microalgas (_Chl-a_).
+* El pH, la conductividad eléctrica ($EC_{w}$) y la temperatura (T) modulan los niveles de microalgas (_Chl-a_).
 
 * La __reducción de las emisiones de fósforo agrícola__ a los ríos no evitaría los altos niveles de _Chl-a_
 
@@ -117,145 +138,42 @@ Imagen: Graham _et al_., 2016
 
 ![](img/01_portada_bc.png){.absolute bottom=0 right=50 width="40%"}
 
----
-
-## Evidencia nacional
-
-
-![](img/evidencia_nacion.png){.r-stretch}
-
 
 # El peso de la evidencia para una afirmación extraordinaria debe ser proporcional a su rareza  {background-color="#f4dbba"}
 
 _Pierre-Simon Laplace_
 
-
-
-##  Articulo de BC2021
-
-### Metodología
-
-
-![](img/05_GA_bc2021.png){.absolute left=800 top=150 width="60%"}
-
-
-:::: {.columns}
-
-::: {.column width="40%"}
-
-* Datos Públicos de calidad de agua (OAN - Min. Ambiente)
-
-* Dos ríos de Uy para entrenar una red neuronal (NNet)
-
-* Validaron NNet con un tercer río
-
-* Predicen concentración de algas (_Chl-a_) simulando distintos usos del suelo
-
-* "NNet herramienta libre de sesgo para determinar la influencia de variables sobre el fenómeno"
-
-:::
-
-::::
-
 ---
+
 
 ## Reacción de la comunidad "Limnológica"
 
-1. Organizarse frente a un "enemigo común"
+1. ¿Quienes se benefician y quienes se perjudican con este "nuevo paradigma"?
 
 <br/>
 
-2. Escribir al editor de la revista resaltando algunos de los errores conceptuales 
+2. Cuestionar la metodología y veracidad de las afirmaciones planteadas en BC2021
+
+<br/>
+
+3. Escribir al editor de la revista resaltando algunos de los errores conceptuales 
   + R: <span style="color:orange">"Escriban un réplica al artículo original"<span/>
 
-<br/>
-
-3. Diversas propuestas de como debía realizarse un "adecuado" análisis de la información
-
-
-## El ciclo cientifico
-
-* La ciencia no es una simple colección de "hechos y números", es una herramienta cognitiva que funciona en base a consensos
-
-
-![](img/science_cycle.png){.absolute width="45%"}
-
-:::: {.columns}
-
-::: {.column}
-:::
-
-::: {.column}
-
-
-* "La ciencia es _cómo_, no un _qué_, y mucho menos un _quién_" [Nogués 2018]
-
-</br>
-
-*  <span style="color:orange"> __Revisión por pares:__ </span> estándar de oro en la ciencia porque garantiza el rigor, la novedad y la consistencia de los resultados académicos
-
-:::
-
-::::
-
----
-
-## Publicaciones científicas y revisión por pares
-
-
-
-
-![](img/peerreview.gif){.absolute width="45%"}
-
-
-:::: {.columns}
-
-::: {.column width="45%"}
-:::
-
-::: {.column width="55%"}
-
-* La revisión por pares ayuda a garantizar que el trabajo sea riguroso, coherente, utilice la investigación pasada y aumente lo que ya sabíamos
-
-* Dado que el conocimiento científico es <span style="color:orange">__acumulativo y se construye sobre sí mismo__</span>, la __confianza__ en el sistema es particularmente importante
-
-* El objetivo principal de la revisión por pares debe ser proporcionar retroalimentación a los autores para mejorar un manuscrito antes de su publicación
-
-:::
-
-::::
-
-# Construcción de una respuesta
-
-
-
-## Datos: Observatorio Ambiental Nacional (2021)
-
-
-* Repositorio de datos públicos de calidad de Agua en Uruguay
-
-* Programas de monitoreo no estandarizados a nivel país
-
-* Fácil selección y descarga de archivos en formato _.csv_ o _.xls_
-
-* Pobre documentación y metadata (hasta el 2021)
-
-![](img/06_OAN_stations.png){.absolute width="30%"}
-![](img/06_Oan_datos.png){.absolute left=700 width="65%"}
 
 ---
 
 ## Del análisis propio a la respuesta
 
-* Los datos de origen presentaban ciertas inconsistencias o artefactos que había que tomar decisiones claras
+* Datos: Observatorio Ambiental Nacional (2021)
+
+* Habilidades propias para revisión y manejo de bases de datos 
+
+* Los datos de origen presentaban ciertas inconsistencias o artefactos que había que tomar decisiones claras. 
 
 * Pero en BC2021 no se hacia mención alguna a estas particularidades
 
-* Y cuando se aclaraban no coincidían con nuestros resultados
+* Nuestros gráficos no coincidian con los del trabajo
 
-* ![](img/08_outliers.png){.absolute left=0 width="50%"}
-
-* ![](img/08_outliers2.png){.absolute right=50 width="30%"}
 
 ---
 
@@ -264,9 +182,7 @@ _Pierre-Simon Laplace_
 * __Reproducibilidad:__ <span style="color:orange">Trabajo que puede ser __revisado y recreado__ de forma __independiente__ utilizando los __mismos__ datos y/o análisis publicados por los autores originales
 
 
-
-
-![](img/07_reproducibility.png){.fragment width="600" height="300" left="50%"}
+![](img/07_reproducibility.png){.fragment width="600" height="300"}
 
 ::: {.footnote}
 White et al., 2013; Culina et al., 2020
@@ -276,12 +192,18 @@ White et al., 2013; Culina et al., 2020
 
 ## Respondimos
 
-* 53 Autores nacionales de 18 afiliaciones diferentes! 
+* Articulo de 11 páginas, aceptado con "revisiones menores" 
 
-![](img/09_reply.png){.absolute top=150 left=0 width="45%"}
+* 53 Autores nacionales de 18 afiliaciones diferentes!
 
-![](img/09_grabs.png){.absolute bottom=300 left=700 width="65%"}
+![](img/09_reply.png){.absolute top=250 left=0 width="80%"}
 
+
+---
+
+## Respondimos
+
+![](img/09_grabs.png){.absolute top=150 left=100 width="90%"}
 
 ::: aside
 Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & García-Rodríguez, F. (2022). A reply to “Relevant factors in the eutrophication of the Uruguay River and the Río Negro”. Science of the Total Environment, 818, 151854.
@@ -303,14 +225,16 @@ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & 
 
 ## ¿Y después? :pensive:
 
-![](img/12_response_alc.png){.absolute width="45%"}
+![](img/12_response_alc.png){.absolute width="35%"}
 
 :::: {.columns}
 
-::: {.column width="50%"}
+::: {.column width="35%"}
 :::
 
-::: {.column width="50%"}
+::: {.column width="65%"}
+
+* Respuesta de una página y media :-1:
 
 * Aclararon procedimientos con los datos faltantes y erróneos :+1:
 
@@ -318,7 +242,8 @@ Alcántara, I., Somma, A., Chalar, G., Fabre, A., Segura, A., Achkar, M., ... & 
 
 * No responden a los cuestionamientos sobre la interpretación de la información :-1:
 
-* Sostienen su interpretación de que el pH potencia el aumento de la _Chl-a_ :-1:
+* Sostienen su interpretación de que el pH potencia el aumento de la _Chl-a_ desviando el foco de los nutrientes :-1:
+
 :::
 
 ::::
@@ -364,12 +289,17 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 
 * ¿Cuántos trabajos con sesgos no tan evidentes se nos escaparán?
 
+</br>
+
+* Responsabilidad de los mensajes que se promueven desde el lugar que uno ocupa
 
 ---
 
 ## Muchas Gracias 
 
-* Co-auores: 
+::: {.nonincremental}
+
+* Co-autores: 
 
   + Andrea Somma 
 
@@ -381,7 +311,7 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 
 * Cátedra UNESCO de DDHH de Udelar y RETEMA
 
-
+:::
 
 ## Referencias
 
@@ -412,3 +342,100 @@ Beretta-Blanco, A., & Carrasco-Letelier, L. (2022). Responses to Alcántara et a
 :::
 
 :::
+
+
+# Información Complementaria
+
+##  Articulo de BC2021
+
+### Metodología
+
+
+![](img/05_GA_bc2021.png){.absolute left=800 top=150 width="60%"}
+
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Datos Públicos de calidad de agua (OAN - Min. Ambiente)
+
+* Dos ríos de Uy para entrenar una red neuronal (NNet)
+
+* Validaron NNet con un tercer río
+
+* Predicen concentración de algas (_Chl-a_) simulando distintos usos del suelo
+
+* "NNet herramienta libre de sesgo para determinar la influencia de variables sobre el fenómeno"
+
+:::
+
+::::
+
+---
+
+## Observatorio Ambiental Nacional
+
+* Repositorio de datos públicos de calidad de Agua en Uruguay
+
+* Programas de monitoreo no estandarizados a nivel país
+
+* Fácil selección y descarga de archivos en formato _.csv_ o _.xls_
+
+* Pobre documentación y metadata (hasta el 2021)
+
+![](img/06_OAN_stations.png){.absolute width="30%"}
+![](img/06_Oan_datos.png){.absolute left=700 width="65%"}
+
+
+---
+
+## El ciclo cientifico
+
+* La ciencia no es una simple colección de "hechos y números", es una herramienta cognitiva que funciona en base a consensos
+
+
+![](img/science_cycle.png){.absolute width="45%"}
+
+:::: {.columns}
+
+::: {.column}
+:::
+
+::: {.column}
+
+
+* "La ciencia es _cómo_, no un _qué_, y mucho menos un _quién_" [Nogués 2018]
+
+</br>
+
+*  <span style="color:orange"> __Revisión por pares:__ </span> estándar de oro en la ciencia porque garantiza el rigor, la novedad y la consistencia de los resultados académicos
+
+:::
+
+::::
+
+---
+
+## Publicaciones científicas y revisión por pares
+
+
+![](img/peerreview.gif){.absolute width="45%"}
+
+
+:::: {.columns}
+
+::: {.column width="45%"}
+:::
+
+::: {.column width="55%"}
+
+* La revisión por pares ayuda a garantizar que el trabajo sea riguroso, coherente, utilice la investigación pasada y aumente lo que ya sabíamos
+
+* Dado que el conocimiento científico es <span style="color:orange">__acumulativo y se construye sobre sí mismo__</span>, la __confianza__ en el sistema es particularmente importante
+
+* El objetivo principal de la revisión por pares debe ser proporcionar retroalimentación a los autores para mejorar un manuscrito antes de su publicación
+
+:::
+
+::::
